@@ -1,6 +1,6 @@
 /* File HFPage.java */
 
-package heap;
+package labelheap;
 
 import java.io.*;
 import java.lang.*;
@@ -24,7 +24,7 @@ interface ConstSlot{
  * deletions are performed. 
  */
 
-public class HFPage extends Page 
+public class LHFPage extends Page 
   implements ConstSlot, GlobalConst{
   
   
@@ -84,7 +84,7 @@ public class HFPage extends Page
    * Default constructor
    */
   
-  public HFPage ()   {  }
+  public LHFPage ()   {  }
   
   /**
    * Constructor of class HFPage
@@ -92,7 +92,7 @@ public class HFPage extends Page
    * @param  page  the given page in Page type
    */
   
-  public HFPage(Page page)
+  public LHFPage(Page page)
     {
       data = page.getpage();
     }
@@ -103,7 +103,7 @@ public class HFPage extends Page
    * @param  apage   a page in buffer pool
    */
   
-  public void openHFpage(Page apage)
+  public void openLHFpage(Page apage)
     {
       data = apage.getpage();
     }
@@ -145,7 +145,7 @@ public class HFPage extends Page
    * @return byte array
    */
   
-  public byte [] getHFpageArray()
+  public byte [] getLHFpageArray()
     {
       return data;
     }  

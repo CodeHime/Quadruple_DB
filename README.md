@@ -1,1 +1,1 @@
-# CSE510_Project
+# CSE510_Project Database Management Implementation

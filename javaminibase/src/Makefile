@@ -6,7 +6,9 @@
 JARFILES=bufmgr/*.class diskmgr/*.class global/*.class iterator/*.class\
          heap/*.class chainexception/*.class  btree/*.class index/*.class tests/*.class
 
-JDKPATH = /usr/lib/jvm/java-11-openjdk-amd64
+# EDIT 1: Set java path to your java jdk dir
+# JDKPATH = /usr/java/jdk1.3.1_02
+JDKPATH = /usr/lib/jvm/java-1.11.0-openjdk-armhf
 LIBPATH = .:..
 CLASSPATH = $(LIBPATH)
 BINPATH = $(JDKPATH)/bin
@@ -17,7 +19,9 @@ DOCFILES=bufmgr diskmgr global chainexception heap btree iterator index
 
 ##############  update the above for each assignment in making
 
-ASSIGN=/home/chris23/OneDrive/Documents/PhD\ related/PhD_Classes/Spring_2022/CSE_510/Project/4-\ minjava/minjava/javaminibase/src
+# EDIT 2: Set ASSIGN to your javaminibase src dir
+#ASSIGN=/home/candan/Courses/CSE510spr02/minjava/javaminibase/src
+ASSIGN=~/Downloads/minjava/javaminibase/src
 LIBDIR=$(ASSIGN)/lib
 KEY=$(ASSIGN)/key
 SRC=$(ASSIGN)/src
@@ -35,7 +39,8 @@ db:
 	make -C bufmgr
 	make -C diskmgr
 	make -C heap
-	make -C index
+
+
 	make -C iterator
 	
 doc:

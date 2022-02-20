@@ -18,7 +18,7 @@ public class Label implements GlobalConst{
   /** 
   * a String array to hold the label
   */
-  private String [] label;
+  private String[] label;
 
   /**
    * start position of this label in label[]
@@ -46,7 +46,7 @@ public class Label implements GlobalConst{
   * @param alabel a string array which contains the label
   * @param length the length of the tuple
   */
-  public Label(String [] alabel, int offset, int length)
+  public Label(String[] alabel, int offset, int length)
   {
     label = alabel;
     label_offset = offset;
@@ -82,7 +82,7 @@ public class Label implements GlobalConst{
   * @param length the length of the label
   */
 
-  public void labelInit(String [] alabel, int offset, int length)
+  public void labelInit(String[] alabel, int offset, int length)
   {
     label = alabel;
     label_offset = offset;
@@ -114,7 +114,7 @@ public class Label implements GlobalConst{
   * @exception   IOException I/O errors
   */
 
-  public Label setLabel(String [] val) 
+  public Label setLabel(String[] val) 
 	  throws IOException
   {
     label = val;

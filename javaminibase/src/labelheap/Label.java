@@ -76,12 +76,21 @@ public class Label implements GlobalConst{
     label_length = size;     
   }
 
+  /** Copy a tuple to the current tuple position
+    *  you must make sure the tuple lengths must be equal
+    * @param fromTuple the tuple being copied
+    */
+  public void labelCopy(Label fromLabel)
+  {
+    String[] temparray = fromLabel.getLabel();
+    System.arraycopy(temparray, 0, label, label_offset, label_length);
+  }
+
   /** This is used when you don't want to use the constructor
   * @param alabel  a String array which contains the label
   * @param offset the offset of the label in the byte array
   * @param length the length of the label
   */
-
   public void labelInit(String[] alabel, int offset, int length)
   {
     label = alabel;

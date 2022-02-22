@@ -59,7 +59,8 @@ public class Label implements GlobalConst{
   */
   public Label(Label fromLabel)
   {
-    label = fromLabel.getLabel();
+    String fromLabelVal = fromLabel.getLabel();
+    label = fromLabelVal.getBytes();
     label_offset = 0;
     label_length = fromLabel.getLength();
   }
@@ -82,7 +83,8 @@ public class Label implements GlobalConst{
     */
   public void labelCopy(Label fromLabel)
   {
-    String[] temparray = fromLabel.getLabel();
+    String fromLabelVal = fromLabel.getLabel();
+    byte[] temparray = fromLabelVal.getBytes();
     System.arraycopy(temparray, 0, label, label_offset, label_length);
   }
 

@@ -29,7 +29,7 @@ public class LScan implements GlobalConst{
    */
 
   /** The heapfile we are using. */
-  private Heapfile  _hf;
+  private LabelHeapfile  _hf;
 
   /** PageId of current directory page (which is itself an HFPage) */
   private PageId dirpageId = new PageId();
@@ -64,7 +64,7 @@ public class LScan implements GlobalConst{
    *
    * @param hf A HeapFile object
    */
-  public LScan(Heapfile hf) 
+  public LScan(LabelHeapfile hf) 
     throws InvalidLabelSizeException,
 	   IOException
   {
@@ -182,7 +182,7 @@ public class LScan implements GlobalConst{
    *
    * @param hf A HeapFile object
    */
-  private void init(Heapfile hf) 
+  private void init(LabelHeapfile hf) 
     throws InvalidLabelSizeException,
       IOException
   {

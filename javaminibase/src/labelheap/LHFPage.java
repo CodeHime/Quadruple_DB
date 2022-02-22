@@ -540,7 +540,7 @@ public class LHFPage extends Page
   {
     short recLen;
     short offset;
-    String[] record;
+    byte[] record;
     PageId pageNo = new PageId();
     pageNo.pid= lid.pageNo.pid;
     curPage.pid = Convert.getIntValue (CUR_PAGE, data);
@@ -552,11 +552,9 @@ public class LHFPage extends Page
     if (( slotNo >=0) && (slotNo < slotCnt) && (recLen >0) 
 	  && (pageNo.pid == curPage.pid))
     {
-      String dataStr = new String(data);
-
       offset = getSlotOffset (slotNo);
-      record = new String[recLen];
-      System.arraycopy(dataStr.split(""), offset, record, 0, recLen);
+      record = new byte[recLen];
+      System.arraycopy(data, offset, record, 0, recLen);
       Label label = new Label(record, 0, recLen);
       return label;
     }  
@@ -595,8 +593,7 @@ public class LHFPage extends Page
 	  && (pageNo.pid == curPage.pid))
     {
       offset = getSlotOffset (slotNo);
-      String dataStr = new String(data);
-      Label label = new Label(dataStr.split(""), offset, recLen);
+      Label label = new Label(data, offset, recLen);
       return label;
     }  
     else {   

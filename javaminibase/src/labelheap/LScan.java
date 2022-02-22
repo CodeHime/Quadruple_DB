@@ -409,7 +409,7 @@ public class LScan implements GlobalConst{
           pinPage(datapageId, (Page) datapage, false);
         }
         catch (Exception e){
-          e.printStackTrace();\
+          e.printStackTrace();
         }
   
         try {

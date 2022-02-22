@@ -333,12 +333,12 @@ public class LHFPage extends Page
    * @exception IOException I/O errors
    * in C++ Status insertLabel(char *recPtr, int recLen, LID& lid)
    */
-  public LID insertLabel (String[] label)
+  public LID insertLabel (String label)
     throws IOException
   {
     LID lid = new LID();
     
-    int recLen = label.length;
+    int recLen = label.length();
     int spaceNeeded = recLen + SIZE_OF_SLOT;
     
     // Start by checking if sufficient space exists.

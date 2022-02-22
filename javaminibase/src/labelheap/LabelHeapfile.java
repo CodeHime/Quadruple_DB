@@ -388,7 +388,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       pinPage(currentDirPageId, currentDirPage, false/*Rdisk*/);
       
       found = false;
-      Label alabel;
+      Label alabel = null;
       DataPageInfo dpinfo = new DataPageInfo();
       while (found == false)
 	{ //Start While01
@@ -460,7 +460,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 		  
 		//   byte [] tmpData = alabel.getLabelByteArray();
 
-		  currentDataPageLid = currentDirPage.insertLabel(new String[] {newLabel});
+		  currentDataPageLid = currentDirPage.insertLabel(newLabel);
 		  
 		  LID tmplid = currentDirPage.firstLabel();
 		  
@@ -567,7 +567,8 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 	throw new HFException(null, "invalid PageId");
       
 	  // user alabel.getLength() instead of recLen?
-      if (!(currentDataPage.available_space() >= alabel.getLength()))
+	  
+      if (alabel != null && !(currentDataPage.available_space() >= alabel.getLength()))
 	throw new SpaceNotAvailableException(null, "no available space");
       
       if (currentDataPage == null)
@@ -575,7 +576,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       
       
       LID lid;
-      lid = currentDataPage.insertLabel(new String[] {newLabel});
+      lid = currentDataPage.insertLabel(newLabel);
       
       dpinfo.recct++;
       dpinfo.availspace = currentDataPage.available_space();
@@ -788,21 +789,21 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       // Assume update a record with a record whose length is equal to
       // the original record
       
+	  Label newLabelCopy = new Label();
+	  newLabelCopy.setLabel(newLabel);
+
 	  // does this matter to check the length??
+      if(newLabelCopy.getLength() != alabel.getLength())
+	{
+	  unpinPage(currentDataPageId, false /*undirty*/);
+	  unpinPage(currentDirPageId, false /*undirty*/);
 	  
-    //   if(newLabel.getLength() != alabel.getLength())
-	// {
-	//   unpinPage(currentDataPageId, false /*undirty*/);
-	//   unpinPage(currentDirPageId, false /*undirty*/);
+	  throw new InvalidUpdateException(null, "invalid record update. Lengths do not match");
 	  
-	//   throw new InvalidUpdateException(null, "invalid record update");
-	  
-	// }
+	}
 
       // new copy of this record fits in old space;
-	  Label newLabelCopy = new Label();
-	  newLabelCopy.setLabel(new String[] {newLabel});
-
+	  
       alabel.labelCopy(newLabelCopy);
       unpinPage(currentDataPageId, true /* = DIRTY */);
       

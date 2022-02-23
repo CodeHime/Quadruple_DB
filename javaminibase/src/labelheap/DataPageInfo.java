@@ -108,10 +108,10 @@ class DataPageInfo implements GlobalConst{
 
 
     // 2) creat a Tuple object using this array
-    Tuple atuple = new Tuple(data, offset, size); 
+    Label aLabel = new Label(data, offset, size); 
  
     // 3) return tuple object
-    return atuple;
+    return aLabel;
 
   }
   

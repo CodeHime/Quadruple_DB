@@ -146,5 +146,22 @@ public class Label implements GlobalConst{
   {
     System.out.println(label);
   }
+
+public byte [] getLabelByteArray() 
+  {
+      byte [] labelCopy = new byte [label_length];
+      System.arraycopy(label, label_offset, labelCopy, 0, label_length);
+      return labelCopy;
+  }
+
+  public byte [] returnTupleByteArray()
+  {
+      return label;
+  }
+
+  public int getOffset()
+   {
+      return label_offset;
+   } 
 }
 

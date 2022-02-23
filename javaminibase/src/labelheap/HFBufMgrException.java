@@ -1,4 +1,4 @@
-package heap;
+package labelheap;
 import chainexception.*;
 
 public class HFBufMgrException extends ChainException{

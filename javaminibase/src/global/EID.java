@@ -28,8 +28,8 @@ public class EID{
   public EID (LID lid)
     {
       // TODO: Check at end
-      pageNo = lid.pageno;
-      slotNo = lid.slotno;
+      pageNo = lid.pageNo;
+      slotNo = lid.slotNo;
     }
   
   /**
@@ -72,7 +72,7 @@ public class EID{
    * @return LID lid corresponding to the EID
    */
   public LID returnLID(){
-    // TODO:
+    return new LID(this.pageNo, this.slotNo);
   }
   
 }

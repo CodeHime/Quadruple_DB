@@ -77,7 +77,7 @@ class DataPageInfo implements GlobalConst{
   {   
      // need check _atuple size == this.size ?otherwise, throw new exception
     if (_aLabel.getLength()!=12){
-      throw new InvalidLabelSizeException(null, "HEAPFILE: TUPLE SIZE ERROR");
+      throw new InvalidLabelSizeException(null, "HEAPFILE: LABEL SIZE ERROR");
     }
 
     else{

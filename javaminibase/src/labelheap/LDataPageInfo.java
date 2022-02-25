@@ -12,7 +12,7 @@ import java.io.*;
 * April 9, 1998
 */
 
-class DataPageInfo implements GlobalConst{
+class LDataPageInfo implements GlobalConst{
 
 
   /** HFPage returns int for avail space, so we use int here */
@@ -43,7 +43,7 @@ class DataPageInfo implements GlobalConst{
 
   /** Default constructor
    */
-  public DataPageInfo()
+  public LDataPageInfo()
   {  
     data = new byte[12]; // size of datapageinfo
     int availspace = 0;
@@ -55,7 +55,7 @@ class DataPageInfo implements GlobalConst{
   /** Constructor 
    * @param array  a byte array
    */
-  public DataPageInfo(byte[] array)
+  public LDataPageInfo(byte[] array)
   {
     data = array;
     offset = 0;
@@ -72,7 +72,7 @@ class DataPageInfo implements GlobalConst{
    *  it will make a copy of the data in the tuple
    * @param atuple: the input tuple
    */
-  public DataPageInfo(Label _aLabel)
+  public LDataPageInfo(Label _aLabel)
        throws InvalidLabelSizeException, IOException
   {   
      // need check _atuple size == this.size ?otherwise, throw new exception
@@ -120,7 +120,7 @@ class DataPageInfo implements GlobalConst{
    *  to the data[](may be in buffer pool)
    *  
    */
-  public void flushToTuple() throws IOException
+  public void flushToLabel() throws IOException
   {
      // write availspace, recct, pageId into "data[]"
     Convert.setIntValue(availspace, offset, data);

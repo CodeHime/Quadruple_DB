@@ -138,7 +138,7 @@ public class Label implements GlobalConst{
   }
 
   /**
-  * Print out the tuple
+  * Print out the label
   * @param type  the types in the tuple
   * @Exception IOException I/O exception
   */
@@ -147,18 +147,27 @@ public class Label implements GlobalConst{
     System.out.println(label);
   }
 
-public byte [] getLabelByteArray() 
+  /** Get the label as a byte array
+  * @return	label as a byte array
+  */
+  public byte[] getLabelByteArray() 
   {
-      byte [] labelCopy = new byte [label_length];
-      System.arraycopy(label, label_offset, labelCopy, 0, label_length);
-      return labelCopy;
+    byte[] labelCopy = new byte[label_length];
+    System.arraycopy(label, label_offset, labelCopy, 0, label_length);
+    return labelCopy;
   }
 
+  /** Return the label as a byte array
+   * @return label
+   */
   public byte [] returnTupleByteArray()
   {
       return label;
   }
 
+  /** Get the offset of the label
+  * @return 	offset of the label
+  */
   public int getOffset()
    {
       return label_offset;

@@ -16,9 +16,9 @@ public class Label implements GlobalConst{
   public static final int max_size = MINIBASE_PAGESIZE;
 
   /** 
-  * a String array to hold the label
+  * a byte array to hold the label
   */
-  private String [] label;
+  private byte[] label;
 
   /**
    * start position of this label in label[]
@@ -37,7 +37,7 @@ public class Label implements GlobalConst{
   public  Label()
   {
        // Creat a new label
-       label = new String[max_size];
+       label = new byte[max_size];
        label_offset = 0;
        label_length = max_size;
   }
@@ -46,7 +46,7 @@ public class Label implements GlobalConst{
   * @param alabel a string array which contains the label
   * @param length the length of the tuple
   */
-  public Label(String [] alabel, int offset, int length)
+  public Label(byte[] alabel, int offset, int length)
   {
     label = alabel;
     label_offset = offset;
@@ -59,7 +59,8 @@ public class Label implements GlobalConst{
   */
   public Label(Label fromLabel)
   {
-    label = fromLabel.getLabel();
+    String fromLabelVal = fromLabel.getLabel();
+    label = fromLabelVal.getBytes();
     label_offset = 0;
     label_length = fromLabel.getLength();
   }
@@ -71,9 +72,20 @@ public class Label implements GlobalConst{
   public  Label(int size)
   {
     // Creat a new label
-    label = new String[size];
+    label = new byte[size];
     label_offset = 0;
     label_length = size;     
+  }
+
+  /** Copy a tuple to the current tuple position
+    *  you must make sure the tuple lengths must be equal
+    * @param fromTuple the tuple being copied
+    */
+  public void labelCopy(Label fromLabel)
+  {
+    String fromLabelVal = fromLabel.getLabel();
+    byte[] temparray = fromLabelVal.getBytes();
+    System.arraycopy(temparray, 0, label, label_offset, label_length);
   }
 
   /** This is used when you don't want to use the constructor
@@ -81,8 +93,7 @@ public class Label implements GlobalConst{
   * @param offset the offset of the label in the byte array
   * @param length the length of the label
   */
-
-  public void labelInit(String [] alabel, int offset, int length)
+  public void labelInit(byte[] alabel, int offset, int length)
   {
     label = alabel;
     label_offset = offset;
@@ -93,9 +104,12 @@ public class Label implements GlobalConst{
   * setHdr () before
   * @return 	label
   */   
-  public String[] getLabel()
+  public String getLabel()
   {
-    return label;
+    byte [] labelcopy = new byte [label_length];
+    System.arraycopy(label, label_offset, labelcopy, 0, label_length);
+    String labelStr = new String(labelcopy);
+    return labelStr;
   }
   
   /** get the length of a label, call this method if you did not 
@@ -114,10 +128,12 @@ public class Label implements GlobalConst{
   * @exception   IOException I/O errors
   */
 
-  public Label setLabel(String [] val) 
+  public Label setLabel(String val) 
 	  throws IOException
   {
-    label = val;
+    byte[] valByte = val.getBytes();
+    label_length = valByte.length;
+    System.arraycopy(valByte, 0, label, label_offset, label_length);
     return this;
   }
 
@@ -130,5 +146,22 @@ public class Label implements GlobalConst{
   {
     System.out.println(label);
   }
+
+public byte [] getLabelByteArray() 
+  {
+      byte [] labelCopy = new byte [label_length];
+      System.arraycopy(label, label_offset, labelCopy, 0, label_length);
+      return labelCopy;
+  }
+
+  public byte [] returnTupleByteArray()
+  {
+      return label;
+  }
+
+  public int getOffset()
+   {
+      return label_offset;
+   } 
 }
 

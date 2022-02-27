@@ -1,4 +1,4 @@
-package heap;
+package labelheap;
 import chainexception.*;
 
 public class FileAlreadyDeletedException extends ChainException{

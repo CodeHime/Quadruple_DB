@@ -1,4 +1,4 @@
-package heap;
+package labelheap;
 
 
 /** File DataPageInfo.java */
@@ -12,7 +12,7 @@ import java.io.*;
 * April 9, 1998
 */
 
-class DataPageInfo implements GlobalConst{
+class LDataPageInfo implements GlobalConst{
 
 
   /** HFPage returns int for avail space, so we use int here */
@@ -43,7 +43,7 @@ class DataPageInfo implements GlobalConst{
 
   /** Default constructor
    */
-  public DataPageInfo()
+  public LDataPageInfo()
   {  
     data = new byte[12]; // size of datapageinfo
     int availspace = 0;
@@ -55,7 +55,7 @@ class DataPageInfo implements GlobalConst{
   /** Constructor 
    * @param array  a byte array
    */
-  public DataPageInfo(byte[] array)
+  public LDataPageInfo(byte[] array)
   {
     data = array;
     offset = 0;
@@ -72,17 +72,17 @@ class DataPageInfo implements GlobalConst{
    *  it will make a copy of the data in the tuple
    * @param atuple: the input tuple
    */
-  public DataPageInfo(Tuple _atuple)
-       throws InvalidTupleSizeException, IOException
+  public LDataPageInfo(Label _aLabel)
+       throws InvalidLabelSizeException, IOException
   {   
      // need check _atuple size == this.size ?otherwise, throw new exception
-    if (_atuple.getLength()!=12){
-      throw new InvalidTupleSizeException(null, "HEAPFILE: TUPLE SIZE ERROR");
+    if (_aLabel.getLength()!=12){
+      throw new InvalidLabelSizeException(null, "HEAPFILE: LABEL SIZE ERROR");
     }
 
     else{
-      data = _atuple.returnTupleByteArray();
-      offset = _atuple.getOffset();
+      data = _aLabel.returnTupleByteArray();
+      offset = _aLabel.getOffset();
       
       availspace = Convert.getIntValue(offset, data);
       recct = Convert.getIntValue(offset+4, data);
@@ -97,7 +97,7 @@ class DataPageInfo implements GlobalConst{
    *  
    *
    */
-  public Tuple convertToTuple()
+  public Label convertToLabel()
        throws IOException
   {
 
@@ -108,10 +108,10 @@ class DataPageInfo implements GlobalConst{
 
 
     // 2) creat a Tuple object using this array
-    Tuple atuple = new Tuple(data, offset, size); 
+    Label aLabel = new Label(data, offset, size); 
  
     // 3) return tuple object
-    return atuple;
+    return aLabel;
 
   }
   
@@ -120,7 +120,7 @@ class DataPageInfo implements GlobalConst{
    *  to the data[](may be in buffer pool)
    *  
    */
-  public void flushToTuple() throws IOException
+  public void flushToLabel() throws IOException
   {
      // write availspace, recct, pageId into "data[]"
     Convert.setIntValue(availspace, offset, data);

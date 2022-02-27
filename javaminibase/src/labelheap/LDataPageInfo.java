@@ -81,7 +81,7 @@ class LDataPageInfo implements GlobalConst{
     }
 
     else{
-      data = _aLabel.returnTupleByteArray();
+      data = _aLabel.returnLabelByteArray();
       offset = _aLabel.getOffset();
       
       availspace = Convert.getIntValue(offset, data);

@@ -83,9 +83,9 @@ public class Label implements GlobalConst{
     */
   public void labelCopy(Label fromLabel)
   {
-    String fromLabelVal = fromLabel.getLabel();
-    byte[] temparray = fromLabelVal.getBytes();
-    System.arraycopy(temparray, 0, label, label_offset, label_length);
+    byte[] fromLabelVal = fromLabel.getLabelByteArray();
+    int fromLabel_offset = fromLabel.getOffset();
+    System.arraycopy(fromLabelVal, fromLabel_offset, label, label_offset, label_length);
   }
 
   /** This is used when you don't want to use the constructor
@@ -106,10 +106,10 @@ public class Label implements GlobalConst{
   */   
   public String getLabel()
   {
-    byte [] labelcopy = new byte [label_length];
-    System.arraycopy(label, label_offset, labelcopy, 0, label_length);
-    String labelStr = new String(labelcopy);
-    return labelStr;
+    //byte[] labelcopy = new byte[label_length];
+    //System.arraycopy(label, label_offset, labelcopy, 0, label_length);
+    //String labelStr = new String(labelcopy);
+    return new String(label);//labelStr;
   }
   
   /** get the length of a label, call this method if you did not 
@@ -144,7 +144,7 @@ public class Label implements GlobalConst{
   */
   public void print()
   {
-    System.out.println(label);
+    System.out.println(new String(label));
   }
 
   /** Get the label as a byte array
@@ -160,7 +160,7 @@ public class Label implements GlobalConst{
   /** Return the label as a byte array
    * @return label
    */
-  public byte [] returnTupleByteArray()
+  public byte [] returnLabelByteArray()
   {
       return label;
   }

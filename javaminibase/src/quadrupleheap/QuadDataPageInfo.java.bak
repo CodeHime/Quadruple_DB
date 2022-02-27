@@ -1,4 +1,4 @@
-package labelheap;
+package quadruple;
 
 
 /** File DataPageInfo.java */
@@ -12,7 +12,7 @@ import java.io.*;
 * April 9, 1998
 */
 
-class DataPageInfo implements GlobalConst{
+class QuadDataPageInfo implements GlobalConst{
 
 
   /** HFPage returns int for avail space, so we use int here */
@@ -43,7 +43,7 @@ class DataPageInfo implements GlobalConst{
 
   /** Default constructor
    */
-  public DataPageInfo()
+  public QuadDataPageInfo()
   {  
     data = new byte[12]; // size of datapageinfo
     int availspace = 0;
@@ -68,21 +68,21 @@ class DataPageInfo implements GlobalConst{
    }
       
       
-  /** constructor: translate a tuple to a DataPageInfo object
-   *  it will make a copy of the data in the tuple
-   * @param atuple: the input tuple
+  /** constructor: translate a quadruple to a DataPageInfo object
+   *  it will make a copy of the data in the quadruple
+   * @param aquadruple: the input quadruple
    */
-  public DataPageInfo(Label _aLabel)
-       throws InvalidLabelSizeException, IOException
+  public QuadDataPageInfo(Quadruple _aquadruple)
+       throws InvalidTupleSizeException, IOException
   {   
-     // need check _atuple size == this.size ?otherwise, throw new exception
-    if (_aLabel.getLength()!=12){
-      throw new InvalidLabelSizeException(null, "HEAPFILE: TUPLE SIZE ERROR");
+     // need check _aquadruple size == this.size ?otherwise, throw new exception
+    if (_aquadruple.getLength()!=12){
+      throw new InvalidTupleSizeException(null, "HEAPFILE: TUPLE SIZE ERROR");
     }
 
     else{
-      data = _aLabel.returnTupleByteArray();
-      offset = _aLabel.getOffset();
+      data = _aquadruple.returnQuadrupleByteArray();
+      offset = _aquadruple.getOffset();
       
       availspace = Convert.getIntValue(offset, data);
       recct = Convert.getIntValue(offset+4, data);
@@ -93,11 +93,11 @@ class DataPageInfo implements GlobalConst{
   }
   
   
-  /** convert this class objcet to a tuple(like cast a DataPageInfo to Tuple)
+  /** convert this class objcet to a quadruple(like cast a DataPageInfo to Quadruple)
    *  
    *
    */
-  public Label convertToLabel()
+  public Quadruple convertToQuadruple()
        throws IOException
   {
 
@@ -107,11 +107,11 @@ class DataPageInfo implements GlobalConst{
     Convert.setIntValue(pageId.pid, offset+8, data);
 
 
-    // 2) creat a Tuple object using this array
-    Label aLabel = new Label(data, offset, size); 
+    // 2) creat a Quadruple object using this array
+    Quadruple aquadruple = new Quadruple(data, offset); 
  
-    // 3) return tuple object
-    return aLabel;
+    // 3) return quadruple object
+    return aquadruple;
 
   }
   
@@ -120,7 +120,7 @@ class DataPageInfo implements GlobalConst{
    *  to the data[](may be in buffer pool)
    *  
    */
-  public void flushToTuple() throws IOException
+  public void flushToQuadruple() throws IOException
   {
      // write availspace, recct, pageId into "data[]"
     Convert.setIntValue(availspace, offset, data);

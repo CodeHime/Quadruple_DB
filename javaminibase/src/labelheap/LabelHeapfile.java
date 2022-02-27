@@ -54,7 +54,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
   /* get a new datapage from the buffer manager and initialize dpinfo
      @param dpinfop the information in the new HFPage
   */
-  private LHFPage _newDatapage(DataPageInfo dpinfop)
+  private LHFPage _newDatapage(LDataPageInfo dpinfop)
     throws HFException,
 	   HFBufMgrException,
 	   HFDiskMgrException,
@@ -126,7 +126,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 		  return false;
 		}
 	      
-	      DataPageInfo dpinfo = new DataPageInfo(aLabel);
+	      LDataPageInfo dpinfo = new LDataPageInfo(aLabel);
 	      try{
 		pinPage(dpinfo.pageId, currentDataPage, false/*Rddisk*/);
 		
@@ -326,7 +326,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 	        lid = currentDirPage.nextLabel(lid))
 	     {
 	       alable = currentDirPage.getLabel(lid);
-	       DataPageInfo dpinfo = new DataPageInfo(alable);
+	       LDataPageInfo dpinfo = new LDataPageInfo(alable);
 	       
 	       answer += dpinfo.recct;
 	     }
@@ -389,7 +389,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       
       found = false;
       Label alabel = null;
-      DataPageInfo dpinfo = new DataPageInfo();
+      LDataPageInfo dpinfo = new LDataPageInfo();
       while (found == false)
 	{ //Start While01
 	  // look for suitable dpinfo-struct
@@ -400,7 +400,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 	    {
 	      alabel = currentDirPage.getLabel(currentDataPageLid);
 	      
-	      dpinfo = new DataPageInfo(alabel);
+	      dpinfo = new LDataPageInfo(alabel);
 	      
 	      // need check the record length == DataPageInfo'slength
 	      // use alabel length instead of recLen?
@@ -586,13 +586,13 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       
       // DataPage is now released
       alabel = currentDirPage.returnLabel(currentDataPageLid);
-      DataPageInfo dpinfo_ondirpage = new DataPageInfo(alabel);
+      LDataPageInfo dpinfo_ondirpage = new LDataPageInfo(alabel);
       
       
       dpinfo_ondirpage.availspace = dpinfo.availspace;
       dpinfo_ondirpage.recct = dpinfo.recct;
       dpinfo_ondirpage.pageId.pid = dpinfo.pageId.pid;
-      dpinfo_ondirpage.flushToTuple();
+      dpinfo_ondirpage.flushToLabel();
       
       
       unpinPage(currentDirPageId, true /* = DIRTY */);
@@ -644,20 +644,20 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
       Label alabel;	
       
       alabel = currentDirPage.returnLabel(currentDataPageLid);
-      DataPageInfo pdpinfo = new DataPageInfo(alabel);
+      LDataPageInfo pdpinfo = new LDataPageInfo(alabel);
       
       // delete the record on the datapage
       currentDataPage.deleteLabel(lid);
       
       pdpinfo.recct--;
-      pdpinfo.flushToTuple();	//Write to the buffer pool
+      pdpinfo.flushToLabel();	//Write to the buffer pool
       if (pdpinfo.recct >= 1) 
 	{
 	  // more records remain on datapage so it still hangs around.  
 	  // we just need to modify its directory entry
 	  
 	  pdpinfo.availspace = currentDataPage.available_space();
-	  pdpinfo.flushToTuple();
+	  pdpinfo.flushToLabel();
 	  unpinPage(currentDataPageId, true /* = DIRTY*/);
 	  
 	  unpinPage(currentDirPageId, true /* = DIRTY */);
@@ -926,7 +926,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 	      lid = currentDirPage.nextLabel(lid))
 	    {
 	      alabel = currentDirPage.getLabel(lid);
-	      DataPageInfo dpinfo = new DataPageInfo( alabel);
+	      LDataPageInfo dpinfo = new LDataPageInfo( alabel);
 	      //int dpinfoLen = arecord.length;
 	      
 	      freePage(dpinfo.pageId);

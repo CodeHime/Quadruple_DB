@@ -238,7 +238,7 @@ public class LScan implements GlobalConst{
     throws InvalidLabelSizeException,
 	   IOException
   {
-    DataPageInfo dpinfo;
+    LDataPageInfo dpinfo;
     Label        reclabel = null;
     Boolean      bst;
 
@@ -269,7 +269,7 @@ public class LScan implements GlobalConst{
       //	System.err.println("SCAN: Chain Error in Scan: " + e);
         e.printStackTrace();
       }			    
-    	dpinfo = new DataPageInfo(reclabel);
+    	dpinfo = new LDataPageInfo(reclabel);
       datapageId.pid = dpinfo.pageId.pid;
     } else {
     /** the first directory page is the only one which can possibly remain
@@ -318,10 +318,10 @@ public class LScan implements GlobalConst{
             e.printStackTrace();
           }
     
-          if (reclabel.getLength() != DataPageInfo.size)
+          if (reclabel.getLength() != LDataPageInfo.size)
             return false;
   
-          dpinfo = new DataPageInfo(reclabel);
+          dpinfo = new LDataPageInfo(reclabel);
           datapageId.pid = dpinfo.pageId.pid;
         } else {
           // heapfile empty
@@ -367,7 +367,7 @@ public class LScan implements GlobalConst{
     throws InvalidLabelSizeException,
 	   IOException
   {
-    DataPageInfo dpinfo;
+    LDataPageInfo dpinfo;
     
     boolean nextDataPageStatus;
     PageId nextDirPageId = new PageId();
@@ -504,10 +504,10 @@ public class LScan implements GlobalConst{
 	  System.err.println("HeapFile: Error in Scan" + e);
 	}
 	
-	if (reclabel.getLength() != DataPageInfo.size)
+	if (reclabel.getLength() != LDataPageInfo.size)
 	  return false;
                         
-	dpinfo = new DataPageInfo(reclabel);
+	dpinfo = new LDataPageInfo(reclabel);
 	datapageId.pid = dpinfo.pageId.pid;
 	
  	try {

@@ -73,14 +73,14 @@ public class LID{
    * @return EID eid corresponding to the LID
    */
   public EID returnEID(){
-    // TODO:
+    return new EID(this); 
   }
   
   /** Returns the corresponding PID, i.e. this.PID
    * @return PID pid corresponding to the LID
    */
   public PID returnPID(){
-    // TODO:
+    return new PID(this);
   }
   
 }

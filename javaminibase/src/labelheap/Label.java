@@ -36,10 +36,10 @@ public class Label implements GlobalConst{
   */
   public  Label()
   {
-       // Creat a new label
-       label = new byte[max_size];
-       label_offset = 0;
-       label_length = max_size;
+    // Creat a new label
+    label = new byte[max_size];
+    label_offset = 0;
+    label_length = max_size;
   }
    
   /** Constructor
@@ -158,19 +158,19 @@ public class Label implements GlobalConst{
   }
 
   /** Return the label as a byte array
-   * @return label
-   */
+  * @return label
+  */
   public byte [] returnLabelByteArray()
   {
-      return label;
+    return label;
   }
 
   /** Get the offset of the label
   * @return 	offset of the label
   */
   public int getOffset()
-   {
-      return label_offset;
-   } 
+  {
+    return label_offset;
+  } 
 }
 

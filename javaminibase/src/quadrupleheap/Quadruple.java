@@ -4,9 +4,16 @@ package quadrupleheap;
 
 import java.io.*;
 import java.nio.ByteBuffer;
-import java.lang.*;
+
+import global.AttrType;
+import global.Convert;
 import global.EID;
 import global.PID;
+import global.PageId;
+import labelheap.FieldNumberOutOfBoundException;
+import global.LID;
+import global.GlobalConst;
+
 
 
 public class Quadruple implements GlobalConst {
@@ -34,12 +41,12 @@ public class Quadruple implements GlobalConst {
   /**
    * start position of this tuple in data[]
    */
-  private int quadruple_offset;
+  private int quadrupleOffset;
 
   /**
    * length of this quadruple
    */
-  private int quadruple_length;
+  private int quadrupleLength;
 
   /** 
    * private field
@@ -64,8 +71,8 @@ public class Quadruple implements GlobalConst {
   {
        // Creat a new tuple
        data = new byte[max_size];
-       quadruple_offset = 0;
-       quadruple_length = 28; // (4 + 4) + (4 + 4) + (4 + 4) + 4
+       quadrupleOffset = 0;
+       quadrupleLength = 28; // (4 + 4) + (4 + 4) + (4 + 4) + 4
   }
    
    /** Constructor
@@ -76,7 +83,7 @@ public class Quadruple implements GlobalConst {
    public Quadruple(byte [] aQuadruple, int offset)
    {
       data = aQuadruple;
-      quadruple_offset = offset;
+      quadrupleOffset = offset;
    }
 
    /** Constructor(used as quadruple copy)
@@ -86,16 +93,16 @@ public class Quadruple implements GlobalConst {
    public Quadruple(Quadruple fromQuadruple)
    {
        data = fromQuadruple.getQuadrupleByteArray();
-       quadruple_offset = 0;
+       quadrupleOffset = 0;
 
        this.subject = new EID();
-       this.subject.copyEid(fromQuadruple.getSubjectqid());
+       this.subject.copyEid(fromQuadruple.getSubjectQid());
 
        this.predicate = new PID();
-       this.subject.copyPid(fromQuadruple.getPredicateID());
+       this.predicate.copyPid(fromQuadruple.getPredicateID());
 
        this.object = new EID();
-       this.subject.copyEid(fromQuadruple.getObjectqid());
+       this.subject.copyEid(fromQuadruple.getObjectQid());
 
        this.confidence = fromQuadruple.getConfidence();
 
@@ -129,7 +136,7 @@ public class Quadruple implements GlobalConst {
    }
 
   Quadruple setSubjectQid(EID subjectQid) {
-    this.subject = subjectqid;
+    this.subject = subjectQid;
     return this;
   }
 
@@ -139,7 +146,7 @@ public class Quadruple implements GlobalConst {
   }
 
   Quadruple setObjectQid(EID objectQid) {
-    this.object = objectqid;
+    this.object = objectQid;
     return this;
   }
 
@@ -164,12 +171,12 @@ public class Quadruple implements GlobalConst {
    public void quadrupleCopy(Quadruple fromQuadruple)
    {
        byte [] tempArray = fromQuadruple.getQuadrupleByteArray();
-       System.arraycopy(tempArray, 0, data, quadruple_offset);
-       quadruple_offset = 0;
+       System.arraycopy(tempArray, 0, data, quadrupleOffset, this.getLength());
+       quadrupleOffset = 0;
 
-       this.subject.copyEid(fromQuadruple.getSubjectqid());
-       this.subject.copyPid(fromQuadruple.getPredicateID());
-       this.subject.copyEid(fromQuadruple.getObjectqid());
+       this.subject.copyEid(fromQuadruple.getSubjectQid());
+       this.predicate.copyPid(fromQuadruple.getPredicateID());
+       this.subject.copyEid(fromQuadruple.getObjectQid());
        this.confidence = fromQuadruple.getConfidence();
 
        fldCnt = fromQuadruple.noOfFlds();
@@ -184,12 +191,12 @@ public class Quadruple implements GlobalConst {
    public void quadrupleInit(byte [] aQuadruple, int offset)
    {
        data = aQuadruple;
-       quadruple_offset = offset;
+       quadrupleOffset = offset;
        ByteBuffer tempBuffer = ByteBuffer.wrap(aQuadruple, offset, this.getLength());
 
-       this.subject = new EID(new LID(tempBuffer.getInt(), tempBuffer.getInt());
-       this.predicate = new PID(tempBuffer.getInt(), tempBuffer.getInt());
-       this.object = new EID(tempBuffer.getInt(), tempBuffer.getInt());
+       this.subject = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
+       this.predicate = new PID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
+       this.object = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
        this.confidence = tempBuffer.getFloat();
    }
 
@@ -200,8 +207,8 @@ public class Quadruple implements GlobalConst {
   */
  public void quadrupleSet(byte [] fromQuadruple, int offset)
   {
-      System.arraycopy(fromQuadruple, offset, data, 0);
-      quadruple_offset = 0;
+      System.arraycopy(fromQuadruple, offset, data, 0, this.getLength());
+      quadrupleOffset = 0;
   }
   
 /** get the length of a quadruple, call this method if you did 
@@ -215,7 +222,7 @@ public class Quadruple implements GlobalConst {
 
     public int getLength()
     {
-        return quadruple_length;
+        return quadrupleLength;
     }
 
    /** get the offset of a quadruple
@@ -223,7 +230,7 @@ public class Quadruple implements GlobalConst {
     */   
    public int getOffset()
    {
-      return quadruple_offset;
+      return quadrupleOffset;
    }   
    
    /** Copy the quadruple byte array out
@@ -233,8 +240,8 @@ public class Quadruple implements GlobalConst {
     
    public byte [] getQuadrupleByteArray() 
    {
-       byte [] quadrupleCopy = new byte [quadruple_length];
-       System.arraycopy(data, quadruple_offset, quadrupleCopy, 0, quadruple_length);
+       byte [] quadrupleCopy = new byte [quadrupleLength];
+       System.arraycopy(data, quadrupleOffset, quadrupleCopy, 0, quadrupleLength);
        return quadrupleCopy;
    }
    
@@ -287,27 +294,13 @@ public class Quadruple implements GlobalConst {
   * @param type  the types in the tuple
   * @Exception IOException I/O exception
   */
- public void print(AttrType type[]) throws IOException 
+ public void print(AttrType[] type)
  {
-  System.out.println(this.subject.toString());
-  System.out.println(this.predicate.toString());
-  System.out.println(this.object.toString());
-  System.out.println(this.confidence.toString());
+    System.out.println(this.subject.toString());
+    System.out.println(this.predicate.toString());
+    System.out.println(this.object.toString());
+    System.out.println(this.confidence);
  }
-
-  /**
-   * private method
-   * Padding must be used when storing different types.
-   * 
-   * @param	offset
-   * @param type   the type of tuple
-   * @return short typle
-   */
-
-  private short pad(short offset, AttrType type)
-   {
-      return 0;
-   }
 
   /**
    * Returns number of fields in this tuple

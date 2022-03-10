@@ -64,26 +64,50 @@ public class KeyDataEntry {
 
   /** Class constructor.
    */
-  public KeyDataEntry( String key, QID qid) {
+  public KeyDataEntry( String key, LID lid) {
      this.key = new StringKey(key); 
-     this.data = new QuadLeafData(qid);
+     this.data = new LabelLeafData(lid);
   }; 
 
   /** Class constructor.
    */
-  public KeyDataEntry( Integer key, QID qid) {
+  public KeyDataEntry( Integer key, LID lid) {
    this.key = new IntegerKey(key); 
-   this.data = new QuadLeafData(qid);
+   this.data = new LabelLeafData(lid);
 };
 
 /** Class constructor.
  */
-public KeyDataEntry( KeyClass key, QID qid){
-   data = new QuadLeafData(qid); 
+public KeyDataEntry( KeyClass key, LID lid){
+   data = new LabelLeafData(lid); 
    if ( key instanceof IntegerKey ) 
       this.key= new IntegerKey(((IntegerKey)key).getKey());
    else if ( key instanceof StringKey ) 
       this.key= new StringKey(((StringKey)key).getKey());    
+};
+
+  /** Class constructor.
+   */
+  public KeyDataEntry( String key, QID qid) {
+   this.key = new StringKey(key); 
+   this.data = new QuadLeafData(qid);
+}; 
+
+/** Class constructor.
+ */
+public KeyDataEntry( Integer key, QID qid) {
+ this.key = new IntegerKey(key); 
+ this.data = new QuadLeafData(qid);
+};
+
+/** Class constructor.
+*/
+public KeyDataEntry( KeyClass key, QID qid){
+ data = new QuadLeafData(qid); 
+ if ( key instanceof IntegerKey ) 
+    this.key= new IntegerKey(((IntegerKey)key).getKey());
+ else if ( key instanceof StringKey ) 
+    this.key= new StringKey(((StringKey)key).getKey());    
 };
 
 
@@ -131,9 +155,14 @@ public KeyDataEntry( String key, RID rid) {
                 (((QID)((QuadLeafData)entry.data).getData()));
          }
 
-
-         st2= ((RID)((LeafData)data).getData()).equals
+         else if (data instanceof LabelLeafData){
+            st2= ((LID)((LabelLeafData)data).getData()).equals
+                (((LID)((LabelLeafData)entry.data).getData()));
+         }
+         else {
+            st2= ((RID)((LeafData)data).getData()).equals
                 (((RID)((LeafData)entry.data).getData()));
+         }
       }
   
       return (st1&&st2);

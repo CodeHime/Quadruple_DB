@@ -4,6 +4,7 @@ import java.io.*;
 import diskmgr.*;
 import bufmgr.*;
 import global.*;
+import heap.*;
 
 /**  This heapfile implementation is directory-based. We maintain a
  *  directory of info about the data pages (which are of type THFPage
@@ -141,7 +142,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   /** Delete the file from the database.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception FileAlreadyDeletedException file is deleted already
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -150,7 +151,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   public void deleteFile()  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////DeleteFile
     throws InvalidSlotNumberException, 
 	   FileAlreadyDeletedException, 
-	   InvalidRecordSizeException, 
+	   InvalidTupleSizeException, 
 	   HFBufMgrException,
 	   HFDiskMgrException,
 	   IOException
@@ -210,7 +211,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   /** Delete record from file with given qid.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -220,7 +221,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    */
   public boolean deleteQuadruple(QID qid)  //////////////////////////////////////////////////////////////////////////////////deleteQuadruple
     throws InvalidSlotNumberException, 
-	   InvalidRecordSizeException, 
+	   InvalidTupleSizeException, 
 	   HFException, 
 	   HFBufMgrException,
 	   HFDiskMgrException,
@@ -355,14 +356,14 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
 	/** Return number of records in file.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
    * @exception IOException I/O errors
    */
   public int getQuadrupleCnt() /////////////////////////////////////////////////////////////////////////////////getQuadrupleCnt
     throws InvalidSlotNumberException, 
-	   InvalidRecordSizeException, 
+	   InvalidTupleSizeException, 
 	   HFDiskMgrException,
 	   HFBufMgrException,
 	   IOException
@@ -415,7 +416,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    * @param qid Quadruple ID
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception SpaceNotAvailableException no space left
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
@@ -426,7 +427,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    */
   public  Quadruple getQuadruple(QID qid) ///////////////////////////////////////////////////////////////////////////////////////////////////////////getQuadruple
     throws InvalidSlotNumberException, 
-	   InvalidRecordSizeException, 
+	   InvalidTupleSizeException, 
 	   HFException, 
 	   HFDiskMgrException,
 	   HFBufMgrException,
@@ -471,7 +472,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    * @param recLen the length of the record
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception SpaceNotAvailableException no space left
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
@@ -482,7 +483,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    */
   public QID insertQuadruple(byte[] recPtr) /////////////////////////////////////////////////////////////////////////////////////////////////////insertQuadruple
     throws InvalidSlotNumberException,  
-	   InvalidRecordSizeException,
+	   InvalidTupleSizeException,
 	   SpaceNotAvailableException,
 	   HFException,
 	   HFBufMgrException,
@@ -718,12 +719,12 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
 	
 	
 	/** Initiate a sequential scan.
-   * @exception InvalidRecordSizeException Invalid tuple size
+   * @exception InvalidTupleSizeException Invalid tuple size
    * @exception IOException I/O errors
    *
    */
   public TScan openScan() /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////openScan
-    throws InvalidRecordSizeException,
+    throws InvalidTupleSizeException,
 	   IOException
     {
       TScan newscan = new TScan(this);
@@ -737,7 +738,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    *
    * @exception InvalidSlotNumberException invalid slot number
    * @exception InvalidUpdateException invalid update on record
-   * @exception InvalidRecordSizeException invalid tuple size
+   * @exception InvalidTupleSizeException invalid tuple size
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -747,7 +748,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   public boolean updateQuadruple(QID qid, Quadruple newquadruple) 
     throws InvalidSlotNumberException, 
 	   InvalidUpdateException, 
-	   InvalidRecordSizeException,
+	   InvalidTupleSizeException,
 	   HFException, 
 	   HFDiskMgrException,
 	   HFBufMgrException,
@@ -854,7 +855,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
 				  PageId dataPageId, THFPage datapage,
 				  QID rpDataPageQid) 
     throws InvalidSlotNumberException, 
-	   InvalidRecordSizeException, 
+	   InvalidTupleSizeException, 
 	   HFException,
 	   HFBufMgrException,
 	   HFDiskMgrException,

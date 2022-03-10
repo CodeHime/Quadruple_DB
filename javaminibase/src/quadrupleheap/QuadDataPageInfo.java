@@ -6,6 +6,7 @@ package quadrupleheap;
 
 import global.*;
 import java.io.*;
+import heap.*;
 
 /** DataPageInfo class : the type of records stored on a directory page.
 *
@@ -55,7 +56,7 @@ class QuadDataPageInfo implements GlobalConst{
   /** Constructor 
    * @param array  a byte array
    */
-  public DataPageInfo(byte[] array)
+  public QuadDataPageInfo(byte[] array)
   {
     data = array;
     offset = 0;

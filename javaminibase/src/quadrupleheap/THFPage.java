@@ -8,6 +8,7 @@ import java.lang.*;
 import global.*;
 import heap.InvalidSlotNumberException;
 import diskmgr.*;
+import heap.*;
 
 
 

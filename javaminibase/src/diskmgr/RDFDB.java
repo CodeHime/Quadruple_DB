@@ -3,10 +3,9 @@
 package diskmgr;
 
 import java.io.*;
-import bufmgr.*;
 import global.*;
 
-public class DB implements GlobalConst {
+public class RDFDB implements GlobalConst {
 
   
   private static final int bits_per_page = MAX_SPACE * 8;
@@ -14,7 +13,7 @@ public class DB implements GlobalConst {
   
   /** Open the database with the given name.
    *
-   * @param name DB_name
+   * @param name rdfDB_name
    *
    * @exception IOException I/O errors
    * @exception FileIOException file I/O error
@@ -40,8 +39,7 @@ public class DB implements GlobalConst {
     
     pinPage(pageId, apage, false /*read disk*/);
     
-    
-    DBFirstPage firstpg = new DBFirstPage();
+    rdfDBFirstPage firstpg = new rdfDBFirstPage();
     firstpg.openPage(apage);
     num_pages = firstpg.getNumDBPages();
     
@@ -50,7 +48,7 @@ public class DB implements GlobalConst {
   
   /** default constructor.
    */
-  public DB() { }
+  public RDFDB() { }
   
   
   /** DB Constructors.
@@ -87,13 +85,13 @@ public class DB implements GlobalConst {
     
     // Initialize space map and directory pages.
     
-    // Initialize the first DB page
+    // Initialize the first rdfDB page
     Page apage = new Page();
     PageId pageId = new PageId();
     pageId.pid = 0;
     pinPage(pageId, apage, true /*no diskIO*/);
     
-    DBFirstPage firstpg = new DBFirstPage(apage);
+    rdfDBFirstPage firstpg = new rdfDBFirstPage(apage);
     
     firstpg.setNumDBPages(num_pages);
     unpinPage(pageId, true /*dirty*/);
@@ -106,7 +104,7 @@ public class DB implements GlobalConst {
     
   }
   
-  /** Close DB file.
+  /** Close rdfDB file.
    * @exception IOException I/O errors.
    */
   public void closeDB() throws IOException {
@@ -151,7 +149,7 @@ public class DB implements GlobalConst {
       fp.read(buffer);
     }
     catch (IOException e) {
-      throw new FileIOException(e, "DB file I/O error");
+      throw new FileIOException(e, "rdfDB file I/O error");
     }
     
   }
@@ -181,7 +179,7 @@ public class DB implements GlobalConst {
       fp.write(apage.getpage());
     }
     catch (IOException e) {
-      throw new FileIOException(e, "DB file I/O error");
+      throw new FileIOException(e, "rdfDB file I/O error");
     }
     
   }
@@ -195,7 +193,7 @@ public class DB implements GlobalConst {
    * @exception OutOfSpaceException database is full
    * @exception InvalidRunSizeException invalid run size 
    * @exception InvalidPageNumberException invalid page number
-   * @exception FileIOException DB file I/O errors
+   * @exception FileIOException rdfDB file I/O errors
    * @exception IOException I/O errors
    * @exception DiskMgrException error caused by other layers
    */
@@ -360,8 +358,8 @@ public class DB implements GlobalConst {
    *
    * @exception FileNameTooLongException invalid file name (too long)
    * @exception InvalidPageNumberException invalid page number
-   * @exception InvalidRunSizeException invalid DB run size
-   * @exception DuplicateEntryException entry for DB is not unique
+   * @exception InvalidRunSizeException invalid rdfDB run size
+   * @exception DuplicateEntryException entry for rdfDB is not unique
    * @exception OutOfSpaceException database is full
    * @exception FileIOException file I/O error
    * @exception IOException I/O errors
@@ -378,14 +376,14 @@ public class DB implements GlobalConst {
 	   DiskMgrException {
     
     if(fname.length() >= MAX_NAME)
-      throw new FileNameTooLongException(null, "DB filename too long");
+      throw new FileNameTooLongException(null, "rdfDB filename too long");
     if((start_page_num.pid < 0)||(start_page_num.pid >= num_pages))
-      throw new InvalidPageNumberException(null, " DB bad page number");
+      throw new InvalidPageNumberException(null, " rdfDB bad page number");
     
     // Does the file already exist?  
     
     if( get_file_entry(fname) != null) 
-      throw new DuplicateEntryException(null, "DB fileentry already exists");
+      throw new DuplicateEntryException(null, "rdfDB fileentry already exists");
     
     Page apage = new Page();
     
@@ -393,7 +391,7 @@ public class DB implements GlobalConst {
     int free_slot = 0;
     PageId hpid = new PageId();
     PageId nexthpid = new PageId(0);
-    DBHeaderPage dp;
+    rdfDBHeaderPage dp;
     do
       {// Start DO01
 	//  System.out.println("start do01");
@@ -406,13 +404,13 @@ public class DB implements GlobalConst {
         // structure from that of subsequent pages.
 	if(hpid.pid==0)
 	  {
-	    dp = new DBFirstPage();
-	    ((DBFirstPage) dp).openPage(apage);
+	    dp = new rdfDBFirstPage();
+	    ((rdfDBFirstPage) dp).openPage(apage);
 	  }
 	else
 	  {
-	    dp = new DBDirectoryPage();
-	    ((DBDirectoryPage) dp).openPage(apage);
+	    dp = new rdfDBDirectoryPage();
+	    ((rdfDBDirectoryPage) dp).openPage(apage);
 	  }
 	
 	nexthpid = dp.getNextPage();
@@ -458,7 +456,7 @@ public class DB implements GlobalConst {
 	hpid.pid = nexthpid.pid;
 	
 	pinPage(hpid, apage, true/*no diskIO*/);
-	dp = new DBDirectoryPage(apage);
+	dp = new rdfDBDirectoryPage(apage);
 	
 	free_slot = 0;
       }
@@ -497,7 +495,7 @@ public class DB implements GlobalConst {
     PageId hpid = new PageId();
     PageId nexthpid = new PageId(0);
     PageId tmppid = new PageId();
-    DBHeaderPage dp;
+    rdfDBHeaderPage dp;
     
     do
       { // startDO01
@@ -510,13 +508,13 @@ public class DB implements GlobalConst {
         // structure from that of subsequent pages.
 	if(hpid.pid==0)
 	  {
-	    dp = new DBFirstPage();
-	    ((DBFirstPage)dp).openPage(apage);
+	    dp = new rdfDBFirstPage();
+	    ((rdfDBFirstPage)dp).openPage(apage);
 	  }
 	else
 	  {
-	    dp = new DBDirectoryPage();
-	    ((DBDirectoryPage) dp).openPage(apage);
+	    dp = new rdfDBDirectoryPage();
+	    ((rdfDBDirectoryPage) dp).openPage(apage);
 	  }
 	nexthpid = dp.getNextPage();
 	
@@ -545,7 +543,7 @@ public class DB implements GlobalConst {
       } while((nexthpid.pid != INVALID_PAGE) && (!found)); // EndDO01
     
     if(!found)  // Entry not found - nothing deleted
-      throw new FileEntryNotFoundException(null, "DB file not found");
+      throw new FileEntryNotFoundException(null, "rdfDB file not found");
     
     // Have to delete record at hpnum:slot
     tmppid.pid = INVALID_PAGE;
@@ -575,7 +573,7 @@ public class DB implements GlobalConst {
     int slot = 0;
     PageId hpid = new PageId();
     PageId nexthpid = new PageId(0);
-    DBHeaderPage dp;
+    rdfDBHeaderPage dp;
     
     do
       {// Start DO01
@@ -590,13 +588,13 @@ public class DB implements GlobalConst {
         // structure from that of subsequent pages.
 	if(hpid.pid==0)
 	  {
-	    dp = new DBFirstPage();
-	    ((DBFirstPage) dp).openPage(apage);
+	    dp = new rdfDBFirstPage();
+	    ((rdfDBFirstPage) dp).openPage(apage);
 	  }
 	else
 	  {
-	    dp = new DBDirectoryPage();
-	    ((DBDirectoryPage) dp).openPage(apage);
+	    dp = new rdfDBDirectoryPage();
+	    ((rdfDBDirectoryPage) dp).openPage(apage);
 	  }
 	nexthpid = dp.getNextPage();
 	
@@ -818,7 +816,7 @@ public class DB implements GlobalConst {
       SystemDefs.JavabaseBM.pinPage(pageno, page, emptyPage);
     }
     catch (Exception e) {
-      throw new DiskMgrException(e,"DB.java: pinPage() failed");
+      throw new DiskMgrException(e,"rdfDB.java: pinPage() failed");
     }
 
   } // end of pinPage
@@ -834,13 +832,13 @@ public class DB implements GlobalConst {
       SystemDefs.JavabaseBM.unpinPage(pageno, dirty); 
     }
     catch (Exception e) {
-      throw new DiskMgrException(e,"DB.java: unpinPage() failed");
+      throw new DiskMgrException(e,"rdfDB.java: unpinPage() failed");
     }
 
   } // end of unpinPage
   
   
-}//end of DB class
+}//end of rdfDB class
 
 /**
  * interface of PageUsedBytes
@@ -853,7 +851,7 @@ interface PageUsedBytes
 
 /** Super class of the directory page and first page
  */
-class DBHeaderPage implements PageUsedBytes, GlobalConst { 
+class rdfDBHeaderPage implements PageUsedBytes, GlobalConst { 
 
   protected static final int NEXT_PAGE = 0;
   protected static final int NUM_OF_ENTRIES = 4;
@@ -865,7 +863,7 @@ class DBHeaderPage implements PageUsedBytes, GlobalConst {
   /**
    * Default constructor
    */
-  public DBHeaderPage ()
+  public rdfDBHeaderPage ()
     {  }
   
   /**
@@ -874,7 +872,7 @@ class DBHeaderPage implements PageUsedBytes, GlobalConst {
    * @param pageusedbytes number of bytes used on the page
    * @exception IOException
    */   
-  public DBHeaderPage(Page page, int pageusedbytes)
+  public rdfDBHeaderPage(Page page, int pageusedbytes)
     throws IOException
     {
       data = page.getpage();
@@ -983,29 +981,29 @@ class DBHeaderPage implements PageUsedBytes, GlobalConst {
 }
 
 /**
- * DBFirstPage class which is a subclass of DBHeaderPage class
+ * rdfDBFirstPage class which is a subclass of DBHeaderPage class
  */
-class DBFirstPage extends DBHeaderPage {
+class rdfDBFirstPage extends rdfDBHeaderPage {
 
   protected static final int NUM_DB_PAGE = MINIBASE_PAGESIZE -4;
   
   /**
    * Default construtor 
    */
-  public DBFirstPage()  { super();}
+  public rdfDBFirstPage()  { super();}
   
   /**
    * Constructor of class DBFirstPage class
    * @param page a page of Page object
    * @exception IOException I/O errors
    */
-  public DBFirstPage(Page page)
+  public rdfDBFirstPage(Page page)
     throws IOException	
     {
       super(page, FIRST_PAGE_USED_BYTES);
     }
   
-  /** open an exist DB first page
+  /** open an exist rdfDB first page
    * @param page a page of Page object
    */
   public void openPage(Page page)
@@ -1015,8 +1013,8 @@ class DBFirstPage extends DBHeaderPage {
   
   
   /**
-   * set number of pages in the DB
-   * @param num the number of pages in DB
+   * set number of pages in the rdfDB
+   * @param num the number of pages in rdfDB
    * @exception IOException I/O errors
    */
   public void setNumDBPages(int num)
@@ -1039,27 +1037,27 @@ class DBFirstPage extends DBHeaderPage {
 }
 
 /**
- * DBDirectoryPage class which is a subclass of DBHeaderPage class
+ * rdfDBDirectoryPage class which is a subclass of DBHeaderPage class
  */
-class DBDirectoryPage extends DBHeaderPage  { //implements PageUsedBytes
+class rdfDBDirectoryPage extends rdfDBHeaderPage  { //implements PageUsedBytes
 
   /**
    * Default constructor
    */
-  public DBDirectoryPage ()  { super(); }
+  public rdfDBDirectoryPage ()  { super(); }
   
   /**
-   * Constructor of DBDirectoryPage class
+   * Constructor of rdfDBDirectoryPage class
    * @param page a page of Page object
    * @exception IOException
    */
-  public DBDirectoryPage(Page page)
+  public rdfDBDirectoryPage(Page page)
     throws IOException
     {
       super(page, DIR_PAGE_USED_BYTES);
     }
   
-  /** open an exist DB directory page
+  /** open an exist rdfDB directory page
    * @param page a page of Page object
    */
   public void openPage(Page page)

@@ -48,6 +48,9 @@ doc:
 
 test: 
 	cd tests; make bmtest dbtest; whoami; make hftest bttest indextest jointest sorttest sortmerge
+	
+cl:
+	cd command_line; make command_line
 
 clean:
 	\rm -f $(CLASSPATH)/*.class *~ \#* core $(JARFILES) TRACE

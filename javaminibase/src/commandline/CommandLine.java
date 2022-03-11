@@ -1,4 +1,4 @@
-package command_line;
+package commandline;
 
 import java.io.*;
 import java.util.*;
@@ -69,7 +69,7 @@ public class CommandLine{
 		Convert.setIntValue(objectid.pageNo.pid,16,quad);
 		Convert.setIntValue(objectid.slotNo,20,quad);
 		
-		Convert.setFloValue(Float.parseFloat(parts[3], 24, quad); 
+		Convert.setFloValue(Float.parseFloat(parts[3], 24, quad)); 
 		database.insertQuadruple(quad);
 		}
 		//databases.put(dbname,database);

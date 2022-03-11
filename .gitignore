@@ -1,4 +1,5 @@
 make
 javaminibase/.gradle/
 javaminibase/build
+javaminibase/bin
 *.class

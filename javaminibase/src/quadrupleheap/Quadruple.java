@@ -113,44 +113,44 @@ public class Quadruple implements GlobalConst {
   /**
     return subject
    */
-   EID getSubjectQid() {
+   public EID getSubjectQid() {
      return this.subject;
    }
 
   /**
     return predicate
    */
-   PID getPredicateID() {
+   public PID getPredicateID() {
      return this.predicate;
    }
   
   /**
     return object
    */
-   EID getObjectQid() {
+   public EID getObjectQid() {
      return this.object;
    }
 
-   double getConfidence() {
+   public double getConfidence() {
      return this.confidence;
    }
 
-  Quadruple setSubjectQid(EID subjectQid) {
+  public Quadruple setSubjectQid(EID subjectQid) {
     this.subject = subjectQid;
     return this;
   }
 
-  Quadruple setPredicateID(PID predicateID) {
+  public Quadruple setPredicateID(PID predicateID) {
     this.predicate = predicateID;
     return this;
   }
 
-  Quadruple setObjectQid(EID objectQid) {
+  public Quadruple setObjectQid(EID objectQid) {
     this.object = objectQid;
     return this;
   }
 
-  Quadruple setConfidence(double confidence) {
+  public Quadruple setConfidence(double confidence) {
     this.confidence = confidence;
     return this;
   }
@@ -164,41 +164,41 @@ public class Quadruple implements GlobalConst {
       return data;
   }
 
-   /** Copy a quadruple to the current quadruple position
-    *  you must make sure the quadruple lengths must be equal
-    * @param fromQuadruple the quadruple being copied
-    */
-   public void quadrupleCopy(Quadruple fromQuadruple)
-   {
-       byte [] tempArray = fromQuadruple.getQuadrupleByteArray();
-       System.arraycopy(tempArray, 0, data, quadrupleOffset, this.getLength());
-       quadrupleOffset = 0;
+  /** Copy a quadruple to the current quadruple position
+  *  you must make sure the quadruple lengths must be equal
+  * @param fromQuadruple the quadruple being copied
+  */
+  public void quadrupleCopy(Quadruple fromQuadruple)
+  {
+      byte [] tempArray = fromQuadruple.getQuadrupleByteArray();
+      System.arraycopy(tempArray, 0, data, quadrupleOffset, this.getLength());
+      quadrupleOffset = 0;
 
-       this.subject.copyEid(fromQuadruple.getSubjectQid());
-       this.predicate.copyPid(fromQuadruple.getPredicateID());
-       this.subject.copyEid(fromQuadruple.getObjectQid());
-       this.confidence = fromQuadruple.getConfidence();
+      this.subject.copyEid(fromQuadruple.getSubjectQid());
+      this.predicate.copyPid(fromQuadruple.getPredicateID());
+      this.subject.copyEid(fromQuadruple.getObjectQid());
+      this.confidence = fromQuadruple.getConfidence();
 
-       fldCnt = fromQuadruple.noOfFlds();
-       fldOffset = fromQuadruple.copyFldOffset();
-   }
+      fldCnt = fromQuadruple.noOfFlds();
+      fldOffset = fromQuadruple.copyFldOffset();
+  }
 
-   /** This is used when you don't want to use the constructor
-    * @param aQuadruple  a byte array which contains the quadruple
-    * @param offset the offset of the quadruple in the byte array
-    */
+  /** This is used when you don't want to use the constructor
+  * @param aQuadruple  a byte array which contains the quadruple
+  * @param offset the offset of the quadruple in the byte array
+  */
 
-   public void quadrupleInit(byte [] aQuadruple, int offset)
-   {
-       data = aQuadruple;
-       quadrupleOffset = offset;
-       ByteBuffer tempBuffer = ByteBuffer.wrap(aQuadruple, offset, this.getLength());
+  public void quadrupleInit(byte [] aQuadruple, int offset)
+  {
+      data = aQuadruple;
+      quadrupleOffset = offset;
+      ByteBuffer tempBuffer = ByteBuffer.wrap(aQuadruple, offset, this.getLength());
 
-       this.subject = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-       this.predicate = new PID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-       this.object = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-       this.confidence = tempBuffer.getFloat();
-   }
+      this.subject = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
+      this.predicate = new PID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
+      this.object = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
+      this.confidence = tempBuffer.getFloat();
+  }
 
  /**
   * Set a tuple with the given quadruple length and offset
@@ -294,13 +294,13 @@ public class Quadruple implements GlobalConst {
   * @param type  the types in the tuple
   * @Exception IOException I/O exception
   */
- public void print(AttrType[] type)
- {
-    System.out.println(this.subject.toString());
-    System.out.println(this.predicate.toString());
-    System.out.println(this.object.toString());
-    System.out.println(this.confidence);
- }
+  public void print(AttrType[] type)
+  {
+      System.out.println(this.subject.toString());
+      System.out.println(this.predicate.toString());
+      System.out.println(this.object.toString());
+      System.out.println(this.confidence);
+  }
 
   /**
    * Returns number of fields in this tuple

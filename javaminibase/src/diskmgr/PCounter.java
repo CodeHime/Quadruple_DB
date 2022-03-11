@@ -1,7 +1,5 @@
 package diskmgr;
 
-public class PCounter
-
 public class PCounter {
 	public static int rcounter;
 	public static int wcounter;

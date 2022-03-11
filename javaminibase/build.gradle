@@ -36,14 +36,15 @@ plugins {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'cli.CLI'
+        // attributes 'Main-Class': 'cli.CLI' 
+        attributes 'Main-Class': 'commandline.CommandLine'
     }
 
     sourceSets {
         main {
             java {
-                srcDir 'src/cli' // TODO: Change it to 'src' once compilation is fixed
-                // exclude 'catalog/Utility.java'
+                srcDir 'src' // TODO: Change it to 'src' once compilation is fixed
+                exclude 'catalog/Utility.java', 'btree/btree_javadoc_src/', 'iterator/sm_join_assign_src/', 'tests/'
             }
         }
     }

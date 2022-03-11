@@ -5,7 +5,7 @@ package diskmgr;
 import java.io.*;
 import global.*;
 
-public class RDFDB implements GlobalConst {
+public class rdfDB implements GlobalConst {
 
   
   private static final int bits_per_page = MAX_SPACE * 8;
@@ -48,7 +48,7 @@ public class RDFDB implements GlobalConst {
   
   /** default constructor.
    */
-  public RDFDB() { }
+  public rdfDB() { }
   
   
   /** DB Constructors.

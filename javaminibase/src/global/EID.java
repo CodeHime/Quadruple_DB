@@ -74,5 +74,9 @@ public class EID{
   public LID returnLID(){
     return new LID(this.pageNo, this.slotNo);
   }
+
+  public String getValue() {
+    return "static string";
+  } 
   
 }

@@ -12,7 +12,7 @@ import java.io.*;
 * April 9, 1998
 */
 
-class QuadDataPageInfo implements GlobalConst{
+class DataPageInfo implements GlobalConst{
 
 
   /** HFPage returns int for avail space, so we use int here */
@@ -43,7 +43,7 @@ class QuadDataPageInfo implements GlobalConst{
 
   /** Default constructor
    */
-  public QuadDataPageInfo()
+  public DataPageInfo()
   {  
     data = new byte[12]; // size of datapageinfo
     int availspace = 0;
@@ -55,7 +55,7 @@ class QuadDataPageInfo implements GlobalConst{
   /** Constructor 
    * @param array  a byte array
    */
-  public QuadDataPageInfo(byte[] array)
+  public DataPageInfo(byte[] array)
   {
     data = array;
     offset = 0;
@@ -68,21 +68,21 @@ class QuadDataPageInfo implements GlobalConst{
    }
       
       
-  /** constructor: translate a quadruple to a DataPageInfo object
-   *  it will make a copy of the data in the quadruple
-   * @param aquadruple: the input quadruple
+  /** constructor: translate a tuple to a DataPageInfo object
+   *  it will make a copy of the data in the tuple
+   * @param atuple: the input tuple
    */
-  public QuadDataPageInfo(Tuple _tuple)
+  public DataPageInfo(Tuple _atuple)
        throws InvalidTupleSizeException, IOException
   {   
-     // need check _aquadruple size == this.size ?otherwise, throw new exception
-    if (_tuple.getLength()!=12){
+     // need check _atuple size == this.size ?otherwise, throw new exception
+    if (_atuple.getLength()!=12){
       throw new InvalidTupleSizeException(null, "HEAPFILE: TUPLE SIZE ERROR");
     }
 
     else{
-      data = _tuple.returnTupleByteArray();
-      offset = _tuple.getOffset();
+      data = _atuple.returnTupleByteArray();
+      offset = _atuple.getOffset();
       
       availspace = Convert.getIntValue(offset, data);
       recct = Convert.getIntValue(offset+4, data);
@@ -93,11 +93,11 @@ class QuadDataPageInfo implements GlobalConst{
   }
   
   
-  /** convert this class objcet to a quadruple(like cast a DataPageInfo to Quadruple)
+  /** convert this class objcet to a tuple(like cast a DataPageInfo to Tuple)
    *  
    *
    */
-  public Quadruple convertToQuadruple()
+  public Tuple convertToTuple()
        throws IOException
   {
 
@@ -107,11 +107,11 @@ class QuadDataPageInfo implements GlobalConst{
     Convert.setIntValue(pageId.pid, offset+8, data);
 
 
-    // 2) creat a Quadruple object using this array
-    Quadruple aquadruple = new Quadruple(data, offset); 
+    // 2) creat a Tuple object using this array
+    Tuple atuple = new Tuple(data, offset, size); 
  
-    // 3) return quadruple object
-    return aquadruple;
+    // 3) return tuple object
+    return atuple;
 
   }
   
@@ -120,7 +120,7 @@ class QuadDataPageInfo implements GlobalConst{
    *  to the data[](may be in buffer pool)
    *  
    */
-  public void flushToQuadruple() throws IOException
+  public void flushToTuple() throws IOException
   {
      // write availspace, recct, pageId into "data[]"
     Convert.setIntValue(availspace, offset, data);

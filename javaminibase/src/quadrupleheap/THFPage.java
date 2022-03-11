@@ -604,7 +604,7 @@ public class THFPage extends Page
 	{
 	  
 	  offset = getSlotOffset (slotNo);
-	  Quadruple quadruple = new Quadruple(data, offset, recLen);
+	  Quadruple quadruple = new Quadruple(data, offset); // recLen is 28 fixed  
 	  return quadruple;
 	}
       

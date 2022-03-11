@@ -10,7 +10,7 @@ import java.io.*;
 import global.*;
 import bufmgr.*;
 import diskmgr.*;
-
+import heap.*;
 
 /**	
  * A Scan object is created ONLY through the function openScan
@@ -20,7 +20,7 @@ import diskmgr.*;
  * An object of type scan will always have pinned one directory page
  * of the heapfile.
  */
-public class Scan implements GlobalConst{
+public class TScan implements GlobalConst{
  
     /**
      * Note that one quadruple in our way-cool HeapFile implementation is
@@ -64,7 +64,7 @@ public class Scan implements GlobalConst{
      *
      * @param hf A HeapFile object
      */
-  public Scan(QuadrupleHeapfile hf) 
+  public TScan(QuadrupleHeapfile hf) 
     throws InvalidTupleSizeException,
 	   IOException
   {

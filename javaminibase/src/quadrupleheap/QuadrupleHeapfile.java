@@ -4,6 +4,7 @@ import java.io.*;
 import diskmgr.*;
 import bufmgr.*;
 import global.*;
+import heap.*;
 
 /**  This heapfile implementation is directory-based. We maintain a
  *  directory of info about the data pages (which are of type THFPage

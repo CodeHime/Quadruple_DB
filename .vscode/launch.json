@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch CLI",
+            "request": "launch",
+            "mainClass": "cli.CLI",
+            "projectName": "CSE510_Project_9bd5de81"
+        },
+        // {
+        //     "type": "java",
+        //     "name": "Launch BMTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.BMTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch BTTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.BTTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch DBTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.DBTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch HFTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.HFTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch IndexTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.IndexTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch JoinTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.JoinTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // },
+        // {
+        //     "type": "java",
+        //     "name": "Launch SortTest",
+        //     "request": "launch",
+        //     "mainClass": "tests.SortTest",
+        //     "projectName": "CSE510_Project_9bd5de81"
+        // }
+    ]
+}

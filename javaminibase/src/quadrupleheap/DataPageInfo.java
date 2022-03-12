@@ -5,6 +5,9 @@ package quadrupleheap;
 
 
 import global.*;
+import heap.InvalidTupleSizeException;
+import heap.Tuple;
+
 import java.io.*;
 
 /** DataPageInfo class : the type of records stored on a directory page.

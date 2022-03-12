@@ -43,7 +43,7 @@ jar {
     sourceSets {
         main {
             java {
-                srcDir 'src' // TODO: Change it to 'src' once compilation is fixed
+                srcDir 'javaminibase/src' // TODO: Change it to 'src' once compilation is fixed
                 exclude 'catalog/Utility.java', 'btree/btree_javadoc_src/', 'iterator/sm_join_assign_src/', 'tests/'
             }
         }

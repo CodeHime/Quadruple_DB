@@ -3,21 +3,19 @@ package commandline;
 import java.io.*;
 import java.util.*;
 import java.lang.*;
+import diskmgr.*;
+import global.*;
 
 
 public class CommandLine{
    
    
-  //private static HashMap<String,rdfDB> databases = new HashMap<String,rdfDB>();
-  public static void report(){
-  	System.out.println("Reads: "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter);
-  	
-  }
-  
+  private static HashMap<String,rdfDB> databases = new HashMap<String,rdfDB>();
+ 
   public static void query(String options[]){
   	System.out.println("query");
   	
-  	//rdfDB database;
+  	rdfDB database;
 	String dbname = options[0]+"_"+options[1];
 	if (databases.containsKey(dbname)){
 		database = databases.get(dbname);
@@ -26,13 +24,12 @@ public class CommandLine{
 		System.out.println("Can not find the database");
 	}
 	
-	Stream stream = database.openStream(options[2],options[3],options[4],options[5],options[6]);
+	// Stream stream = database.openStream(options[2],options[3],options[4],options[5],options[6]);
 	
-	for (QID qid = stream.getNext();qid != null; qid = stream.getNext()){
+	// for (QID qid = stream.getNext();qid != null; qid = stream.getNext()){
 		
-	}
+	// }
 	
-	report();
   }
   
   public static void batchinsert(String options[]){
@@ -41,13 +38,13 @@ public class CommandLine{
   	
   	try {
 		File f = new File(options[0]);
-		//rdfDB database;
+		rdfDB database;
 		String dbname = options[2]+"_"+options[1];
 		if (databases.containsKey(dbname)){
 			database = databases.get(dbname);
 		}
 		else{
-	  	//database = new rdfDB(Integer.parseInt(options[1]));
+	  	// database = new rdfDB(Integer.parseInt(options[1]));
 	  	}
 	      Scanner scanner = new Scanner(f);
 	      while (scanner.hasNextLine()) {
@@ -57,31 +54,29 @@ public class CommandLine{
 		
 		
 		byte quad[] = new byte[28];
-		EID subjectid = database.insertEntity(parts[0]);
-		Convert.setIntValue(subjectid.pageNo.pid,0,quad);
-		Convert.setIntValue(subjectid.slotNo,4,quad);
+		// EID subjectid = database.insertEntity(parts[0]);
+		// Convert.setIntValue(subjectid.pageNo.pid,0,quad);
+		// Convert.setIntValue(subjectid.slotNo,4,quad);
 		
-		PID predicateid = database.insertPredicate(parts[1]);
-		Convert.setIntValue(predicateid.pageNo.pid,8,quad);
-		Convert.setIntValue(predicateid.slotNo,12,quad);
+		// PID predicateid = database.insertPredicate(parts[1]);
+		// Convert.setIntValue(predicateid.pageNo.pid,8,quad);
+		// Convert.setIntValue(predicateid.slotNo,12,quad);
 		
-		EID objectid = database.insertEntity(parts[2]);
-		Convert.setIntValue(objectid.pageNo.pid,16,quad);
-		Convert.setIntValue(objectid.slotNo,20,quad);
+		// EID objectid = database.insertEntity(parts[2]);
+		// Convert.setIntValue(objectid.pageNo.pid,16,quad);
+		// Convert.setIntValue(objectid.slotNo,20,quad);
 		
-		Convert.setFloValue(Float.parseFloat(parts[3], 24, quad)); 
-		database.insertQuadruple(quad);
+		// Convert.setFloValue(Float.parseFloat(parts[3], 24, quad)); 
+		// database.insertQuadruple(quad);
 		}
-		//databases.put(dbname,database);
+		// databases.put(dbname,database);
 	      
 	      scanner.close();
 	    } catch (FileNotFoundException e) {
 	      System.out.println("An error occurred.");
 	      e.printStackTrace();
 	    }
-  	
-  	report();
-  
+  	  
   	
   }
    
@@ -94,18 +89,36 @@ public class CommandLine{
   	BufferedReader in = new BufferedReader (new InputStreamReader(System.in));
 	
 	try {
-	   String input = in.readLine();
+		FileWriter fw;
+		String input = in.readLine();
 	   String parsed[] = input.split(" ");
 	   PCounter.initialize();
 	   
 	   if (parsed[0].equals("report")&&parsed.length == 1){
-	   	report();
+		   File f = new File("../logfile.txt");
+	   	Scanner scan = new Scanner(f);
+		   while(scan.hasNextLine()){
+			   System.out.println(scan.nextLine());
+		   }
+		   scan.close();
 	   }
 	   else if (parsed[0].equals("query")&&parsed.length == 9){
 	   	query(Arrays.copyOfRange(parsed,1,parsed.length));
+		//    fw = new FileWriter(parsed[1]+"_"+parsed[2]);
+		fw = new FileWriter("../logfile.txt");
+		   fw.write(input+"\n");
+		   fw.write("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+		   fw.close();
+		   System.out.println("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
 	   }
 	   else if (parsed[0].equals("batchinsert")&&parsed.length == 4){
 	   	batchinsert(Arrays.copyOfRange(parsed,1,parsed.length));
+		//    fw = new FileWriter(parsed[3]+"_"+parsed[2]);
+		fw = new FileWriter("../logfile.txt");
+		   fw.write(input+"\n");
+		   fw.write("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+		   fw.close();
+		   System.out.println("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
 	   }
 	   else if (parsed[0].equals("exit")||parsed[0].equals("quit")||parsed[0].equals("q")){
 		end = 1;	

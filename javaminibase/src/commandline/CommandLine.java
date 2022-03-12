@@ -7,7 +7,6 @@ import java.lang.*;
 
 public class CommandLine{
    
-   
   //private static HashMap<String,rdfDB> databases = new HashMap<String,rdfDB>();
   public static void report(){
   	System.out.println("Reads: "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter);
@@ -35,7 +34,7 @@ public class CommandLine{
 	report();
   }
   
-  public static void batchinsert(String options[]){
+  public static void batchinsert(String options[]) {
   	System.out.println("batch");
   	
   	

@@ -3,7 +3,6 @@
 package diskmgr;
 
 import java.io.*;
-import bufmgr.*;
 import global.*;
 
 public class rdfDB implements GlobalConst {
@@ -40,7 +39,6 @@ public class rdfDB implements GlobalConst {
     
     pinPage(pageId, apage, false /*read disk*/);
     
-    #
     rdfDBFirstPage firstpg = new rdfDBFirstPage();
     firstpg.openPage(apage);
     num_pages = firstpg.getNumDBPages();

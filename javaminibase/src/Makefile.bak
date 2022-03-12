@@ -8,7 +8,7 @@ JARFILES=bufmgr/*.class diskmgr/*.class global/*.class iterator/*.class\
 
 # EDIT 1: Set java path to your java jdk dir
 # JDKPATH = /usr/java/jdk1.3.1_02
-JDKPATH = ${JDKPATH}
+#JDKPATH = ${JDKPATH}
 LIBPATH = .:..
 CLASSPATH = $(LIBPATH)
 BINPATH = $(JDKPATH)/bin

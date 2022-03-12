@@ -4,6 +4,7 @@ import java.io.*;
 import diskmgr.*;
 import bufmgr.*;
 import global.*;
+import heap.*;
 
 /**  This heapfile implementation is directory-based. We maintain a
  *  directory of info about the data pages (which are of type THFPage
@@ -141,7 +142,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   /** Delete the file from the database.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidRecordSizeException invalid tuple size
+//    * @exception InvalidRecordSizeException invalid tuple size
    * @exception FileAlreadyDeletedException file is deleted already
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -150,7 +151,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
   public void deleteFile()  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////DeleteFile
     throws InvalidSlotNumberException, 
 	   FileAlreadyDeletedException, 
-	   InvalidRecordSizeException, 
+	//    InvalidRecordSizeException, 
 	   HFBufMgrException,
 	   HFDiskMgrException,
 	   IOException
@@ -168,7 +169,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
       PageId nextDirPageId = new PageId();
       nextDirPageId.pid = 0;
       Page pageinbuffer = new Page();
-      THFPage currentDirPage =  new THFPage();
+      HFPage currentDirPage =  new HFPage();
       Quadruple aquadruple;
       
       pinPage(currentDirPageId, currentDirPage, false);

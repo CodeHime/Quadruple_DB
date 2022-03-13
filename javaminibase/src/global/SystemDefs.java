@@ -3,6 +3,7 @@ package global;
 import bufmgr.*;
 import diskmgr.*;
 import catalog.*;
+import diskmgr.rdfDB;
 
 public class SystemDefs {
   public static BufMgr	JavabaseBM;
@@ -54,7 +55,7 @@ public class SystemDefs {
       
       try {
 	JavabaseBM = new BufMgr(bufpoolsize, replacement_policy);
-	JavabaseDB = new rdfDB();
+	JavabaseDB = rdfDB.getInstance();
 /*
 	JavabaseCatalog = new Catalog(); 
 */

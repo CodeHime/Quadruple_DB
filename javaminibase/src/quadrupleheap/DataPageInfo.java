@@ -9,6 +9,7 @@ import heap.InvalidTupleSizeException;
 import heap.Tuple;
 
 import java.io.*;
+import heap.*;
 
 /** DataPageInfo class : the type of records stored on a directory page.
 *

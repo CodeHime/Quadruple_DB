@@ -374,7 +374,7 @@ public class QuadrupleHeapfile implements Filetype,  GlobalConst {
    *
    * @return the rid of the record
    */
-  public QID insertRecord(byte[] recPtr)
+  public QID insertQuadruple(byte[] recPtr)
     throws InvalidSlotNumberException,  
 	   InvalidTupleSizeException,
 	   SpaceNotAvailableException,

@@ -17,10 +17,12 @@ import btree.StringKey;
 import bufmgr.*;
 import global.*;
 import labelheap.*;
-import quadrupleheap.*;
+import quadrupleheap.Quadruple;
+import quadrupleheap.QuadrupleHeapfile;
 
 public class rdfDB extends DB {
 
+    private static rdfDB rdfdb = new rdfDB( );
     private LabelHeapfile entity_heap_file; 
     private LabelHeapfile predicate_heap_file;
     private QuadrupleHeapfile quad_heap_file;
@@ -31,7 +33,21 @@ public class rdfDB extends DB {
     public LabelHeapfile getPredicateHeapFile() { return predicate_heap_file; }
     public QuadrupleHeapfile getQuadHeapFile() { return quad_heap_file; }
 
-    public rdfDB() {}
+    private rdfDB() {
+        try {
+            entity_heap_file = new LabelHeapfile(rdfDB_name + "/entityHF");
+            predicate_heap_file = new LabelHeapfile(rdfDB_name + "/predHF");
+            quad_heap_file = new QuadrupleHeapfile(rdfDB_name + "/quadHF");
+        } catch(Exception e) {
+            System.err.println(e);
+            e.printStackTrace();
+            Runtime.getRuntime().exit(1);
+        }
+    }
+    
+    public static rdfDB getInstance( ) {
+        return rdfdb;
+    }
 
     public void openrdfDB(String name, int type) {
         rdfDB_name = name + "_" + Integer.toString(type);
@@ -205,7 +221,7 @@ public class rdfDB extends DB {
     }
 
     public boolean deleteEntity(String EntityLabel) {
-
+        return true;
     }
 
     public PID insertPredicate(String PredicateLabel) {
@@ -230,7 +246,7 @@ public class rdfDB extends DB {
     }
 
     public boolean deletePredicate(String PredicateLabel) {
-
+        return true;
     }
 
     public QID insertQuadruple(byte[] quadruplePtr) {

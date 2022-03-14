@@ -7,18 +7,19 @@ import global.*;
 
 /**
  * Contains the enumerated types of state of the scan
+* Commented out, it is already defined in QuadIndexFile.java
  */
-// class ScanState 
-// {
-//   public static final int NEWSCAN = 0; 
-//   public static final int SCANRUNNING = 1; 
-//   public static final int SCANCOMPLETE = 2; 
-// }
+class ScanState 
+{
+  public static final int NEWSCAN = 0; 
+  public static final int SCANRUNNING = 1; 
+  public static final int SCANCOMPLETE = 2; 
+}
 
 /**
  * Base class for a index file
  */
-public abstract class IndexFile 
+public abstract class QuadIndexFile 
 {
   /**
    * Insert entry into the index file.
@@ -40,7 +41,7 @@ public abstract class IndexFile
    * @exception LeafDeleteException delete leaf page failed
    * @exception InsertException insert record failed
    */
-  abstract public void insert(final KeyClass data, final RID rid)
+  abstract public void insert(final KeyClass data, final QID qid)
     throws KeyTooLongException, 
 	   KeyNotMatchException, 
 	   LeafInsertRecException,   
@@ -79,7 +80,7 @@ public abstract class IndexFile
    * @exception DeleteRecException delete record failed
    * @exception IndexSearchException  index search failed
    */
-  abstract public boolean Delete(final KeyClass data, final RID rid)  
+  abstract public boolean Delete(final KeyClass data, final QID qid)  
     throws  DeleteFashionException, 
 	    LeafRedistributeException,
 	    RedistributeException,

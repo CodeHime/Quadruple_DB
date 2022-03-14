@@ -1,6 +1,11 @@
 package iterator;
 
 import heap.*;
+import labelheap.HFBufMgrException;
+import labelheap.HFDiskMgrException;
+import labelheap.HFException;
+import labelheap.InvalidLabelSizeException;
+import labelheap.InvalidSlotNumberException;
 import labelheap.LabelHeapfile;
 import quadrupleheap.Quadruple;
 import global.*;
@@ -32,10 +37,16 @@ public class QuadrupleUtils
    *@return   0        if the two are equal,
    *          1        if the tuple is greater,
    *         -1        if the tuple is smaller,                              
+ * @throws Exception
+ * @throws HFBufMgrException
+ * @throws HFDiskMgrException
+ * @throws HFException
+ * @throws InvalidLabelSizeException
+ * @throws InvalidSlotNumberException
    */
-  public static int compareQuadrupleWithQuadruple(Quadruple q1, Quadruple q2, int quadrupleFldNo)
+  public static int compareQuadrupleWithQuadruple(Quadruple q1, Quadruple q2, int quadrupleFldNo) throws InvalidSlotNumberException, InvalidLabelSizeException, HFException, HFDiskMgrException, HFBufMgrException, Exception
     {   
-        LabelHeapfile labelHeapfile = rdfDB.getLabelHeapFile();
+        LabelHeapfile labelHeapfile;
         switch (quadrupleFldNo) {
             case 1:
                 // compare subject value
@@ -45,6 +56,7 @@ public class QuadrupleUtils
                 else if (q1.getSubjectQid().slotNo == -2 || q2.getSubjectQid().slotNo == -1){
                     return -1;
                 }
+                labelHeapfile = rdfDB.getInstance().getEntityHeapFile();
                 LID subjectLID1 = q1.getSubjectQid().returnLID();
                 String subject1 = labelHeapfile.getLabel(subjectLID1).getLabel();
 
@@ -60,6 +72,7 @@ public class QuadrupleUtils
                 else if (q1.getPredicateID().slotNo == -2 || q2.getPredicateID().slotNo == -1){
                     return -1;
                 }
+                labelHeapfile = rdfDB.getInstance().getPredicateHeapFile();
                 LID predicateLID1 = q1.getPredicateID().returnLID();
                 String predicate1 = labelHeapfile.getLabel(predicateLID1).getLabel();
 
@@ -75,6 +88,9 @@ public class QuadrupleUtils
                 else if (q1.getObjectQid().slotNo == -2 || q2.getObjectQid().slotNo == -1){
                     return -1;
                 }
+
+                labelHeapfile = rdfDB.getInstance().getEntityHeapFile();
+
                 LID objectLID1 = q1.getObjectQid().returnLID();
                 String object1 = labelHeapfile.getLabel(objectLID1).getLabel();
 
@@ -91,9 +107,10 @@ public class QuadrupleUtils
         }
     }
   
-  public static boolean Equal(Quadruple q1, Quadruple q2)
+  public static boolean Equal(Quadruple q1, Quadruple q2) throws InvalidSlotNumberException, InvalidLabelSizeException, HFException, HFDiskMgrException, HFBufMgrException, Exception
     {
-        LabelHeapfile labelHeapfile = rdfDB.getLabelHeapFile();
+        LabelHeapfile labelHeapfile;
+        labelHeapfile = rdfDB.getInstance().getEntityHeapFile();
         // compare subject value
         LID subjectLID1 = q1.getSubjectQid().returnLID();
         String subject1 = labelHeapfile.getLabel(subjectLID1).getLabel();
@@ -106,6 +123,7 @@ public class QuadrupleUtils
         }
             
         // compare predicate value
+        labelHeapfile = rdfDB.getInstance().getPredicateHeapFile();
         LID predicateLID1 = q1.getPredicateID().returnLID();
         String predicate1 = labelHeapfile.getLabel(predicateLID1).getLabel();
 
@@ -116,7 +134,8 @@ public class QuadrupleUtils
             return false;
         }
 
-        // compare predicate value
+        // compare object value
+        labelHeapfile = rdfDB.getInstance().getEntityHeapFile();
         LID objectLID1 = q1.getObjectQid().returnLID();
         String object1 = labelHeapfile.getLabel(objectLID1).getLabel();
 

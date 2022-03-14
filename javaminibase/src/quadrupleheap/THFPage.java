@@ -8,6 +8,7 @@ import java.lang.*;
 import global.*;
 import heap.InvalidSlotNumberException;
 import diskmgr.*;
+import heap.*;
 
 
 
@@ -562,7 +563,7 @@ public class THFPage extends Page
 	  offset = getSlotOffset (slotNo);
 	  quadruple = new byte[recLen];
 	  System.arraycopy(data, offset, quadruple, 0, recLen);
-	  Quadruple aquadruple = new Quadruple(quadruple, 0); // recLen - is always 28 for Quadruple 
+	  Quadruple aquadruple = new Quadruple(quadruple, 0); // recLen - is always 32 for Quadruple 
 	  return aquadruple;
 	}
       
@@ -604,7 +605,7 @@ public class THFPage extends Page
 	{
 	  
 	  offset = getSlotOffset (slotNo);
-	  Quadruple quadruple = new Quadruple(data, offset); // recLen is 28 fixed  
+	  Quadruple quadruple = new Quadruple(data, offset); // recLen is 32 fixed  
 	  return quadruple;
 	}
       

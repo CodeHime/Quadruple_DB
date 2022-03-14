@@ -64,10 +64,59 @@ public class KeyDataEntry {
 
   /** Class constructor.
    */
-  public KeyDataEntry( String key, RID rid) {
+  public KeyDataEntry( String key, LID lid) {
      this.key = new StringKey(key); 
-     this.data = new LeafData(rid);
+     this.data = new LabelLeafData(lid);
   }; 
+
+  /** Class constructor.
+   */
+  public KeyDataEntry( Integer key, LID lid) {
+   this.key = new IntegerKey(key); 
+   this.data = new LabelLeafData(lid);
+};
+
+/** Class constructor.
+ */
+public KeyDataEntry( KeyClass key, LID lid){
+   data = new LabelLeafData(lid); 
+   if ( key instanceof IntegerKey ) 
+      this.key= new IntegerKey(((IntegerKey)key).getKey());
+   else if ( key instanceof StringKey ) 
+      this.key= new StringKey(((StringKey)key).getKey());    
+};
+
+  /** Class constructor.
+   */
+  public KeyDataEntry( String key, QID qid) {
+   this.key = new StringKey(key); 
+   this.data = new QuadLeafData(qid);
+}; 
+
+/** Class constructor.
+ */
+public KeyDataEntry( Integer key, QID qid) {
+ this.key = new IntegerKey(key); 
+ this.data = new QuadLeafData(qid);
+};
+
+/** Class constructor.
+*/
+public KeyDataEntry( KeyClass key, QID qid){
+ data = new QuadLeafData(qid); 
+ if ( key instanceof IntegerKey ) 
+    this.key= new IntegerKey(((IntegerKey)key).getKey());
+ else if ( key instanceof StringKey ) 
+    this.key= new StringKey(((StringKey)key).getKey());    
+};
+
+
+/** Class constructor.
+ */
+public KeyDataEntry( String key, RID rid) {
+   this.key = new StringKey(key); 
+   this.data = new LeafData(rid);
+}; 
 
   /** Class constructor.
    */
@@ -100,10 +149,21 @@ public class KeyDataEntry {
       if( data instanceof IndexData )
          st2= ( (IndexData)data).getData().pid==
               ((IndexData)entry.data).getData().pid ;
-      else
-         st2= ((RID)((LeafData)data).getData()).equals
-                (((RID)((LeafData)entry.data).getData()));
+      else {
+         if( data instanceof QuadLeafData){
+            st2= ((QID)((QuadLeafData)data).getData()).equals
+                (((QID)((QuadLeafData)entry.data).getData()));
+         }
 
+         else if (data instanceof LabelLeafData){
+            st2= ((LID)((LabelLeafData)data).getData()).equals
+                (((LID)((LabelLeafData)entry.data).getData()));
+         }
+         else {
+            st2= ((RID)((LeafData)data).getData()).equals
+                (((RID)((LeafData)entry.data).getData()));
+         }
+      }
   
       return (st1&&st2);
   }     

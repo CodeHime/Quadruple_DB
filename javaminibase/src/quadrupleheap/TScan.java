@@ -1,4 +1,4 @@
-package heap;
+package quadrupleheap;
 
 /** JAVA */
 /**
@@ -8,7 +8,10 @@ package heap;
 
 import java.io.*;
 import global.*;
-import bufmgr.*;
+import heap.HFBufMgrException;
+import heap.HFPage;
+import heap.InvalidTupleSizeException;
+import heap.Tuple;
 import diskmgr.*;
 
 
@@ -20,7 +23,7 @@ import diskmgr.*;
  * An object of type scan will always have pinned one directory page
  * of the heapfile.
  */
-public class Scan implements GlobalConst{
+public class TScan implements GlobalConst{
  
     /**
      * Note that one record in our way-cool HeapFile implementation is
@@ -29,7 +32,7 @@ public class Scan implements GlobalConst{
      */
 
     /** The heapfile we are using. */
-    private Heapfile  _hf;
+    private QuadrupleHeapfile  _qhf;
 
     /** PageId of current directory page (which is itself an HFPage) */
     private PageId dirpageId = new PageId();
@@ -46,10 +49,10 @@ public class Scan implements GlobalConst{
     private PageId datapageId = new PageId();
 
     /** in-core copy (pinned) of the same */
-    private HFPage datapage = new HFPage();
+    private THFPage datapage = new THFPage();
 
     /** record ID of the current record (from the current data page) */
-    private RID userrid = new RID();
+    private QID userqid = new QID();
 
     /** Status of next user status */
     private boolean nextUserStatus;
@@ -62,13 +65,13 @@ public class Scan implements GlobalConst{
      * @exception InvalidTupleSizeException Invalid tuple size
      * @exception IOException I/O errors
      *
-     * @param hf A HeapFile object
+     * @param qhf A HeapFile object
      */
-  public Scan(Heapfile hf) 
+  public TScan(QuadrupleHeapfile qhf) 
     throws InvalidTupleSizeException,
 	   IOException
   {
-	init(hf);
+	init(qhf);
   }
 
 
@@ -78,14 +81,14 @@ public class Scan implements GlobalConst{
    * @exception InvalidTupleSizeException Invalid tuple size
    * @exception IOException I/O errors
    *
-   * @param rid Record ID of the record
+   * @param qid Record ID of the record
    * @return the Tuple of the retrieved record.
    */
-  public Tuple getNext(RID rid) 
+  public Quadruple getNext(QID qid) 
     throws InvalidTupleSizeException,
 	   IOException
   {
-    Tuple recptrtuple = null;
+    Quadruple recPtrQuadruple = null;
     
     if (nextUserStatus != true) {
         nextDataPage();
@@ -94,11 +97,11 @@ public class Scan implements GlobalConst{
     if (datapage == null)
       return null;
     
-    rid.pageNo.pid = userrid.pageNo.pid;    
-    rid.slotNo = userrid.slotNo;
+    qid.pageNo.pid = userqid.pageNo.pid;    
+    qid.slotNo = userqid.slotNo;
          
     try {
-      recptrtuple = datapage.getRecord(rid);
+      recPtrQuadruple = datapage.getQuadruple(qid);
     }
     
     catch (Exception e) {
@@ -106,11 +109,11 @@ public class Scan implements GlobalConst{
       e.printStackTrace();
     }   
     
-    userrid = datapage.nextRecord(rid);
-    if(userrid == null) nextUserStatus = false;
+    userqid = datapage.nextQuadruple(qid);
+    if(userqid == null) nextUserStatus = false;
     else nextUserStatus = true;
      
-    return recptrtuple;
+    return recPtrQuadruple;
   }
 
 
@@ -118,25 +121,25 @@ public class Scan implements GlobalConst{
      * 
      * @exception InvalidTupleSizeException Invalid tuple size
      * @exception IOException I/O errors
-     * @param rid Record ID of the given record
+     * @param qid Record ID of the given record
      * @return 	true if successful, 
      *			false otherwise.
      */
-  public boolean position(RID rid) 
+  public boolean position(QID qid) 
     throws InvalidTupleSizeException,
 	   IOException
   { 
-    RID    nxtrid = new RID();
+    QID    nxtQid = new QID();
     boolean bst;
 
-    bst = peekNext(nxtrid);
+    bst = peekNext(nxtQid);
 
-    if (nxtrid.equals(rid)==true) 
+    if (nxtQid.equals(qid)==true) 
     	return true;
 
     // This is kind lame, but otherwise it will take all day.
     PageId pgid = new PageId();
-    pgid.pid = rid.pageNo.pid;
+    pgid.pid = qid.pageNo.pid;
  
     if (!datapageId.equals(pgid)) {
 
@@ -158,23 +161,23 @@ public class Scan implements GlobalConst{
     // Now we are on the correct page.
     
     try{
-    	userrid = datapage.firstRecord();
+    	userqid = datapage.firstQuadruple();
 	}
     catch (Exception e) {
       e.printStackTrace();
     }
 	
 
-    if (userrid == null)
+    if (userqid == null)
       {
     	bst = false;
         return bst;
       }
     
-    bst = peekNext(nxtrid);
+    bst = peekNext(nxtQid);
     
-    while ((bst == true) && (nxtrid != rid))
-      bst = mvNext(nxtrid);
+    while ((bst == true) && (nxtQid != qid))
+      bst = mvNext(nxtQid);
     
     return bst;
   }
@@ -185,13 +188,13 @@ public class Scan implements GlobalConst{
      * @exception InvalidTupleSizeException Invalid tuple size
      * @exception IOException I/O errors
      *
-     * @param hf A HeapFile object
+     * @param qhf A HeapFile object
      */
-    private void init(Heapfile hf) 
+    private void init(QuadrupleHeapfile qhf) 
       throws InvalidTupleSizeException,
 	     IOException
   {
-	_hf = hf;
+	_qhf = qhf;
 
     	firstDataPage();
   }
@@ -254,7 +257,7 @@ public class Scan implements GlobalConst{
 
     /** copy data about first directory page */
  
-    dirpageId.pid = _hf._firstDirPageId.pid;  
+    dirpageId.pid = _qhf._firstDirPageId.pid;  
     nextUserStatus = true;
 
     /** get first directory page and pin it */
@@ -439,7 +442,7 @@ public class Scan implements GlobalConst{
 	
 	// pin first data page
 	try {
-	  datapage  = new HFPage();
+	  datapage  = new THFPage();
 	  pinPage(datapageId, (Page) datapage, false);
 	}
 	catch (Exception e){
@@ -447,7 +450,7 @@ public class Scan implements GlobalConst{
 	}
 	
 	try {
-	  userrid = datapage.firstRecord();
+	  userqid = datapage.firstQuadruple();
 	}
 	catch (Exception e) {
 	  e.printStackTrace();
@@ -552,7 +555,7 @@ public class Scan implements GlobalConst{
 	datapageId.pid = dpinfo.pageId.pid;
 	
  	try {
-	  datapage = new HFPage();
+	  datapage = new THFPage();
 	  pinPage(dpinfo.pageId, (Page) datapage, false);
 	}
 	
@@ -566,9 +569,9 @@ public class Scan implements GlobalConst{
      // - this->dirpageId, this->dirpage correct
      // - this->datapageId, this->datapage, this->datapageRid correct
 
-     userrid = datapage.firstRecord();
+     userqid = datapage.firstQuadruple();
      
-     if(userrid == null)
+     if(userqid == null)
      {
        nextUserStatus = false;
        return false;
@@ -578,41 +581,41 @@ public class Scan implements GlobalConst{
   }
 
 
-  private boolean peekNext(RID rid) {
+  private boolean peekNext(QID qid) {
     
-    rid.pageNo.pid = userrid.pageNo.pid;
-    rid.slotNo = userrid.slotNo;
+    qid.pageNo.pid = userqid.pageNo.pid;
+    qid.slotNo = userqid.slotNo;
     return true;
     
   }
 
 
   /** Move to the next record in a sequential scan.
-   * Also returns the RID of the (new) current record.
+   * Also returns the QID of the (new) current record.
    */
-  private boolean mvNext(RID rid) 
+  private boolean mvNext(QID qid) 
     throws InvalidTupleSizeException,
 	   IOException
   {
-    RID nextrid;
+    QID nextqid;
     boolean status;
 
     if (datapage == null)
         return false;
 
-    	nextrid = datapage.nextRecord(rid);
+    	nextqid = datapage.nextQuadruple(qid);
 	
-	if( nextrid != null ){
-	  userrid.pageNo.pid = nextrid.pageNo.pid;
-	  userrid.slotNo = nextrid.slotNo;
+	if( nextqid != null ){
+	  userqid.pageNo.pid = nextqid.pageNo.pid;
+	  userqid.slotNo = nextqid.slotNo;
 	  return true;
 	} else {
 	  
 	  status = nextDataPage();
 
 	  if (status==true){
-	    rid.pageNo.pid = userrid.pageNo.pid;
-	    rid.slotNo = userrid.slotNo;
+	    qid.pageNo.pid = userqid.pageNo.pid;
+	    qid.slotNo = userqid.slotNo;
 	  }
 	
 	}

@@ -24,11 +24,11 @@ public class CommandLine{
 		System.out.println("Can not find the database");
 	}
 	
-	// Stream stream = database.openStream(options[2],options[3],options[4],options[5],options[6]);
+	Stream stream = database.openStream(options[2],options[3],options[4],options[5],options[6]);
 	
-	// for (QID qid = stream.getNext();qid != null; qid = stream.getNext()){
+	for (QID qid = stream.getNext();qid != null; qid = stream.getNext()){
 		
-	// }
+	}
 	
   }
   
@@ -44,7 +44,7 @@ public class CommandLine{
 			database = databases.get(dbname);
 		}
 		else{
-	  	// database = new rdfDB(Integer.parseInt(options[1]));
+	  	database = new rdfDB(Integer.parseInt(options[1]));
 	  	}
 	      Scanner scanner = new Scanner(f);
 	      while (scanner.hasNextLine()) {
@@ -54,22 +54,22 @@ public class CommandLine{
 		
 		
 		byte quad[] = new byte[28];
-		// EID subjectid = database.insertEntity(parts[0]);
-		// Convert.setIntValue(subjectid.pageNo.pid,0,quad);
-		// Convert.setIntValue(subjectid.slotNo,4,quad);
+		EID subjectid = database.insertEntity(parts[0]);
+		Convert.setIntValue(subjectid.pageNo.pid,0,quad);
+		Convert.setIntValue(subjectid.slotNo,4,quad);
 		
-		// PID predicateid = database.insertPredicate(parts[1]);
-		// Convert.setIntValue(predicateid.pageNo.pid,8,quad);
-		// Convert.setIntValue(predicateid.slotNo,12,quad);
+		PID predicateid = database.insertPredicate(parts[1]);
+		Convert.setIntValue(predicateid.pageNo.pid,8,quad);
+		Convert.setIntValue(predicateid.slotNo,12,quad);
 		
-		// EID objectid = database.insertEntity(parts[2]);
-		// Convert.setIntValue(objectid.pageNo.pid,16,quad);
-		// Convert.setIntValue(objectid.slotNo,20,quad);
+		EID objectid = database.insertEntity(parts[2]);
+		Convert.setIntValue(objectid.pageNo.pid,16,quad);
+		Convert.setIntValue(objectid.slotNo,20,quad);
 		
-		// Convert.setFloValue(Float.parseFloat(parts[3], 24, quad)); 
-		// database.insertQuadruple(quad);
+		Convert.setFloValue(Float.parseFloat(parts[3], 24, quad)); 
+		database.insertQuadruple(quad);
 		}
-		// databases.put(dbname,database);
+		databases.put(dbname,database);
 	      
 	      scanner.close();
 	    } catch (FileNotFoundException e) {

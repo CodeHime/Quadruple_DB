@@ -70,7 +70,7 @@ public class CommandLine {
 
 				String parts[] = line.replace('\t', ':').replaceAll(" ", "").split(":");
 
-				byte quad[] = new byte[28];
+				byte quad[] = new byte[32];
 				EID subjectid = database.insertEntity(parts[0]);
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
 				Convert.setIntValue(subjectid.slotNo, 4, quad);

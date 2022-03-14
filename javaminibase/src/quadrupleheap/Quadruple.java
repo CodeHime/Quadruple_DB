@@ -72,7 +72,7 @@ public class Quadruple implements GlobalConst {
        // Creat a new tuple
        data = new byte[max_size];
        quadrupleOffset = 0;
-       quadrupleLength = 28; // (4 + 4) + (4 + 4) + (4 + 4) + 4
+       quadrupleLength = QUADRUPLE_SIZE; // (4 + 4) + (4 + 4) + (4 + 4) + 8
   }
    
    /** Constructor

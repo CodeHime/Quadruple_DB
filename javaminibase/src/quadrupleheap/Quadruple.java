@@ -90,25 +90,25 @@ public class Quadruple implements GlobalConst {
   /**
     return subject
    */
-   EID getSubjecqid() {
+   public EID getSubjecqid() {
      return this.subject;
    }
 
   /**
     return predicate
    */
-   PID getPredicateID() {
+   public PID getPredicateID() {
      return this.predicate;
    }
   
   /**
     return object
    */
-   PID getObjecqid() {
+   public EID getObjecqid() {
      return this.object;
    }
 
-   double getConfidence() {
+   public double getConfidence() {
      return this.confidence;
    }
 
@@ -117,7 +117,7 @@ public class Quadruple implements GlobalConst {
     return this;
   }
 
-  Quadruple setPredicateID(EID predicateID) {
+  Quadruple setPredicateID(PID predicateID) {
     this.predicate = predicateID;
     return this;
   }

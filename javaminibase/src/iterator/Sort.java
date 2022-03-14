@@ -17,14 +17,14 @@ import chainexception.*;
  * After the sorting is done, the user should call <code>close()</code>
  * to clean up.
  */
-public class Sort extends IteratorQ implements GlobalConst
+public class Sort extends Stream implements GlobalConst
 {
   private static final int ARBIT_RUNS = 10;
-  
+  public boolean closeFlag = false;
   private AttrType[]  _in;         
   private short       n_cols;
   private short[]     str_lens;
-  private IteratorQ    _am;
+  private Stream    _am;
   private int         _sort_fld;
   private QuadrupleOrder  order;
   private int         _n_pages;
@@ -33,7 +33,7 @@ public class Sort extends IteratorQ implements GlobalConst
   private int         Nruns;
   private int         max_elems_in_heap;
   private int         sortFldLen;
-  private int         tuple_size =28;
+  private int         tuple_size =32;
   
   private pnodeSplayPQ Q;
   private QuadrupleHeapfile[]   temp_files; 
@@ -179,7 +179,7 @@ public class Sort extends IteratorQ implements GlobalConst
     // maintain a fixed maximum number of elements in the heap
     while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
       try {
-	tuple = _am.get_next();  // according to Iterator.java
+	tuple = _am.getNext();  // according to Iterator.java
       } catch (Exception e) {
 	e.printStackTrace(); 
 	throw new SortException(e, "Sort.java: get_next() failed");
@@ -292,7 +292,7 @@ public class Sort extends IteratorQ implements GlobalConst
       else if (p_elems_curr_Q == 0) {
 	while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
 	  try {
-	    tuple = _am.get_next();  // according to Iterator.java
+	    tuple = _am.getNext();  // according to Iterator.java
 	  } catch (Exception e) {
 	    throw new SortException(e, "get_next() failed");
 	  } 
@@ -463,21 +463,8 @@ public class Sort extends IteratorQ implements GlobalConst
     String s = new String(c);
     //    short fld_no = 1;
     
-    switch (_sort_fld) {
-    case 4:
-      //      lastElem.setHdr(fld-no, junk, null);
-      lastElem.setConfidence(Float.MIN_VALUE);
-      break;
-    case AttrType.attrString:
-      //      lastElem.setHdr(fld_no, junk, s_size);
-      lastElem.setStrFld(_sort_fld, s);
-      break;
-    default:
-      // don't know how to handle attrSymbol, attrNull
-      //System.err.println("error in sort.java");
-      throw new UnknowAttrType("Sort.java: don't know how to handle attrSymbol, attrNull");
-    }
-    
+    QuadrupleUtils.setValue(lastElem, _sort_fld, false);
+
     return;
   }
 
@@ -501,24 +488,8 @@ public class Sort extends IteratorQ implements GlobalConst
     String s = new String(c);
     //    short fld_no = 1;
     
-    switch (sortFldType.attrType) {
-    case AttrType.attrInteger: 
-      //      lastElem.setHdr(fld_no, junk, null);
-      lastElem.setIntFld(_sort_fld, Integer.MAX_VALUE);
-      break;
-    case AttrType.attrReal:
-      //      lastElem.setHdr(fld_no, junk, null);
-      lastElem.setFloFld(_sort_fld, Float.MAX_VALUE);
-      break;
-    case AttrType.attrString:
-      //      lastElem.setHdr(fld_no, junk, s_size);
-      lastElem.setStrFld(_sort_fld, s);
-      break;
-    default:
-      // don't know how to handle attrSymbol, attrNull
-      //System.err.println("error in sort.java");
-      throw new UnknowAttrType("Sort.java: don't know how to handle attrSymbol, attrNull");
-    }
+    QuadrupleUtils.setValue(lastElem, _sort_fld, true);
+
     
     return;
   }
@@ -538,7 +509,7 @@ public class Sort extends IteratorQ implements GlobalConst
    * @exception SortException something went wrong in the lower layer. 
    */
   public Sort(
-	      IteratorQ   am,                 
+	      Stream   am,                 
 	      int        sort_fld,          
 	      QuadrupleOrder sort_order,     
 	      int        n_pages      
@@ -612,7 +583,7 @@ public class Sort extends IteratorQ implements GlobalConst
    * @exception LowMemException memory low exception
    * @exception Exception other exceptions
    */
-  public Quadruple get_next() 
+  public Quadruple getNext() 
     throws IOException, 
 	   SortException, 
 	   UnknowAttrType,
@@ -653,13 +624,13 @@ public class Sort extends IteratorQ implements GlobalConst
    * @exception IOException from lower layers
    * @exception SortException something went wrong in the lower layer. 
    */
-  public void close() throws SortException, IOException
+  public void closestream() throws SortException, IOException
   {
     // clean up
     if (!closeFlag) {
        
       try {
-	_am.close();
+	_am.closestream();
       }
       catch (Exception e) {
 	throw new SortException(e, "Sort.java: error in closing iterator.");
@@ -689,6 +660,73 @@ public class Sort extends IteratorQ implements GlobalConst
       closeFlag = true;
     } 
   } 
+
+  /**
+   * tries to get n_pages of buffer space
+   *@param n_pages the number of pages
+   *@param PageIds the corresponding PageId for each page
+   *@param bufs the buffer space
+   *@exception IteratorBMException exceptions from bufmgr layer
+   */
+  public void  get_buffer_pages(int n_pages, PageId[] PageIds, byte[][] bufs)
+    throws IteratorBMException
+    {
+      Page pgptr = new Page();        
+      PageId pgid = null;
+      
+      for(int i=0; i < n_pages; i++) {
+	pgptr.setpage(bufs[i]);
+
+	pgid = newPage(pgptr,1);
+	PageIds[i] = new PageId(pgid.pid);
+	
+	bufs[i] = pgptr.getpage();
+	
+      }
+    }
+
+  /**
+   *free all the buffer pages we requested earlier.
+   * should be called in the destructor
+   *@param n_pages the number of pages
+   *@param PageIds  the corresponding PageId for each page
+   *@exception IteratorBMException exception from bufmgr class 
+   */
+  public void free_buffer_pages(int n_pages, PageId[] PageIds) 
+    throws IteratorBMException
+    {
+      for (int i=0; i<n_pages; i++) {
+	freePage(PageIds[i]);
+      }
+    }
+
+  private void freePage(PageId pageno)
+    throws IteratorBMException {
+    
+    try {
+      SystemDefs.JavabaseBM.freePage(pageno);
+    }
+    catch (Exception e) {
+      throw new IteratorBMException(e,"Iterator.java: freePage() failed");
+    }
+    
+  } // end of freePage
+
+  private PageId newPage(Page page, int num)
+    throws IteratorBMException {
+    
+    PageId tmpId = new PageId();
+    
+    try {
+      tmpId = SystemDefs.JavabaseBM.newPage(page,num);
+    }
+    catch (Exception e) {
+      throw new IteratorBMException(e,"Iterator.java: newPage() failed");
+    }
+
+    return tmpId;
+
+  } // end of newPage
 
 }
 

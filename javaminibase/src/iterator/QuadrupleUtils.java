@@ -39,6 +39,12 @@ public class QuadrupleUtils
         switch (quadrupleFldNo) {
             case 1:
                 // compare subject value
+                if (q1.getSubjectQid().slotNo == -1 || q2.getSubjectQid().slotNo == -2){
+                    return 1;
+                }
+                else if (q1.getSubjectQid().slotNo == -2 || q2.getSubjectQid().slotNo == -1){
+                    return -1;
+                }
                 LID subjectLID1 = q1.getSubjectQid().returnLID();
                 String subject1 = labelHeapfile.getLabel(subjectLID1).getLabel();
 
@@ -48,6 +54,12 @@ public class QuadrupleUtils
                 return subject1.compareTo(subject2);
             case 2:
                 // compare predicate value
+                if (q1.getPredicateID().slotNo == -1 || q2.getPredicateID().slotNo == -2){
+                    return 1;
+                }
+                else if (q1.getPredicateID().slotNo == -2 || q2.getPredicateID().slotNo == -1){
+                    return -1;
+                }
                 LID predicateLID1 = q1.getPredicateID().returnLID();
                 String predicate1 = labelHeapfile.getLabel(predicateLID1).getLabel();
 
@@ -57,6 +69,12 @@ public class QuadrupleUtils
                 return predicate1.compareTo(predicate2);
             case 3:
                 // compare object value
+                if (q1.getObjectQid().slotNo == -1 || q2.getObjectQid().slotNo == -2){
+                    return 1;
+                }
+                else if (q1.getObjectQid().slotNo == -2 || q2.getObjectQid().slotNo == -1){
+                    return -1;
+                }
                 LID objectLID1 = q1.getObjectQid().returnLID();
                 String object1 = labelHeapfile.getLabel(objectLID1).getLabel();
 
@@ -114,6 +132,70 @@ public class QuadrupleUtils
         }
 
         return true;
+    }
+
+    public static void SetValue(Quadruple q1, Quadruple q2, int field_no){
+
+        switch (field_no) {
+            case 1:
+                q1.setSubjectQid(q2.getSubjectQid());
+                break;
+            case 2:
+                q1.setPredicateID(q2.getPredicateID());
+                break;
+            case 3:
+                q1.setObjectQid(q2.getObjectQid());
+                break;
+            case 4:
+                q1.setConfidence(q2.getConfidence());
+        }
+    }
+
+    public static void setValue(Quadruple q1, int field_no, boolean max){
+        
+        if (max){
+            EID e = new EID();
+            e.pageNo =new PageId(0);
+            e.slotNo = -1;
+            switch (field_no) {
+                case 1:
+                    q1.setSubjectQid(e);
+                    break;
+                case 2:
+                    PID p = new PID();
+                    p.pageNo = new PageId(0);
+                    p.slotNo = -1;
+                    q1.setPredicateID(p);
+                    break;
+                case 3:
+                    q1.setObjectQid(e);
+                    break;
+                case 4:
+                    q1.setConfidence(1.0);
+            }   
+        }
+        else{
+            
+            EID e = new EID();
+            e.pageNo =new PageId(0);
+            e.slotNo = -2;
+            switch (field_no) {
+                case 1:
+                    q1.setSubjectQid(e);
+                    break;
+                case 2:
+                    PID p = new PID();
+                    p.pageNo = new PageId(0);
+                    p.slotNo = -2;
+                    q1.setPredicateID(p);
+                    break;
+                case 3:
+                    q1.setObjectQid(e);
+                    break;
+                case 4:
+                    q1.setConfidence(0.0);
+            }
+        }
     }
 }
 

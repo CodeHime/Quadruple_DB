@@ -5,6 +5,9 @@ import global.*;
 import diskmgr.*;
 import bufmgr.*;
 import index.*;
+import quadrupleheap.Quadruple;
+import quadrupleheap.QuadrupleHeapfile;
+
 import java.io.*;
 
 /**
@@ -19,9 +22,9 @@ public class SortMerge extends Iterator implements GlobalConst
 {
   private AttrType  _in1[], _in2[];
   private  int        in1_len, in2_len;
-  private  Iterator  p_i1,        // pointers to the two iterators. If the
+  private  IteratorQ  p_i1,        // pointers to the two iterators. If the
     p_i2;               // inputs are sorted, then no sorting is done
-  private  TupleOrder  _order;                      // The sorting order.
+  private  QuadrupleOrder  _order;                      // The sorting order.
   private  CondExpr  OutputFilter[];
   
   private  boolean      get_from_in1, get_from_in2;        // state variables for get_next
@@ -29,15 +32,15 @@ public class SortMerge extends Iterator implements GlobalConst
   private  boolean        process_next_block;
   private  short     inner_str_sizes[];
   private  IoBuf    io_buf1,  io_buf2;
-  private  Tuple     TempTuple1,  TempTuple2;
-  private  Tuple     tuple1,  tuple2;
+  private  Quadruple     TempTuple1,  TempTuple2;
+  private  Quadruple     tuple1,  tuple2;
   private  boolean       done;
   private  byte    _bufs1[][],_bufs2[][];
   private  int        _n_pages; 
-  private  Heapfile temp_file_fd1, temp_file_fd2;
+  private  QuadrupleHeapfile temp_file_fd1, temp_file_fd2;
   private  AttrType   sortFldType;
   private  int        t1_size, t2_size;
-  private  Tuple     Jtuple;
+  private  Quadruple     Jtuple;
   private  FldSpec   perm_mat[];
   private  int        nOutFlds;
   
@@ -69,20 +72,13 @@ public class SortMerge extends Iterator implements GlobalConst
    *@exception IOException some I/O fault
    */
   public SortMerge(AttrType    in1[],               
-		   int     len_in1,                        
-		   short   s1_sizes[],
-		   AttrType    in2[],                
-		   int     len_in2,                        
-		   short   s2_sizes[],
 		   
 		   int     join_col_in1,                
-		   int      sortFld1Len,
 		   int     join_col_in2,                
-		   int      sortFld2Len,
 		   
 		   int     amt_of_mem,               
-		   Iterator     am1,                
-		   Iterator     am2,                
+		   IteratorQ     am1,                
+		   IteratorQ     am2,                
 		   
 		   boolean     in1_sorted,                
 		   boolean     in2_sorted,                
@@ -106,7 +102,7 @@ public class SortMerge extends Iterator implements GlobalConst
       in1_len = len_in1;
       in2_len = len_in2;
       
-      Jtuple = new Tuple();
+      Jtuple = new Quadruple();
       AttrType[] Jtypes = new AttrType[n_out_flds];
       short[]    ts_size = null;
       perm_mat = proj_list;

@@ -1,6 +1,8 @@
 
 package iterator;
 import heap.*;
+import quadrupleheap.Quadruple;
+import quadrupleheap.QuadrupleHeapfile;
 import global.*;
 import diskmgr.*;
 import bufmgr.*;
@@ -21,7 +23,7 @@ public class IoBuf implements GlobalConst{
    *@param tSize the page size
    *@param temp_fd the reference to a Heapfile
    */ 
-  public void init(byte bufs[][], int n_pages, int tSize, Heapfile temp_fd)
+  public void init(byte bufs[][], int n_pages, int tSize, QuadrupleHeapfile temp_fd)
     {
       _bufs    = bufs;
       _n_pages = n_pages;
@@ -85,11 +87,11 @@ public class IoBuf implements GlobalConst{
    *@exception IOException some I/O fault
    *@exception Exception other exceptions
    */
-  public Tuple Get(Tuple  buf)
+  public Quadruple Get(Quadruple  buf)
     throws IOException,
 	   Exception
     {
-      Tuple temptuple;
+      Quadruple temptuple;
       if (done){
 	buf =null;
 	return null;
@@ -115,7 +117,7 @@ public class IoBuf implements GlobalConst{
 	      buf = null;
 	      return null;
 	    }
-	  buf.tupleSet(_bufs[curr_page],t_rd_from_pg*t_size,t_size);      
+	  buf.quadrupleSet(_bufs[curr_page],t_rd_from_pg*t_size);      
 	  
 	  // Setup for next read
 	  t_rd_from_pg++;
@@ -145,14 +147,14 @@ public class IoBuf implements GlobalConst{
 	{
 	  for (count = 0; count <= curr_page; count++)
 	    {
-	      RID rid;
+	      QID rid;
 
 	      // Will have to go thru entire buffer writing tuples to disk
 	      for (int i = 0; i < t_wr_to_pg; i++)
 		{
 		  System.arraycopy(_bufs[count],t_size*i,tempbuf,0,t_size);
 		  try {
-		    rid =  _temp_fd.insertRecord(tempbuf);
+		    rid =  _temp_fd.insertQuadruple(tempbuf);
 		  }
 		  catch (Exception e){
 		    throw e;
@@ -204,7 +206,7 @@ public class IoBuf implements GlobalConst{
   private  int  t_size;               // Size of a tuple
   private  long t_written;           // # of tuples written so far
   private  int  _TEST_temp_fd;       // fd of a temporary file
-  private  Heapfile _temp_fd;
+  private  QuadrupleHeapfile _temp_fd;
   private  boolean  flushed;        // TRUE => buffer has been flushed.
   private  int  mode;
   private  int  t_rd_from_pg;      // # of tuples read from current page

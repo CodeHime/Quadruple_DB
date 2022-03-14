@@ -1,5 +1,6 @@
 package commandline;
 
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,25 +21,13 @@ import global.QID;
 
 public class CommandLine {
 
-	// private static HashMap<String,rdfDB> databases = new HashMap<String,rdfDB>();
-	public static void report() {
-		System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter);
-
-	}
-
 	public static void query(String options[]) {
 		System.out.println("query");
 
-		String dbname = options[2] + "_" + options[1];
+		String dbname = options[0] + "_" + options[1];
 		rdfDB database = rdfDB.getInstance();
 		database.openDB(dbname);
-		
-		// String dbname = options[0] + "_" + options[1];
-		// if (databases.containsKey(dbname)) {
-		// 	database = databases.get(dbname);
-		// } else {
-		// 	System.out.println("Can not find the database");
-		// }
+
 
 		Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], Double.parseDouble(options[6]));
 
@@ -46,7 +35,6 @@ public class CommandLine {
 
 		}
 
-		report();
 	}
 
 	public static void batchinsert(String options[]) throws IOException, InvalidPageNumberException, FileIOException, DiskMgrException {
@@ -58,11 +46,6 @@ public class CommandLine {
 			rdfDB database = rdfDB.getInstance();
 			database.openDB(dbname);
 
-			// if (databases.containsKey(dbname)) {
-			// 	database = databases.get(dbname);
-			// } else {
-			// 	// database = new rdfDB(Integer.parseInt(options[1]));
-			// }
 
 			Scanner scanner = new Scanner(f);
 			while (scanner.hasNextLine()) {
@@ -94,38 +77,60 @@ public class CommandLine {
 			e.printStackTrace();
 		}
 
-		report();
 	}
 
 	public static void getInput() throws InvalidPageNumberException, FileIOException, DiskMgrException {
-
-		int end = 0;
-		while (end == 0) {
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-			try {
-				String input = in.readLine();
-				String parsed[] = input.split(" ");
-				PCounter.initialize();
-
-				if (parsed[0].equals("report") && parsed.length == 1) {
-					report();
-				} else if (parsed[0].equals("query") && parsed.length == 9) {
-					query(Arrays.copyOfRange(parsed, 1, parsed.length));
-				} else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
-					batchinsert(Arrays.copyOfRange(parsed, 1, parsed.length));
-				} else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {
-					end = 1;
-				} else {
-					System.out.println("Unrecgonized command. Leave with 'exit'.");
-				}
-
-			} catch (IOException e) {
-				System.out.println("error");
-			}
-		}
+  
+  	int end = 0;
+  	while(end == 0){
+  
+  	BufferedReader in = new BufferedReader (new InputStreamReader(System.in));
+	
+	try {
+		FileWriter fw;
+		String input = in.readLine();
+	   String parsed[] = input.split(" ");
+	   PCounter.initialize();
+	   
+	   if (parsed[0].equals("report")&&parsed.length == 1){
+		   File f = new File("../logfile.txt");
+	   	Scanner scan = new Scanner(f);
+		   while(scan.hasNextLine()){
+			   System.out.println(scan.nextLine());
+		   }
+		   scan.close();
+	   }
+	   else if (parsed[0].equals("query")&&parsed.length == 9){
+	   	query(Arrays.copyOfRange(parsed,1,parsed.length));
+		//    fw = new FileWriter(parsed[1]+"_"+parsed[2]);
+		fw = new FileWriter("../logfile.txt");
+		   fw.write(input+"\n");
+		   fw.write("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+		   fw.close();
+		   System.out.println("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+	   }
+	   else if (parsed[0].equals("batchinsert")&&parsed.length == 4){
+	   	batchinsert(Arrays.copyOfRange(parsed,1,parsed.length));
+		//    fw = new FileWriter(parsed[3]+"_"+parsed[2]);
+		fw = new FileWriter("../logfile.txt");
+		   fw.write(input+"\n");
+		   fw.write("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+		   fw.close();
+		   System.out.println("Reads "+PCounter.rcounter+"\nWrites: "+PCounter.wcounter+"\n\n");
+	   }
+	   else if (parsed[0].equals("exit")||parsed[0].equals("quit")||parsed[0].equals("q")){
+		end = 1;	
+	   }
+	   else{
+	   	System.out.println("Unrecgonized command. Leave with 'exit'.");
+	   }
+	   
 	}
+	catch (IOException e) {
+		System.out.println("error");
+	}
+  	}
+  }
 
 	public static void main(String[] argvs) throws InvalidPageNumberException, FileIOException, DiskMgrException {
 		getInput();

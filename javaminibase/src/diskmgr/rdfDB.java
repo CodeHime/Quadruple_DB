@@ -2,13 +2,10 @@
 
 package diskmgr;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 import btree.*;
-import bufmgr.*;
 import global.*;
 import labelheap.*;
 import quadrupleheap.*;
@@ -22,6 +19,10 @@ public class rdfDB extends DB {
     
     private String rdfDB_name;
     private int indexOption;
+    
+    QuadBTreeFile quadBT;
+    LabelBTreeFile predBT;
+    LabelBTreeFile entityBT;
 
     public LabelHeapfile getEntityHeapFile() { return entity_heap_file; }
     public LabelHeapfile getPredicateHeapFile() { return predicate_heap_file; }
@@ -80,9 +81,9 @@ public class rdfDB extends DB {
             predicate_heap_file = new LabelHeapfile(rdfDB_name + Integer.toString(indexOption) + "PredHF");
             entity_heap_file = new LabelHeapfile(rdfDB_name + Integer.toString(indexOption) + "EntityHF");
 
-            QuadBTreeFile quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "Integer.toString(indexOption) + EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
+            predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
+            entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "Integer.toString(indexOption) + EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
 
         }
         catch(Exception e) {
@@ -316,6 +317,7 @@ public class rdfDB extends DB {
 
         QID qid = null;
         try {
+          //LOOKUP
           QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
           KeyClass key = getStringKey(quadruplePtr);
           

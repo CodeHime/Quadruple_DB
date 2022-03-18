@@ -23,7 +23,7 @@ public abstract class pnodePQ
   protected AttrType              fld_type;
 
   /** the sorting order (Ascending or Descending) */
-  protected TupleOrder            sort_order;
+  protected QuadrupleOrder            sort_order;
 
   /**
    * class constructor, set <code>count</code> to <code>0</code>.
@@ -76,8 +76,16 @@ public abstract class pnodePQ
    */
   public int pnodeCMP(pnode a, pnode b) 
          throws IOException, UnknowAttrType, TupleUtilsException {
-    int ans = TupleUtils.CompareTupleWithTuple(fld_type, a.tuple, fld_no, b.tuple, fld_no);
-    return ans;
+        int ans = 0;
+        try{
+          ans = QuadrupleUtils.compareQuadrupleWithQuadruple(a.tuple, b.tuple, fld_no);
+        }catch(Exception e)
+        {
+          System.err.println(e);
+          e.printStackTrace();
+          Runtime.getRuntime().exit(1);
+        }
+      return ans;
   }
 
   /**

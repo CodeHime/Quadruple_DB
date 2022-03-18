@@ -32,13 +32,13 @@ public class QuadrupleOrder {
    * @param _quadupleOrder The possible ordering of the tuples 
    */
 
-  public TupleOrder (int _quadupleOrder) {
+  public QuadrupleOrder (int _quadupleOrder) {
     quadupleOrder = _quadupleOrder;
   }
 
   public String toString() {
     
-    switch (tupleOrder) {
+    switch (_quadupleOrder) {
     case SubjectPredicateObjectConfidence:
       return "SubjectPredicateObjectConfidence";
     case PredicateSubjectObjectConfidence:
@@ -54,7 +54,7 @@ public class QuadrupleOrder {
     case Random:
       return "Random";
     }
-    return ("Unexpected TupleOrder " + tupleOrder);
+    return ("Unexpected QuadrupleOrder " + _quadupleOrder);
   }
 
 }

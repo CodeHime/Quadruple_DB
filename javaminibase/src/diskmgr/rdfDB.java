@@ -145,7 +145,7 @@ public class rdfDB extends DB {
             EID eid;
             while(entry != null){
                 qid = ((QuadLeafData)entry.data).getData();
-                eid = quad_heap_file.getQuadruple(qid).getSubjecqid();
+                eid = quad_heap_file.getQuadruple(qid).getSubjectQid();
                 if(!eids.contains(eid)){
                     eids.add(eid);
                 }
@@ -172,7 +172,7 @@ public class rdfDB extends DB {
             EID eid;
             while(entry != null){
                 qid = ((QuadLeafData)entry.data).getData();
-                eid = quad_heap_file.getQuadruple(qid).getObjecqid();
+                eid = quad_heap_file.getQuadruple(qid).getObjectQid();
                 if(!eids.contains(eid)){
                     eids.add(eid);
                 }
@@ -339,8 +339,8 @@ public class rdfDB extends DB {
                 byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
 
                 if ( Arrays.equals(oldBytes, newBytes)){
-                    double new_confidence = Convert.getFloValue(24, quadruplePtr);
-                    double old_confidence = Convert.getFloValue(24, oldQuad.getQuadrupleByteArray());
+                    double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
+                    double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
     
                     if (new_confidence > old_confidence){
                         Quadruple newQuad = new Quadruple(quadruplePtr, 0);
@@ -396,17 +396,17 @@ public class rdfDB extends DB {
 
     }
 
-    public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, double confidenceFilter){
-        Stream stream = null;
-        try{
-            stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
-        }
-        catch(Exception e){
-            System.err.println(e);
-            e.printStackTrace();
-        }
-        return stream;
-    }
+    // public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, double confidenceFilter){
+    //     Stream stream = null;
+    //     try{
+    //         stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+    //     }
+    //     catch(Exception e){
+    //         System.err.println(e);
+    //         e.printStackTrace();
+    //     }
+    //     return stream;
+    // }
 
     // helper method to get the first n(exclusive) bytes from an array
     private byte[] getFirstNBytes(byte[] input, int n) {
@@ -425,7 +425,7 @@ public class rdfDB extends DB {
             switch(indexOption){
                 // object 
                 case(1):{
-                    LID lid = newQuad.getObjecqid().returnLID();
+                    LID lid = newQuad.getObjectQid().returnLID();
                     String object = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(object);
                 }
@@ -437,13 +437,13 @@ public class rdfDB extends DB {
                 }
                 // subject
                 case(3):{
-                    LID lid = newQuad.getSubjecqid().returnLID();
+                    LID lid = newQuad.getSubjectQid().returnLID();
                     String subject = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(subject);
                 }
                 // object + predicate
                 case(4):{
-                    LID lid = newQuad.getObjecqid().returnLID();
+                    LID lid = newQuad.getObjectQid().returnLID();
                     String object = entity_heap_file.getLabel(lid).getLabel();
                     lid = newQuad.getPredicateID().returnLID();
                     String pred = entity_heap_file.getLabel(lid).getLabel();
@@ -453,7 +453,7 @@ public class rdfDB extends DB {
                 case(5):{
                     LID lid = newQuad.getPredicateID().returnLID();
                     String pred = entity_heap_file.getLabel(lid).getLabel();
-                    lid = newQuad.getSubjecqid().returnLID();
+                    lid = newQuad.getSubjectQid().returnLID();
                     String subject = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(pred + subject);
 

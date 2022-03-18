@@ -2,7 +2,6 @@ package labelheap;
 
 import java.io.*;
 import diskmgr.*;
-import bufmgr.*;
 import global.*;
 
 /**  This heapfile implementation is directory-based. We maintain a
@@ -294,7 +293,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
   /** Return number of records in file.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
    * @exception IOException I/O errors
@@ -355,7 +354,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
    * @param recLen the length of the record
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception SpaceNotAvailableException no space left
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
@@ -605,7 +604,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
   /** Delete record from file with given lid.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -754,7 +753,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
    *
    * @exception InvalidSlotNumberException invalid slot number
    * @exception InvalidUpdateException invalid update on record
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer
@@ -818,7 +817,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
    * @param lid Record ID
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception SpaceNotAvailableException no space left
    * @exception HFException heapfile exception
    * @exception HFBufMgrException exception thrown from bufmgr layer
@@ -869,7 +868,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
   
   
   /** Initiate a sequential scan.
-   * @exception InvalidTupleSizeException Invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException Invalid tuple size
    * @exception IOException I/O errors
    *
    */
@@ -885,7 +884,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
   /** Delete the file from the database.
    *
    * @exception InvalidSlotNumberException invalid slot number
-   * @exception InvalidTupleSizeException invalid tuple size
+   * @exception InvalidQuadrupleTupleSizeException invalid tuple size
    * @exception FileAlreadyDeletedException file is deleted already
    * @exception HFBufMgrException exception thrown from bufmgr layer
    * @exception HFDiskMgrException exception thrown from diskmgr layer

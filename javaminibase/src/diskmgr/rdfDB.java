@@ -82,7 +82,7 @@ public class rdfDB extends DB {
 
             QuadBTreeFile quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
             LabelBTreeFile predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "Integer.toString(indexOption) + EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
 
         }
         catch(Exception e) {

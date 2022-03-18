@@ -42,12 +42,15 @@ public class CommandLine {
 		System.out.println("batch");
 
 		try {
-			SystemDefs sysdef = new SystemDefs("firstDBName", 1000, 1000, "Clock" );
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
+			SystemDefs sysdef = new SystemDefs(dbname, 1000 + 20, 1000, "Clock" );
 			rdfDB database = rdfDB.getInstance();
+			System.out.println("rdfdb instance got");
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);
+			System.out.println("rdfdb opened");
+
 
 
 			Scanner scanner = new Scanner(f);
@@ -90,8 +93,8 @@ public class CommandLine {
   	BufferedReader in = new BufferedReader (new InputStreamReader(System.in));
 	
 	try {
-		FileWriter fw;
-	   String input =  "batchinsert phase2_test_data.txt 0 firstDBName"; //in.readLine();
+	   FileWriter fw;
+	   String input =  "batchinsert phase2_test_data.txt 1 testDB"; //in.readLine();
 	   String parsed[] = input.split(" ");
 	   PCounter.initialize();
 	   

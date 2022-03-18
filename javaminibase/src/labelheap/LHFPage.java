@@ -338,7 +338,9 @@ public class LHFPage extends Page
   {
     LID lid = new LID();
     
-    int recLen = label.length();
+
+    byte[] labelByte = label.getBytes();
+    int recLen = labelByte.length;
     int spaceNeeded = recLen + SIZE_OF_SLOT;
     
     // Start by checking if sufficient space exists.
@@ -383,7 +385,7 @@ public class LHFPage extends Page
     setSlot(i, recLen, usedPtr);   
 
     // insert data onto the data page
-    System.arraycopy (label, 0, data, usedPtr, recLen);
+    System.arraycopy (labelByte, 0, data, usedPtr, recLen);
     curPage.pid = Convert.getIntValue (CUR_PAGE, data);
     lid.pageNo.pid = curPage.pid;
     lid.slotNo = i;

@@ -177,7 +177,7 @@ public class LabelBTreeFile extends LabelIndexFile
     {      
       
       
-      headerPageId=get_file_entry(filename);   
+      headerPageId= get_file_entry(filename);   
       
       headerPage= new  LabelBTreeHeaderPage( headerPageId);       
       dbname = new String(filename);

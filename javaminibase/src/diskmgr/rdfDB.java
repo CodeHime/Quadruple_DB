@@ -330,8 +330,8 @@ public class rdfDB extends DB {
                 byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
 
                 if ( Arrays.equals(oldBytes, newBytes)){
-                    double new_confidence = Convert.getFloValue(24, quadruplePtr);
-                    double old_confidence = Convert.getFloValue(24, oldQuad.getQuadrupleByteArray());
+                    double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
+                    double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
     
                     if (new_confidence > old_confidence){
                         Quadruple newQuad = new Quadruple(quadruplePtr, 0);

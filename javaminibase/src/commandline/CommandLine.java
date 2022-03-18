@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.io.FileWriter;
 
 import diskmgr.DiskMgrException;
 import diskmgr.FileIOException;
@@ -17,23 +18,22 @@ import diskmgr.rdfDB;
 import global.Convert;
 import global.EID;
 import global.PID;
-import global.QID;
 
 public class CommandLine {
 
 	public static void query(String options[]) {
 		System.out.println("query");
 
-		String dbname = options[0] + "_" + options[1];
-		rdfDB database = rdfDB.getInstance();
-		database.openDB(dbname);
+		// String dbname = options[0] + "_" + options[1];
+		// rdfDB database = rdfDB.getInstance();
+		// database.openrdfDB(dbname, type);
 
 
-		Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], Double.parseDouble(options[6]));
+		// Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], Double.parseDouble(options[6]));
 
-		for (QID qid = stream.getNext(); qid != null; qid = stream.getNext()) {
+		// for (QID qid = stream.getNext(); qid != null; qid = stream.getNext()) {
 
-		}
+		// }
 
 	}
 
@@ -44,7 +44,8 @@ public class CommandLine {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
 			rdfDB database = rdfDB.getInstance();
-			database.openDB(dbname);
+			int type = Integer.parseInt(options[1]);
+			database.openrdfDB(dbname, type);
 
 
 			Scanner scanner = new Scanner(f);

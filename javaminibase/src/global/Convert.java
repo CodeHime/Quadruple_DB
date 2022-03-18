@@ -65,6 +65,27 @@ public class Convert{
       return value;
     }
   
+    public static double getDoubleValue (int position, byte []data)
+    throws java.io.IOException
+    {
+      InputStream in;
+      DataInputStream instr;
+      double value;
+      byte tmp[] = new byte[8];
+      
+      // copy the value from data array out to a tmp byte array
+      System.arraycopy (data, position, tmp, 0, 8);
+      
+      /* creates a new data input stream to read data from the
+       * specified input stream
+       */
+      in = new ByteArrayInputStream(tmp);
+      instr = new DataInputStream(in);
+      value = instr.readDouble();  
+      
+      return value;
+    }
+
   
   /**
    * read 2 bytes from given byte array at the specified position

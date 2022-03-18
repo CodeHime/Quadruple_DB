@@ -36,12 +36,7 @@ Steps:
 				- else no record found
 		
 	- sort the values and store them for iteration
-3. Iterate over indexes (getNext)
-	- No index => return result from full scan 
-	OR
-	- If next sorted tuple exists, get Labels for subject, object and predicates, compare the labels and return triple if filters match
-		- If use_index=false, return first triple
-		- else if nextQID exists, return the next match 
+3. Iterate over indexes (getNext from qsort or tscan)
 4. Close stream
 	- delete all index files
 	- close scan
@@ -385,13 +380,22 @@ public class Stream implements GlobalConst{
     /** Closes the Stream object */
     public void closestream()
     {
-	if(qsort!=null){
-	    qsort.close();
-	}
+	try{
+	    if(qsort!=null){
+		qsort.close();
+	    }
+	    
+	    if(quadover!= null){
+		quadover.closescan();
+	    }
 
-	if(_results!=null && _results!=_rdfdb.getQuadHeapFile()){
-	    _results.deleteFile();
+	    if(_results!=null && _results!=_rdfdb.getQuadHeapFile()){
+		_results.deleteFile();
+	    }
+	}catch(Exception e){
+	    System.out.println("Error in closing Stream");
 	}
+	
 	
     }
    

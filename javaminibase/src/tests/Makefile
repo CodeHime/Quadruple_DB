@@ -1,5 +1,5 @@
 # modify the paths appropriately
-JDKPATH = /usr/lib/jvm/java-1.11.0-openjdk-armhf
+JDKPATH = /usr/lib/jvm/jdk-17.0.2/
 LIBPATH = .:..
 CLASSPATH = $(LIBPATH)
 BINPATH = $(JDKPATH)/bin

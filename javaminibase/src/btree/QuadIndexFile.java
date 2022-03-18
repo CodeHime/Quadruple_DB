@@ -7,6 +7,7 @@ import global.*;
 
 /**
  * Contains the enumerated types of state of the scan
+* Commented out, it is already defined in QuadIndexFile.java
  */
 class ScanState 
 {

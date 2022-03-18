@@ -57,9 +57,12 @@ public class CommandLine {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 
-				String parts[] = line.replace('\t', ':').replaceAll(" ", "").split(":");
+				// String parts[] = line.replace('\t', ':').replaceAll(" ", "").split(":");
 
+				// :Jorunn_Danielsen :knows :Eirik_Newth		0.5232176791516268
+				String parts[] = {"Jorunn", "knows", "Eirik_Newth", "0.5232176791516268"};
 				byte quad[] = new byte[32];
+
 				EID subjectid = database.insertEntity(parts[0]);
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
 				Convert.setIntValue(subjectid.slotNo, 4, quad);
@@ -74,6 +77,7 @@ public class CommandLine {
 
 				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
 				database.insertQuadruple(quad);
+				break; // TODO DELETE THIS
 			}
 			// databases.put(dbname,database);
 

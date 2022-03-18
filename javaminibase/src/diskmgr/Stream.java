@@ -61,10 +61,8 @@ Steps:
  /* Changes
   * HeapFile-> QuadrupleHeapfile ->rdfDB
   * RID->QID
-  * HFPage->THFPage
   * Scan->Stream
   * Tuple->Quadruple
-  * dirPageId.PageID -> dirPageId.pageno
   */
 public class Stream implements GlobalConst{
  
@@ -95,33 +93,8 @@ public class Stream implements GlobalConst{
     QuadrupleHeapfile _results = null;
     TScan quadover=null;
     
-    //
     boolean use_index=true;
-
-    /** PageId of current directory page (which is itself an THFPage) */
-    private PageId dirpageId = new PageId();
-
-    /** pointer to in-core data of dirpageId (page is pinned) */
-    private THFPage dirpage = new THFPage();
-
-    /** record ID of the DataPageInfo struct (in the directory page) which
-     * describes the data page where our current record lives.
-     */
-    private QID datapageQid = new QID();
-
-    /** the actual PageId of the data page with the current record */
-    private PageId datapageId = new PageId();
-
-    /** in-core copy (pinned) of the same */
-    private THFPage datapage = new THFPage();
-
-    /** record ID of the current record (from the current data page) */
-    private QID userqid = new QID();
-
-    /** Status of next user status */
-    private boolean nextUserStatus;
     
-     
     /** The constructor pins the first directory page in the file
      * and initializes its private data members from the private
      * data member from hf
@@ -406,16 +379,12 @@ public class Stream implements GlobalConst{
 	_predicateFilter=predicateFilter;
 	_objectFilter=objectFilter;
 	_confidenceFilter=confidenceFilter;
-
-    	firstDataPage();
   }
 
 
     /** Closes the Stream object */
     public void closestream()
     {
-    	reset();
-	
 	if(qsort!=null){
 	    qsort.close();
 	}
@@ -426,34 +395,4 @@ public class Stream implements GlobalConst{
 	
     }
    
-
-    /** Reset everything and unpin all pages. */
-    private void reset()
-    {
-	if (datapage != null) {
-
-	    try{
-		unpinPage(datapageId, false);
-	    }
-	    catch (Exception e){
-		// 	System.err.println("STREAM: Error in Stream" + e);
-		e.printStackTrace();
-	    }  
-	}
-	datapageId.pid = 0;
-	datapage = null;
-
-	if (dirpage != null) {
-
-	    try{
-		unpinPage(dirpageId, false);
-	    }
-	    catch (Exception e){
-		//     System.err.println("STREAM: Error in Stream: " + e);
-		e.printStackTrace();
-	    }
-	}
-	dirpage = null;
-	nextUserStatus = true;
-  }
 }

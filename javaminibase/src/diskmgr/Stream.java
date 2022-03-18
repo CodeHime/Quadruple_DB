@@ -11,6 +11,44 @@ import global.*;
 import bufmgr.*;
 import diskmgr.*;
 
+/*
+Steps:
+1. Initialize Stream values
+	- get null filters
+	- set filter values
+	- check if index chosen and filter do not conflict
+		- if conflict, run command to create a normal full scan
+		- if no conflict, run command to create btree index
+2. Create indexes
+	- Get EID: From BTree, scan the indexes and get the value that matches filter string and return the LID for that
+	- Get PID: From BTree, scan the indexes and get the value that matches filter string and return the LID for that
+	- ScanBTReeIndex: 
+		- Fetch all matching subject EID 
+			- if subject filter is not null, match
+			- else take all
+		- Fetch all matching predicate PIDs 
+		- Fetch all matching object EIDs
+		- create a key with them and set lower and upper key with this value (In exact match lower_key=upper_key=key)
+		- Get handle to heapfiles having the values
+		- Start a new scan and compare the keys until match is found
+			- Check confidence for threshold
+				- If record satisfies conditions, insert record into results to return
+				- else no record found
+		
+	- sort the values and store them for iteration
+3. Iterate over indexes (getNext)
+	- No index => return result from full scan 
+	OR
+	- If next sorted tuple exists, get Labels for subject, object and predicates, compare the labels and return triple if filters match
+		- If use_index=false, return first triple
+		- else if nextQID exists, return the next match 
+4. Close stream
+	- delete all index files
+	- close scan
+	- close sorting method
+	
+
+*/
 
 /**	
  * A Stream object is created ONLY through the function openStream
@@ -95,13 +133,14 @@ public class Stream implements GlobalConst{
     throws InvalidTupleSizeException,
 	   IOException
   {
+	// set null filters and filter values
 	init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 	//Scan file using index
 	if(!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter &!_confidenceNullFilter)
 	{
-	    ScanBTreeIndex()
-	    // No nulls so we can perform a filter on all columns in the full btree
+	    // No nulls so we can perform a filter on all columns in the full btree 
 	    scan_on_btree = true;
+	    ScanBTreeIndex()
 	}
 	else
 	{
@@ -109,7 +148,7 @@ public class Stream implements GlobalConst{
 	    {
 		use_index=true;
 		//TODO:
-		ScanBTIndex();
+		ScanBTreeIndex();
 	    }
 	    else{
 		// None of the above options were selected or the index cannot be created for the given filter as one of the column values used in the index is null
@@ -152,6 +191,154 @@ public class Stream implements GlobalConst{
 	else {
 	    return false;
 	}
+    }
+    
+    public static LID getEID(String EntityLabel){
+	LID eid=null;
+	LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
+	
+	KeyClass eid_key=new StringKey(EntityLabel);
+	
+	KeyDataEntry entry = null;
+	
+	try{
+	    LabelBTFileScan scan = entityBTFile.new_scan(eid_key, eid_key);
+	    KeyDataEntry entry = scan.get_next();
+	    // entry is not already in btree
+            if(entry == null){
+                System.out.println("No EID for given filter found.");
+            }
+            // entry already exists, return existing EID
+            else{
+                eid = ((LabelLeafData)entry.data).getData().returnEID();
+            }
+            scan.DestroyBTreeFileScan();
+            entityBTFile.close();
+	}
+	catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+            Runtime.getRuntime().exit(1);
+	}
+	return eid;
+    }
+    
+    public static LID getPID(String PredicateLabel){
+	LID pid=null;
+	LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
+	
+	KeyClass pid_key=new StringKey(PredicateLabel);
+	
+	KeyDataEntry entry = null;
+	
+	try{
+	    LabelBTFileScan scan = predBTFile.new_scan(pid_key, pid_key);
+	    KeyDataEntry entry = scan.get_next();
+	    // entry is not already in btree
+            if(entry == null){
+                System.out.println("No PID for given filter found.");
+            }
+            // entry already exists, return existing EID
+            else{
+                pid = ((LabelLeafData)entry.data).getData().returnPID();
+            }
+            scan.DestroyBTreeFileScan();
+            predBTFile.close();
+	}
+	catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+            Runtime.getRuntime().exit(1);
+	}
+	return pid;
+    }
+    
+    public boolean ScanBTreeIndex(){
+	if(indexValidForStream())
+	{
+	    QID qid = null;
+	    try {
+	      QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
+	      
+	      //TODO: get how to get QuadPtr or how to make key
+	      LID subjectid= getEID(_subjectFilter);
+	      LID predicateid= getPID(_predicateFilter);
+	      LID objectid= getEID(_objectFilter);
+	      
+	      byte quadruplePtr[] = new byte[28];
+	      Convert.setIntValue(subjectid.pageNo.pid,0,quadruplePtr);
+	      Convert.setIntValue(subjectid.slotNo,4,quadruplePtr);
+	      Convert.setIntValue(predicateid.pageNo.pid,8,quadruplePtr);
+	      Convert.setIntValue(predicateid.slotNo,12,quadruplePtr);
+	      Convert.setIntValue(objectid.pageNo.pid,16,quadruplePtr);
+	      Convert.setIntValue(objectid.slotNo,20,quadruplePtr);
+	      Convert.setDoubleValue(Convert.getDoubleValue(_confidenceFilter, 24, quadruplePtr)); 
+
+	      KeyClass key = getStringKey(quadruplePtr);
+	      
+	      QuadBTFileScan scan = quadBTFile.new_scan(key, key);
+	      KeyDataEntry entry = scan.get_next();
+
+	      // The quadruple is not already in the btree, return false
+	      if(entry == null)
+	      {
+		  System.out.println("No match found");
+		  return false;
+	      }
+	      // btree found a match
+	      else{
+		while(entry != null) {
+		    boolean entryMatch = true;
+		    // get qid of given entry
+		    qid = ((QuadLeafData)entry.data).getData();
+		    Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
+		    byte[] oldQuad = quad_heap_file.getQuadruple(qid).getQuadrupleByteArray();
+
+		    // compare subject, predicate, object of the quadruple. These are the first 24 bytes
+		    if(!_subjectNullFilter)
+		    {
+			if(Arrays.equals(Convert.getIntValue(0, quadruplePtr), Convert.getIntValue(0, oldQuad.getQuadrupleByteArray())))
+			{
+			    
+			}
+		    }
+		    
+		    byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
+		    byte[] filterBytes = getFirstNBytes(quadruplePtr, 24);
+
+		    if ( Arrays.equals(oldBytes, newBytes)){
+			// TODO: convert into double instead from Jack's branch
+			// DESIGN DECISION: Confidence is updatable SO to decrease #of sorts needed to be done and unreliable Indexes
+			double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
+			double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
+	
+			if (new_confidence > old_confidence){
+			    Quadruple newQuad = new Quadruple(quadruplePtr, 0);
+			    quad_heap_file.updateQuadruple(qid, newQuad);
+			}
+		    }
+		    entry = scan.get_next();
+		}
+	      }
+
+	      scan.DestroyBTreeFileScan();
+	      quadBTFile.close();
+	    }
+	    catch(Exception e) {
+		System.err.println(e);
+		e.printStackTrace();
+		Runtime.getRuntime().exit(1);
+	    }
+
+	    return qid;
+	}
+	else
+	{
+	    
+	}
+    
+	
+	
     }
   /** Retrieve the next record in a sequential Stream
    *

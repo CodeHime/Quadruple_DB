@@ -76,8 +76,16 @@ public abstract class pnodePQ
    */
   public int pnodeCMP(pnode a, pnode b) 
          throws IOException, UnknowAttrType, TupleUtilsException {
-    int ans = QuadrupleUtils.compareQuadrupleWithQuadruple(a.tuple, b.tuple, fld_no);
-    return ans;
+        int ans = 0;
+        try{
+          ans = QuadrupleUtils.compareQuadrupleWithQuadruple(a.tuple, b.tuple, fld_no);
+        }catch(Exception e)
+        {
+          System.err.println(e);
+          e.printStackTrace();
+          Runtime.getRuntime().exit(1);
+        }
+      return ans;
   }
 
   /**

@@ -18,6 +18,7 @@ import diskmgr.rdfDB;
 import global.Convert;
 import global.EID;
 import global.PID;
+import global.SystemDefs;
 
 public class CommandLine {
 
@@ -41,6 +42,7 @@ public class CommandLine {
 		System.out.println("batch");
 
 		try {
+			SystemDefs sysdef = new SystemDefs("firstDBName", 1000, 1000, "Clock" );
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
 			rdfDB database = rdfDB.getInstance();
@@ -89,7 +91,7 @@ public class CommandLine {
 	
 	try {
 		FileWriter fw;
-		String input = in.readLine();
+	   String input =  "batchinsert phase2_test_data.txt 0 firstDBName"; //in.readLine();
 	   String parsed[] = input.split(" ");
 	   PCounter.initialize();
 	   
@@ -134,6 +136,7 @@ public class CommandLine {
   }
 
 	public static void main(String[] argvs) throws InvalidPageNumberException, FileIOException, DiskMgrException {
+		System.out.println("Hello, It's working");
 		getInput();
 	}
 }

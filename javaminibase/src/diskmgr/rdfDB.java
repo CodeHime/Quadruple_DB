@@ -15,6 +15,7 @@ import quadrupleheap.*;
 
 public class rdfDB extends DB {
 
+    private static rdfDB rdfdb;
     private LabelHeapfile entity_heap_file; 
     private LabelHeapfile predicate_heap_file;
     private QuadrupleHeapfile quad_heap_file;
@@ -28,12 +29,21 @@ public class rdfDB extends DB {
     public String getName() { return rdfDB_name;}
     public int getIndexOption() { return indexOption; }
 
-    public rdfDB() {}
+    private rdfDB() {}
+
+    public static rdfDB getInstance( ) {
+      if (rdfdb == null) {
+        rdfdb = new rdfDB();
+      } 
+
+      return rdfdb;
+    }
 
     public void openrdfDB(String name, int type) {
         rdfDB_name = name + "_" + Integer.toString(type);
         try {
             openDB(name);
+            
             createRDFDB(type);
         }
         catch(Exception e) {

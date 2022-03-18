@@ -27,6 +27,11 @@ public class rdfDB extends DB {
     public LabelHeapfile getEntityHeapFile() { return entity_heap_file; }
     public LabelHeapfile getPredicateHeapFile() { return predicate_heap_file; }
     public QuadrupleHeapfile getQuadHeapFile() { return quad_heap_file; }
+    
+    public QuadBTreeFile getQuadBTreeFile(){return quadBT;}
+    public LabelBTreeFile getLabelBTreeFile(){return predBT;}
+    public LabelBTreeFile getLabelBTreeFile(){return entityBT;}
+    
     public String getName() { return rdfDB_name;}
     public int getIndexOption() { return indexOption; }
 
@@ -462,8 +467,16 @@ public class rdfDB extends DB {
 
                 }
                 default:{
-                    System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
-                    Runtime.getRuntime().exit(1); 
+                    System.out.println("Default index");
+                    LID lid = newQuad.getPredicateID().returnLID();
+                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getSubjectQid().returnLID();
+                    String subject = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getObjectQid().returnLID();
+                    String object = entity_heap_file.getLabel(lid).getLabel();
+                    key = new StringKey(subject + pred + object);
+                    //System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
+                    //Runtime.getRuntime().exit(1); 
                 }
             }
           }

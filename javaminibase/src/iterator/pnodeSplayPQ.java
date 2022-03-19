@@ -28,7 +28,8 @@ public class pnodeSplayPQ extends pnodePQ
   {
     root = null;
     count = 0;
-    fld_no = 0;
+    fld_no = new int[4];
+
     sort_order = new QuadrupleOrder(QuadrupleOrder.Ascending);
   }
 
@@ -38,7 +39,7 @@ public class pnodeSplayPQ extends pnodePQ
    * @param fldType the type of the field for sorting
    * @param order   the order of sorting (Ascending or Descending)
    */  
-  public pnodeSplayPQ(int fldNo, QuadrupleOrder order)
+  public pnodeSplayPQ(int[] fldNo, QuadrupleOrder order)
   {
     root = null;
     count = 0;

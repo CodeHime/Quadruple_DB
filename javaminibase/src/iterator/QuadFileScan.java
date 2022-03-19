@@ -146,6 +146,7 @@ public class FileScan extends  Iterator
    */
   public void close() 
     {
+     
       if (!closeFlag) {
 	scan.closescan();
 	closeFlag = true;
@@ -153,4 +154,5 @@ public class FileScan extends  Iterator
     }
   
 }
+
 

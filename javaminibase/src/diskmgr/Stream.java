@@ -13,6 +13,8 @@ import heap.HFBufMgrException;
 import heap.HFDiskMgrException;
 import heap.HFException;
 import heap.InvalidTupleSizeException;
+import iterator.QuadFileScan;
+import iterator.Sort;
 import quadrupleheap.Quadruple;
 import quadrupleheap.QuadrupleHeapfile;
 import quadrupleheap.TScan;
@@ -97,7 +99,7 @@ public class Stream implements GlobalConst {
 	EID _objectID = new EID();
 
 	int SORT_Q_NUM_PAGES = 16;
-	// QuadrupleSort qsort = null;
+	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
 	public TScan quadover = null;
 
@@ -138,15 +140,18 @@ public class Stream implements GlobalConst {
 			// Sort results
 			// TODO: set class name and define instance
 			// SORT: don't forget a default case ASK TANNER
-			quadover = new TScan(_results);
-			QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType);
-			// try{
-			// qsort = new QuadrupleSort(quadover, quadrupleOrder, SORT_Q_NUM_PAGES);
-			// }
-			// catch (Exception e)
-			// {
-			// e.printStacktrace();
-			// }
+			//quadover = new TScan(_results);
+			try{
+				QuadFileScan qfs = new QuadFileScan(_results);
+				//0 means Ascending
+				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType,0);
+			
+				qsort = new Sort(qfs, quadrupleOrder,  SORT_Q_NUM_PAGES);
+			}
+			catch (Exception e)
+			{
+			e.printStackTrace();
+			}
 		}
 	}
 

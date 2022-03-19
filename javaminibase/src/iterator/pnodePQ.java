@@ -17,7 +17,7 @@ public abstract class pnodePQ
   protected int                   count;
 
   /** the field number of the sorting field */
-  protected int                   fld_no;
+  protected int[]                   fld_no;
 
   /** the attribute type of the sorting field */
   protected AttrType              fld_type;
@@ -78,7 +78,7 @@ public abstract class pnodePQ
          throws IOException, UnknowAttrType, TupleUtilsException {
         int ans = 0;
         try{
-          ans = QuadrupleUtils.compareQuadrupleWithQuadruple(a.tuple, b.tuple, fld_no);
+          ans = QuadrupleUtils.compareQuadrupleWithQuadruple(a.tuple, b.tuple, fld_no,0);
         }catch(Exception e)
         {
           System.err.println(e);

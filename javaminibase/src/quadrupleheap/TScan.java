@@ -602,7 +602,8 @@ public class TScan implements GlobalConst{
   /** Move to the next record in a sequential scan.
    * Also returns the QID of the (new) current record.
    */
-  private boolean mvNext(QID qid) 
+  //CHANGE: private
+  public boolean mvNext(QID qid) 
     throws InvalidTupleSizeException,
 	   IOException
   {

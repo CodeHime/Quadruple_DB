@@ -47,11 +47,9 @@ public class DuplElim extends IteratorQ
       
       Jtuple =  new Quadruple();
       
-	
-     
-      
       _am = am;
-      QuadrupleOrder order = new QuadrupleOrder(QuadrupleOrder.Ascending);
+      //CHANGE
+      TupleOrder order = new TupleOrder(TupleOrder.Ascending);
       if (!inp_sorted)
 	{
 	  // try {

@@ -55,7 +55,7 @@ public class rdfDB extends DB {
     }
 
     public void openrdfDB(String name, int pages, int type) {
-        rdfDB_name = name;
+        rdfDB_name = name + "_" + Integer.toString(type);
         try {
             openDB(name, pages);
             createRDFDB(type);

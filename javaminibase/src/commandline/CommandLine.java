@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.io.FileWriter;
@@ -17,7 +18,18 @@ import diskmgr.rdfDB;
 import global.Convert;
 import global.EID;
 import global.PID;
+import global.QID;
 import global.SystemDefs;
+import heap.HFBufMgrException;
+import heap.HFDiskMgrException;
+import heap.HFException;
+import heap.InvalidSlotNumberException;
+import heap.InvalidTupleSizeException;
+import quadrupleheap.*;
+import quadrupleheap.Quadruple;
+import quadrupleheap.QuadrupleHeapfile;
+
+import java.io.FileInputStream;
 
 public class CommandLine {
 
@@ -53,7 +65,7 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 1000 + 20, 1000, "Clock");
+			SystemDefs sysdef = new SystemDefs(dbname, 10 + 20, 10, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			System.out.println("rdfdb instance got");
 			int type = Integer.parseInt(options[1]);
@@ -87,11 +99,36 @@ public class CommandLine {
 				Convert.setIntValue(objectid.slotNo, 20, quad);
 
 				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
-				database.insertQuadruple(quad);
+				QID qid = database.insertQuadruple(quad);
 				
-				// break; // TODO DELETE THIS
+				System.out.println(Arrays.toString(quad));
+				System.out.println(qid.pageNo.pid);
+				System.out.println(qid.slotNo);
 			}
 			// databases.put(dbname,database);
+
+			int labelCnt = database.getEntityCnt();
+			int subCnt = database.getSubjectCnt();
+			int predCnt = database.getPredicateCnt();
+			int objCnt = database.getObjectCnt();
+			int quadCnt = database.getQuadrupleCnt();
+
+			System.out.print("Label Count:");
+			System.out.println(labelCnt);
+
+			System.out.print("Subject Count:");
+			System.out.println(subCnt);
+
+			System.out.print("Predicate Count:");
+			System.out.println(predCnt);
+
+			System.out.print("Object Count:");
+			System.out.println(objCnt);
+
+			System.out.print("Quadruple Count:");
+			System.out.println(quadCnt);
+
+
 
 			scanner.close();
 		} catch (FileNotFoundException e) {

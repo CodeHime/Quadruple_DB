@@ -180,7 +180,7 @@ public class Stream implements GlobalConst {
 		LabelBTreeFile entityBTFile;
 
 		try {
-			entityBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name + Integer.toString(_orderType) + "EntityBT");
+			entityBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name +  Integer.toString(rdfDB.getInstance().indexOption) + "EntityBT");
 			KeyClass eid_key = new StringKey(EntityLabel);
 	
 			KeyDataEntry entry = null;
@@ -210,7 +210,7 @@ public class Stream implements GlobalConst {
 		LabelBTreeFile predBTFile;
 
 		try {
-			predBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name + Integer.toString(_orderType) + "PredBT");
+			predBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name + Integer.toString(rdfDB.getInstance().indexOption) + "PredBT");
 			KeyClass pid_key = new StringKey(PredicateLabel);
 
 			KeyDataEntry entry = null;
@@ -250,7 +250,8 @@ public class Stream implements GlobalConst {
 	}
     
 	try {
-	  QuadBTreeFile quadBTFile = _rdfdb.getQuadBTreeFile();
+		QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB.getInstance().rdfDB_name  +  Integer.toString(rdfDB.getInstance().indexOption) + "QuadBT");
+            
 	  QuadrupleHeapfile quad_heap_file = _rdfdb.getQuadHeapFile();
 	  //LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
 	  //LabelHeapfile entity_heap_file = _rdfdb.getEntityHeapFile();

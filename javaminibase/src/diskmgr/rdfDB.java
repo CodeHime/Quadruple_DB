@@ -2,24 +2,22 @@
 
 package diskmgr;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 import btree.*;
-import bufmgr.*;
 import global.*;
 import labelheap.*;
 import quadrupleheap.*;
 
 public class rdfDB extends DB {
 
+    private static rdfDB rdfdb;
     private LabelHeapfile entity_heap_file; 
     private LabelHeapfile predicate_heap_file;
     private QuadrupleHeapfile quad_heap_file;
     
-    private String rdfDB_name;
+    public String rdfDB_name;
     private int indexOption;
     
     QuadBTreeFile quadBT;
@@ -31,22 +29,28 @@ public class rdfDB extends DB {
     public QuadrupleHeapfile getQuadHeapFile() { return quad_heap_file; }
     
     public QuadBTreeFile getQuadBTreeFile(){return quadBT;}
-    public LabelBTreeFile getLabelBTreeFile(){return predBT;}
-    public LabelBTreeFile getLabelBTreeFile(){return entityBT;}
-    
+    public LabelBTreeFile getPredicateBTreeFile(){return predBT;}
+    public LabelBTreeFile getEntityBTreeFile(){return entityBT;}
+
     public String getName() { return rdfDB_name;}
     public int getIndexOption() { return indexOption; }
 
-    public rdfDB() {}
-    
-    public rdfDB(int type) {
-        createRDFDB(type);
+
+    private rdfDB() {}
+
+    public static rdfDB getInstance( ) {
+      if (rdfdb == null) {
+        rdfdb = new rdfDB();
+      } 
+
+      return rdfdb;
     }
 
     public void openrdfDB(String name, int type) {
         rdfDB_name = name + "_" + Integer.toString(type);
         try {
             openDB(name);
+            
             createRDFDB(type);
         }
         catch(Exception e) {
@@ -401,17 +405,17 @@ public class rdfDB extends DB {
 
     }
 
-    // public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, double confidenceFilter){
-    //     Stream stream = null;
-    //     try{
-    //         stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
-    //     }
-    //     catch(Exception e){
-    //         System.err.println(e);
-    //         e.printStackTrace();
-    //     }
-    //     return stream;
-    // }
+    public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, String confidenceFilter){
+        Stream stream = null;
+        try{
+            stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+        }
+        catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+        }
+        return stream;
+    }
 
     // helper method to get the first n(exclusive) bytes from an array
     private byte[] getFirstNBytes(byte[] input, int n) {
@@ -423,7 +427,7 @@ public class rdfDB extends DB {
     }
 
     // gets the key based on the indexing scheme determined when the file was opened
-    private KeyClass getStringKey(byte[] quadruplePtr) {
+    public KeyClass getStringKey(byte[] quadruplePtr) {
         KeyClass key = null;
         try{
             Quadruple newQuad = new Quadruple(quadruplePtr, 0);

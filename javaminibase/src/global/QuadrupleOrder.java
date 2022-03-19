@@ -33,12 +33,12 @@ public class QuadrupleOrder {
    */
 
   public QuadrupleOrder (int _quadupleOrder) {
-    quadupleOrder = _quadupleOrder;
+
+    this._quadupleOrder = _quadupleOrder;
   }
 
   public String toString() {
-    
-    switch (_quadupleOrder) {
+    switch (this._quadupleOrder) {
     case SubjectPredicateObjectConfidence:
       return "SubjectPredicateObjectConfidence";
     case PredicateSubjectObjectConfidence:
@@ -54,7 +54,8 @@ public class QuadrupleOrder {
     case Random:
       return "Random";
     }
-    return ("Unexpected QuadrupleOrder " + _quadupleOrder);
+
+    return ("Unexpected TupleOrder " + this._quadupleOrder);
   }
 
 }

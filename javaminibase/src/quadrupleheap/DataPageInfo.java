@@ -59,7 +59,7 @@ class DataPageInfo implements GlobalConst{
   /** Constructor 
    * @param array  a byte array
    */
-  public void QuadDataPageInfo(byte[] array)
+  public DataPageInfo(byte[] array)
   {
     data = array;
     offset = 0;

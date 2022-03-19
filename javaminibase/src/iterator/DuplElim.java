@@ -54,12 +54,12 @@ public class DuplElim extends IteratorQ
       QuadrupleOrder order = new QuadrupleOrder(QuadrupleOrder.Ascending);
       if (!inp_sorted)
 	{
-	  try {
-	    _am = new Sort(am, 1, order, amt_of_mem);
-	  }catch(SortException e){
-	    e.printStackTrace();
-	    throw new DuplElimException(e, "SortException is caught by DuplElim.java");
-	  }
+	  // try {
+	  //   _am = new Sort(am, 1, order, amt_of_mem);
+	  // }catch(SortException e){
+	  //   e.printStackTrace();
+	  //   throw new DuplElimException(e, "SortException is caught by DuplElim.java");
+	  // }
 	}
 
       // Allocate memory for the temporary tuples

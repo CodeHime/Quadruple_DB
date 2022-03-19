@@ -1,3 +1,5 @@
+// jar file 
+// ./gradlew build 
 package commandline;
 
 
@@ -14,6 +16,7 @@ import diskmgr.DiskMgrException;
 import diskmgr.FileIOException;
 import diskmgr.InvalidPageNumberException;
 import diskmgr.PCounter;
+import diskmgr.Stream;
 import diskmgr.rdfDB;
 import global.Convert;
 import global.EID;
@@ -24,15 +27,16 @@ public class CommandLine {
 	public static void query(String options[]) {
 		System.out.println("query");
 
-		// String dbname = options[0] + "_" + options[1];
-		// rdfDB database = rdfDB.getInstance();
-		// database.openrdfDB(dbname, type);
+		String dbname = options[0] + "_" + options[1];
+		rdfDB database = rdfDB.getInstance();
+		int type = Integer.parseInt(options[1]);
+		database.openrdfDB(dbname, type);
 
 
-		// Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], Double.parseDouble(options[6]));
+		Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], options[6]);
 
 		// for (QID qid = stream.getNext(); qid != null; qid = stream.getNext()) {
-
+			
 		// }
 
 	}

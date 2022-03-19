@@ -46,6 +46,7 @@ public class QuadrupleUtils {
     public static int compareQuadrupleWithQuadruple(Quadruple q1, Quadruple q2, int quadrupleFldNo[], int index)
             throws InvalidSlotNumberException, InvalidLabelSizeException, HFException, HFDiskMgrException,
             HFBufMgrException, Exception {
+
         int comapred = -1;
         LabelHeapfile labelHeapfile;
         switch (quadrupleFldNo[index]) {

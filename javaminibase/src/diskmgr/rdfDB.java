@@ -2,13 +2,10 @@
 
 package diskmgr;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 import btree.*;
-import bufmgr.*;
 import global.*;
 import labelheap.*;
 import quadrupleheap.*;
@@ -20,14 +17,24 @@ public class rdfDB extends DB {
     private LabelHeapfile predicate_heap_file;
     private QuadrupleHeapfile quad_heap_file;
     
-    private String rdfDB_name;
+    public String rdfDB_name;
     private int indexOption;
+    
+    QuadBTreeFile quadBT;
+    LabelBTreeFile predBT;
+    LabelBTreeFile entityBT;
 
     public LabelHeapfile getEntityHeapFile() { return entity_heap_file; }
     public LabelHeapfile getPredicateHeapFile() { return predicate_heap_file; }
     public QuadrupleHeapfile getQuadHeapFile() { return quad_heap_file; }
+    
+    public QuadBTreeFile getQuadBTreeFile(){return quadBT;}
+    public LabelBTreeFile getPredicateBTreeFile(){return predBT;}
+    public LabelBTreeFile getEntityBTreeFile(){return entityBT;}
+
     public String getName() { return rdfDB_name;}
     public int getIndexOption() { return indexOption; }
+
 
     private rdfDB() {}
 
@@ -80,9 +87,9 @@ public class rdfDB extends DB {
             predicate_heap_file = new LabelHeapfile(rdfDB_name + Integer.toString(indexOption) + "PredHF");
             entity_heap_file = new LabelHeapfile(rdfDB_name + Integer.toString(indexOption) + "EntityHF");
 
-            QuadBTreeFile quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "Integer.toString(indexOption) + EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
+            predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
+            entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
 
         }
         catch(Exception e) {
@@ -316,6 +323,7 @@ public class rdfDB extends DB {
 
         QID qid = null;
         try {
+          //LOOKUP
           QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
           KeyClass key = getStringKey(quadruplePtr);
           
@@ -397,17 +405,17 @@ public class rdfDB extends DB {
 
     }
 
-    // public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, double confidenceFilter){
-    //     Stream stream = null;
-    //     try{
-    //         stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
-    //     }
-    //     catch(Exception e){
-    //         System.err.println(e);
-    //         e.printStackTrace();
-    //     }
-    //     return stream;
-    // }
+    public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, String confidenceFilter){
+        Stream stream = null;
+        try{
+            stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+        }
+        catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+        }
+        return stream;
+    }
 
     // helper method to get the first n(exclusive) bytes from an array
     private byte[] getFirstNBytes(byte[] input, int n) {
@@ -419,7 +427,7 @@ public class rdfDB extends DB {
     }
 
     // gets the key based on the indexing scheme determined when the file was opened
-    private KeyClass getStringKey(byte[] quadruplePtr) {
+    public KeyClass getStringKey(byte[] quadruplePtr) {
         KeyClass key = null;
         try{
             Quadruple newQuad = new Quadruple(quadruplePtr, 0);
@@ -460,8 +468,16 @@ public class rdfDB extends DB {
 
                 }
                 default:{
-                    System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
-                    Runtime.getRuntime().exit(1); 
+                    System.out.println("Default index");
+                    LID lid = newQuad.getPredicateID().returnLID();
+                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getSubjectQid().returnLID();
+                    String subject = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getObjectQid().returnLID();
+                    String object = entity_heap_file.getLabel(lid).getLabel();
+                    key = new StringKey(subject + pred + object);
+                    //System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
+                    //Runtime.getRuntime().exit(1); 
                 }
             }
           }

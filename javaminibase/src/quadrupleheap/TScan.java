@@ -49,7 +49,7 @@ public class TScan implements GlobalConst{
     private PageId datapageId = new PageId();
 
     /** in-core copy (pinned) of the same */
-    private THFPage datapage = new THFPage();
+    THFPage datapage = new THFPage();
 
     /** record ID of the current record (from the current data page) */
     private QID userqid = new QID();
@@ -206,6 +206,15 @@ public class TScan implements GlobalConst{
     	reset();
     }
    
+    public QID get_firstQID(){
+      try {
+        return datapage.firstQuadruple();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      return null;
+    }
 
     /** Reset everything and unpin all pages. */
     private void reset()

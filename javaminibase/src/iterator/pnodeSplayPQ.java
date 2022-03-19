@@ -30,7 +30,7 @@ public class pnodeSplayPQ extends pnodePQ
     count = 0;
     fld_no = new int[4];
 
-    sort_order = new QuadrupleOrder(QuadrupleOrder.Ascending);
+    sort_order = new QuadrupleOrder(QuadrupleOrder.Ascending,QuadrupleOrder.SubjectPredicateObjectConfidence);
   }
 
   /**
@@ -74,7 +74,7 @@ public class pnodeSplayPQ extends pnodePQ
     boolean done = false;
 
     while (!done) {
-      if ((sort_order.quadrupleOrder == QuadrupleOrder.Ascending && comp >= 0) || (sort_order.quadrupleOrder == QuadrupleOrder.Descending && comp <= 0)) {
+      if ((sort_order._quadrupleOrder == QuadrupleOrder.Ascending && comp >= 0) || (sort_order._quadrupleOrder == QuadrupleOrder.Descending && comp <= 0)) {
 	pnodeSplayNode tr = t.rt;
 	if (tr == null) {
 	  tr = newnode;
@@ -83,7 +83,7 @@ public class pnodeSplayPQ extends pnodePQ
 	}
 	else comp = pnodeCMP(item, tr.item);
 	
-	if ((sort_order.quadrupleOrder == QuadrupleOrder.Ascending && comp <= 0) ||(sort_order.quadrupleOrder == QuadrupleOrder.Descending && comp >= 0))  {
+	if ((sort_order._quadrupleOrder == QuadrupleOrder.Ascending && comp <= 0) ||(sort_order._quadrupleOrder == QuadrupleOrder.Descending && comp >= 0))  {
 	  l.rt = t; t.par = l;
 	  l = t;
 	  t = tr;
@@ -113,7 +113,7 @@ public class pnodeSplayPQ extends pnodePQ
 	}
 	else comp = pnodeCMP(item, tl.item);
 	
-	if ((sort_order.quadrupleOrder == QuadrupleOrder.Ascending && comp >= 0) || (sort_order.quadrupleOrder == QuadrupleOrder.Descending && comp <= 0)) {
+	if ((sort_order._quadrupleOrder == QuadrupleOrder.Ascending && comp >= 0) || (sort_order._quadrupleOrder == QuadrupleOrder.Descending && comp <= 0)) {
 	  r.lt = t; t.par = r;
 	  r = t;
 	  t = tl;

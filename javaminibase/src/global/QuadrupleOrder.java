@@ -14,8 +14,13 @@ public class QuadrupleOrder {
   public static final int PredicateConfidence = 4;
   public static final int ObjectConfidence = 5;
   public static final int Confidence = 6;
+
+  public static final int Ascending  = 0;
+  public static final int Descending = 1;
+
   
-  public int _quadupleOrder;
+  public int _quadruplesortorder;
+  public int _quadrupleOrder;
 
   /** 
    * QuadrupleOrder Constructor
@@ -29,16 +34,17 @@ public class QuadrupleOrder {
    * <li>   if (quadupleOrder.quadupleOrder == QuadrupleOrder.Random) ....
    * </ul>
    *
-   * @param _quadupleOrder The possible ordering of the tuples 
+   * @param _quadruplesortorder The possible ordering of the tuples 
    */
 
-  public QuadrupleOrder (int _quadupleOrder) {
+  public QuadrupleOrder (int _quadruplesortorder, int _quadrupleOrder) {
 
-    this._quadupleOrder = _quadupleOrder;
+    this._quadruplesortorder = _quadruplesortorder;
+    this._quadrupleOrder = _quadrupleOrder;
   }
 
   public String toString() {
-    switch (this._quadupleOrder) {
+    switch (this._quadruplesortorder) {
     case SubjectPredicateObjectConfidence:
       return "SubjectPredicateObjectConfidence";
     case PredicateSubjectObjectConfidence:
@@ -55,7 +61,7 @@ public class QuadrupleOrder {
       return "Random";
     }
 
-    return ("Unexpected TupleOrder " + this._quadupleOrder);
+    return ("Unexpected TupleOrder " + this._quadruplesortorder);
   }
 
 }

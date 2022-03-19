@@ -155,7 +155,7 @@ public class Sort extends IteratorQ implements GlobalConst
     int comp_res;
     
     // set the lastElem to be the minimum value for the sort field
-    if(order.quadrupleOrder == QuadrupleOrder.Ascending) {
+    if(order._quadrupleOrder == QuadrupleOrder.Ascending) {
       try {
 	MIN_VAL(lastElem);
       } catch (UnknowAttrType e) {
@@ -203,7 +203,7 @@ public class Sort extends IteratorQ implements GlobalConst
       
       comp_res = QuadrupleUtils.compareQuadrupleWithQuadruple(cur_node.tuple, lastElem, _sort_fld,0);  // need tuple_utils.java
       
-      if ((comp_res < 0 && order.quadrupleOrder == QuadrupleOrder.Ascending) || (comp_res > 0 && order.quadrupleOrder == QuadrupleOrder.Descending)) {
+      if ((comp_res < 0 && order._quadrupleOrder == QuadrupleOrder.Ascending) || (comp_res > 0 && order._quadrupleOrder == QuadrupleOrder.Descending)) {
 	// doesn't fit in current run, put into the other queue
 	try {
 	  pother_Q.enq(cur_node);
@@ -258,7 +258,7 @@ public class Sort extends IteratorQ implements GlobalConst
 	o_buf.init(bufs, _n_pages, tuple_size, temp_files[run_num], false);
 	
 	// set the last Elem to be the minimum value for the sort field
-	if(order.quadrupleOrder == QuadrupleOrder.Ascending) {
+	if(order._quadrupleOrder == QuadrupleOrder.Ascending) {
 	  try {
 	    MIN_VAL(lastElem);
 	  } catch (UnknowAttrType e) {
@@ -353,7 +353,7 @@ public class Sort extends IteratorQ implements GlobalConst
 	  o_buf.init(bufs, _n_pages, tuple_size, temp_files[run_num], false);
 	  
 	  // set the last Elem to be the minimum value for the sort field
-	  if(order.quadrupleOrder == QuadrupleOrder.Ascending) {
+	  if(order._quadrupleOrder == QuadrupleOrder.Ascending) {
 	    try {
 	      MIN_VAL(lastElem);
 	    } catch (UnknowAttrType e) {
@@ -508,33 +508,32 @@ public class Sort extends IteratorQ implements GlobalConst
    */
   public Sort(
 	      QuadFileScan   am,                 
-	      int        sort_fld,          
 	      QuadrupleOrder sort_order,     
 	      int        n_pages      
 	      ) throws IOException, SortException
   {
 
-    if(sort_fld == 1){
+    if(sort_order._quadruplesortorder == 1){
       int temp[] = {1,2,3,4};
       _sort_fld = temp;
     }
-    if(sort_fld == 2){
+    if(sort_order._quadruplesortorder == 2){
       int temp[] = {2,1,3,4};
       _sort_fld = temp;
     }
-    if(sort_fld == 3){
+    if(sort_order._quadruplesortorder == 3){
       int temp[] = {1,4,-1,-1};
       _sort_fld = temp;
     }
-    if(sort_fld == 4){
+    if(sort_order._quadruplesortorder == 4){
       int temp[] = {2,4,-1,-1};
       _sort_fld = temp;
     }
-    if(sort_fld == 5){
+    if(sort_order._quadruplesortorder == 5){
       int temp[] = {3,4,-1,-1};
       _sort_fld = temp;
     }
-    if(sort_fld == 6){
+    if(sort_order._quadruplesortorder == 6){
       int temp[] = {4,-1,-1,-1};
       _sort_fld = temp;
     }

@@ -1,4 +1,4 @@
-package heap;
+package diskmgr;
 
 /** JAVA */
 /**
@@ -8,8 +8,13 @@ package heap;
 
 import java.io.*;
 import global.*;
+import heap.InvalidTupleSizeException;
+import quadrupleheap.Quadruple;
+import quadrupleheap.QuadrupleHeapfile;
+import quadrupleheap.TScan;
 import bufmgr.*;
 import diskmgr.*;
+import btree.*;
 
 /*
 Steps:
@@ -45,191 +50,182 @@ Steps:
 
 */
 
-/**	
+/**
  * A Stream object is created ONLY through the function openStream
  * of a rdfDB. It supports the getNext interface which will
  * simply retrieve the next record in the rdfDB.
- *Heapfile
+ * Heapfile
  * An object of type Stream will always have pinned one directory page
  * of the rdfDB.
  */
- /* Changes
-  * HeapFile-> QuadrupleHeapfile ->rdfDB
-  * RID->QID
-  * Scan->Stream
-  * Tuple->Quadruple
-  */
-public class Stream implements GlobalConst{
- 
-    /**
-     * Note that one record in our way-cool rdfDB implementation is
-     * specified by six (6) parameters, some of which can be determined
-     * from others:
-     */
+/*
+ * Changes
+ * HeapFile-> QuadrupleHeapfile ->rdfDB
+ * RID->QID
+ * Scan->Stream
+ * Tuple->Quadruple
+ */
+public class Stream implements GlobalConst {
 
-    /** The rdfDB we are using. */
-    private rdfDB  _rdfdb;
-    int _orderType;
-    boolean _needSort;
-    String _subjectFilter, _predicateFilter, _objectFilter;
-    double _confidenceFilter;
-    
-    boolean _subjectNullFilter=false;
-    boolean _predicateNullFilter=false;
-    boolean _objectNullFilter=false;
-    boolean _confidenceNullFilter=false;
-    
-    EID _subjectID=new EID();
-    PID _predicateID=new PID();
-    EID _objectID=new EID();
-    
-    int SORT_Q_NUM_PAGES=16;
-    QuadrupleSort qsort =null;
-    QuadrupleHeapfile _results = null;
-    TScan quadover=null;
-    
-    boolean use_index=true;
-    
-    /** The constructor pins the first directory page in the file
-     * and initializes its private data members from the private
-     * data member from hf
-     *
-     * @exception InvalidTupleSizeException Invalid tuple size
-     * @exception IOException I/O errors
-     *
-     * @param rdfdb A rdfDB object
-     */
-    public Stream(rdfDB rdfdatabase, int orderType, String subjectFilter,String predicateFilter, String objectFilter, double confidenceFilter) 
-    throws InvalidTupleSizeException,
-	   IOException
-  {
-	// set null filters and filter values
-	init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
-	//Scan file using index
-	if(!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter &!_confidenceNullFilter)
-	{
-	    // No nulls so we can perform a filter on all columns in the full btree 
-	    // scan_on_btree=> only one match will be found
-	    scan_on_btree = true;
-	}
-	else
-	{
-	    scan_on_btree=false;
-	    if(indexValidForStream())
-	    {
-		use_index=true;
-	    }
-	    else{
-		// None of the above options were selected or the index cannot be created for the given filter as one of the column values used in the index is null
-		use_index = false;
-	    }
-	    ScanBTreeIndex();
-	    
-	    // Sort results
-	    //TODO: set class name and define instance
-	    // SORT: don't forget a default case ASK TANNER
-	    quadover = new TScan(_results);
-	    QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType);
-	    try{
-	      qsort = new QuadrupleSort(quadover, quadrupleOrder, SORT_Q_NUM_PAGES)
-	    }
-	    catch (Exception e)
-	    {
-	      e.printStacktrace();
-	    }
-	}
-  }
+	/**
+	 * Note that one record in our way-cool rdfDB implementation is
+	 * specified by six (6) parameters, some of which can be determined
+	 * from others:
+	 */
 
+	/** The rdfDB we are using. */
+	private rdfDB _rdfdb;
+	int _orderType;
+	boolean _needSort;
+	String _subjectFilter, _predicateFilter, _objectFilter;
+	String _confidenceFilter;
 
-    public boolean indexValidForStream(){
-	if (_rdfdb.getIndexOption()==1 && !_objectNullFilter){
-	    return true;
+	boolean _subjectNullFilter = false;
+	boolean _predicateNullFilter = false;
+	boolean _objectNullFilter = false;
+	boolean _confidenceNullFilter = false;
+	boolean scan_on_btree = false;
+
+	EID _subjectID = new EID();
+	PID _predicateID = new PID();
+	EID _objectID = new EID();
+
+	int SORT_Q_NUM_PAGES = 16;
+	// QuadrupleSort qsort = null;
+	QuadrupleHeapfile _results = null;
+	TScan quadover = null;
+
+	boolean use_index = true;
+
+	/**
+	 * The constructor pins the first directory page in the file
+	 * and initializes its private data members from the private
+	 * data member from hf
+	 *
+	 * @exception InvalidTupleSizeException Invalid tuple size
+	 * @exception IOException               I/O errors
+	 *
+	 * @param rdfdb A rdfDB object
+	 */
+	public Stream(rdfDB rdfdatabase, int orderType, String subjectFilter, String predicateFilter, String objectFilter,
+			String confidenceFilter)
+			throws InvalidTupleSizeException,
+			IOException {
+		// set null filters and filter values
+		init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+		// Scan file using index
+		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
+			// No nulls so we can perform a filter on all columns in the full btree
+			// scan_on_btree=> only one match will be found
+			scan_on_btree = true;
+		} else {
+			scan_on_btree = false;
+			if (indexValidForStream()) {
+				use_index = true;
+			} else {
+				// None of the above options were selected or the index cannot be created for
+				// the given filter as one of the column values used in the index is null
+				use_index = false;
+			}
+			ScanBTreeIndex();
+
+			// Sort results
+			// TODO: set class name and define instance
+			// SORT: don't forget a default case ASK TANNER
+			quadover = new TScan(_results);
+			QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType);
+			// try{
+			// qsort = new QuadrupleSort(quadover, quadrupleOrder, SORT_Q_NUM_PAGES);
+			// }
+			// catch (Exception e)
+			// {
+			// e.printStacktrace();
+			// }
+		}
 	}
-	else if (_rdfdb.getIndexOption()==2 && !_predicateNullFilter){
-	    return true;
+
+	public boolean indexValidForStream() {
+		if (_rdfdb.getIndexOption() == 1 && !_objectNullFilter) {
+			return true;
+		} else if (_rdfdb.getIndexOption() == 2 && !_predicateNullFilter) {
+			return true;
+		} else if (_rdfdb.getIndexOption() == 3 && !_subjectNullFilter) {
+			return true;
+		} else if (_rdfdb.getIndexOption() == 4 && !_objectNullFilter && !_predicateNullFilter) {
+			return true;
+		} else if (_rdfdb.getIndexOption() == 5 && !_predicateNullFilter && !_subjectNullFilter) {
+			return true;
+		} else {
+			return false;
+		}
 	}
-	else if (_rdfdb.getIndexOption()==3 && !_subjectNullFilter){
-	    return true;
+
+	public static LID getEID(String EntityLabel) {
+		LID eid = null;
+		LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
+
+		KeyClass eid_key = new StringKey(EntityLabel);
+
+		KeyDataEntry entry = null;
+
+		try {
+			LabelBTFileScan scan = entityBTFile.new_scan(eid_key, eid_key);
+			entry = scan.get_next();
+			// entry is not already in btree
+			if (entry == null) {
+				System.out.println("No EID for given filter found.");
+			}
+			// entry already exists, return existing EID
+			else {
+				eid = ((LabelLeafData) entry.data).getData().returnEID();
+			}
+			scan.DestroyBTreeFileScan();
+			entityBTFile.close();
+		} catch (Exception e) {
+			System.err.println(e);
+			e.printStackTrace();
+			Runtime.getRuntime().exit(1);
+		}
+		return eid;
 	}
-	else if (_rdfdb.getIndexOption()==4 && !_objectNullFilter && !_predicateNullFilter){
-	    return true;
+
+	public static LID getPID(String PredicateLabel) {
+		LID pid = null;
+		LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
+
+		KeyClass pid_key = new StringKey(PredicateLabel);
+
+		KeyDataEntry entry = null;
+
+		try {
+			LabelBTFileScan scan = predBTFile.new_scan(pid_key, pid_key);
+			KeyDataEntry entry = scan.get_next();
+			// entry is not already in btree
+			if (entry == null) {
+				System.out.println("No PID for given filter found.");
+			}
+			// entry already exists, return existing EID
+			else {
+				pid = ((LabelLeafData) entry.data).getData().returnPID();
+			}
+			scan.DestroyBTreeFileScan();
+			predBTFile.close();
+		} catch (Exception e) {
+			System.err.println(e);
+			e.printStackTrace();
+			Runtime.getRuntime().exit(1);
+		}
+		return pid;
 	}
-	else if (_rdfdb.getIndexOption()==5 && !_predicateNullFilter && !_subjectNullFilter){
-	    return true;
-	}
-	else {
-	    return false;
-	}
-    }
-    
-    public static LID getEID(String EntityLabel){
-	LID eid=null;
-	LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
-	
-	KeyClass eid_key=new StringKey(EntityLabel);
-	
-	KeyDataEntry entry = null;
-	
-	try{
-	    LabelBTFileScan scan = entityBTFile.new_scan(eid_key, eid_key);
-	    KeyDataEntry entry = scan.get_next();
-	    // entry is not already in btree
-            if(entry == null){
-                System.out.println("No EID for given filter found.");
-            }
-            // entry already exists, return existing EID
-            else{
-                eid = ((LabelLeafData)entry.data).getData().returnEID();
-            }
-            scan.DestroyBTreeFileScan();
-            entityBTFile.close();
-	}
-	catch(Exception e){
-            System.err.println(e);
-            e.printStackTrace();
-            Runtime.getRuntime().exit(1);
-	}
-	return eid;
-    }
-    
-    public static LID getPID(String PredicateLabel){
-	LID pid=null;
-	LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
-	
-	KeyClass pid_key=new StringKey(PredicateLabel);
-	
-	KeyDataEntry entry = null;
-	
-	try{
-	    LabelBTFileScan scan = predBTFile.new_scan(pid_key, pid_key);
-	    KeyDataEntry entry = scan.get_next();
-	    // entry is not already in btree
-            if(entry == null){
-                System.out.println("No PID for given filter found.");
-            }
-            // entry already exists, return existing EID
-            else{
-                pid = ((LabelLeafData)entry.data).getData().returnPID();
-            }
-            scan.DestroyBTreeFileScan();
-            predBTFile.close();
-	}
-	catch(Exception e){
-            System.err.println(e);
-            e.printStackTrace();
-            Runtime.getRuntime().exit(1);
-	}
-	return pid;
-    }
-    
-    public boolean ScanBTreeIndex(){
+
+	public boolean ScanBTreeIndex(){
 	QID qid = null;
 	//TODO: check
 	_results = new QuadrupleHeapfile(Long.toString((new java.util.date()).getTime());
 	
 	if(!use_index)
 	{
-	    _rdfdb.createRDFDB(0)
+	    _rdfdb.createRDFDB(0);
 	}
     
 	try {
@@ -249,9 +245,9 @@ public class Stream implements GlobalConst{
 	  Convert.setIntValue(predicateid.slotNo,12,quadruplePtr);
 	  Convert.setIntValue(objectid.pageNo.pid,16,quadruplePtr);
 	  Convert.setIntValue(objectid.slotNo,20,quadruplePtr);
-	  Convert.setDoubleValue(Convert.getDoubleValue(_confidenceFilter, 24, quadruplePtr)); 
+	  Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr); 
 
-	  KeyClass key = getStringKey(quadruplePtr);
+	  KeyClass key = _rdfdb.getStringKey(quadruplePtr);
 	  
 	  QuadBTFileScan scan = quadBTFile.new_scan(key, key);
 	  KeyDataEntry entry = scan.get_next();
@@ -316,87 +312,81 @@ public class Stream implements GlobalConst{
 	}
 	
     }
-  /** Retrieve the next record in a sequential Stream
-   *
-   * @exception InvalidTupleSizeException Invalid tuple size
-   * @exception IOException I/O errors
-   *
-   * @param qid Record ID of the record
-   * @return the Quadruple of the retrieved record.
-   */
-    public Quadruple getNext(QID qid) 
-    throws InvalidTupleSizeException,
-	   IOException
-    {
-	try{
-	    //TODO: ONLY IF DEFAULT CASE COVERED
-	    return qsort.getNext(qid);
-	}catch(Exception e){
-	    System.out.println("Error in getNext of Steam.java");
-	}
-	return null;
-    }
 
-
-
-    /** Do all the constructor work
-     *
-     * @exception InvalidTupleSizeException Invalid tuple size
-     * @exception IOException I/O errors
-     *
-     * @param rdfdb A rdfDB object
-     */
-    private void init(rdfDB rdfdb, int orderType, String subjectFilter,String predicateFilter, String objectFilter, double confidenceFilter) 
-      throws InvalidTupleSizeException,
-	     IOException
-  {
-	// set variables and filters
-	_rdfdb = rdfdb;
-	_orderType=orderType;
-	
-	if(subjectFilter.compareToIgnoreCase("null")==0)
-	{
-	  _subjectNullFilter=true;
+	/**
+	 * Retrieve the next record in a sequential Stream
+	 *
+	 * @exception InvalidTupleSizeException Invalid tuple size
+	 * @exception IOException               I/O errors
+	 *
+	 * @param qid Record ID of the record
+	 * @return the Quadruple of the retrieved record.
+	 */
+	public Quadruple getNext(QID qid)
+			throws InvalidTupleSizeException,
+			IOException {
+		try {
+			// TODO: ONLY IF DEFAULT CASE COVERED
+			return quadover.getNext(qid);
+			// return qsort.getNext(qid); TODO delete
+		} catch (Exception e) {
+			System.out.println("Error in getNext of Steam.java");
+		}
+		return null;
 	}
-	if(predicateFilter.compareToIgnoreCase("null")==0)
-	{
-	  _predicateNullFilter=true;
-	}
-	if(objectFilter.compareToIgnoreCase("null")==0)unpinPage
-	{
-	  _objectNullFilter=true;
-	}
-	if(confidenceFilter.compareToIgnoreCase("null")==0)
-	{
-	  _confidenceNullFilter=true;
-	}
-	_subjectFilter=subjectFilter;
-	_predicateFilter=predicateFilter;
-	_objectFilter=objectFilter;
-	_confidenceFilter=confidenceFilter;
-  }
 
+	/**
+	 * Do all the constructor work
+	 *
+	 * @exception InvalidTupleSizeException Invalid tuple size
+	 * @exception IOException               I/O errors
+	 *
+	 * @param rdfdb A rdfDB object
+	 */
+	private void init(rdfDB rdfdb, int orderType, String subjectFilter, String predicateFilter, String objectFilter,
+			String confidenceFilter)
+			throws InvalidTupleSizeException,
+			IOException {
+		// set variables and filters
+		_rdfdb = rdfdb;
+		_orderType = orderType;
 
-    /** Closes the Stream object */
-    public void closestream()
-    {
-	try{
-	    if(qsort!=null){
-		qsort.close();
-	    }
-	    
-	    if(quadover!= null){
-		quadover.closescan();
-	    }
-
-	    if(_results!=null && _results!=_rdfdb.getQuadHeapFile()){
-		_results.deleteFile();
-	    }
-	}catch(Exception e){
-	    System.out.println("Error in closing Stream");
+		if (subjectFilter.compareToIgnoreCase("null") == 0) {
+			_subjectNullFilter = true;
+		}
+		if (predicateFilter.compareToIgnoreCase("null") == 0) {
+			_predicateNullFilter = true;
+		}
+		if (objectFilter.compareToIgnoreCase("null") == 0) {
+			_objectNullFilter = true;
+		}
+		if (_confidenceFilter.compareToIgnoreCase("null") == 0) {
+			_confidenceNullFilter = true;
+		}
+		_subjectFilter = subjectFilter;
+		_predicateFilter = predicateFilter;
+		_objectFilter = objectFilter;
+		_confidenceFilter = confidenceFilter;
 	}
-	
-	
-    }
-   
+
+	/** Closes the Stream object */
+	public void closestream() {
+		try {
+			if (qsort != null) {
+				qsort.close();
+			}
+
+			if (quadover != null) {
+				quadover.closescan();
+			}
+
+			if (_results != null && _results != _rdfdb.getQuadHeapFile()) {
+				_results.deleteFile();
+			}
+		} catch (Exception e) {
+			System.out.println("Error in closing Stream");
+		}
+
+	}
+
 }

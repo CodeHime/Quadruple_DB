@@ -200,24 +200,21 @@ public class rdfDB extends DB {
         KeyClass key = new StringKey(EntityLabel);
 
         try {
-            lid = entity_heap_file.insertLabel(EntityLabel);
-            eid = lid.returnEID();
-            // LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
-            // // LabelBTFileScan scan = entityBTFile.new_scan(key, key);
-            // LabelBTFileScan scan = entityBTFile.new_scan(null, null);
-            // KeyDataEntry entry = scan.get_next();
-            // // entry is not already in btree
-            // if(entry == null){
-            //     lid = entity_heap_file.insertLabel(EntityLabel);
-            //     eid = lid.returnEID();
-            //     entityBTFile.insert(key, lid);
-            // }
-            // // entry already exists, return existing EID
-            // else{
-            //     eid = ((LabelLeafData)entry.data).getData().returnEID();
-            // }
-            // scan.DestroyBTreeFileScan();
-            // entityBTFile.close();
+            LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
+            LabelBTFileScan scan = entityBTFile.new_scan(key, key);
+            KeyDataEntry entry = scan.get_next();
+            // entry is not already in btree
+            if(entry == null){
+                lid = entity_heap_file.insertLabel(EntityLabel.getBytes());
+                eid = lid.returnEID();
+                entityBTFile.insert(key, lid);
+            }
+            // entry already exists, return existing EID
+            else{
+                eid = ((LabelLeafData)entry.data).getData().returnEID();
+            }
+            scan.DestroyBTreeFileScan();
+            entityBTFile.close();
         }
         catch(Exception e) {
             System.err.println(e);
@@ -263,24 +260,22 @@ public class rdfDB extends DB {
         LID lid = null;
         KeyClass key = new StringKey(PredicateLabel);
         try {
-            lid =  predicate_heap_file.insertLabel(PredicateLabel);
-            pid = lid.returnPID();
-            // LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
-            // LabelBTFileScan scan = predBTFile.new_scan(key, key);
-            // KeyDataEntry entry = scan.get_next();
+            LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
+            LabelBTFileScan scan = predBTFile.new_scan(key, key);
+            KeyDataEntry entry = scan.get_next();
 
-            // // entry is not already in BTree
-            // if(entry == null){
-            //     lid =  predicate_heap_file.insertLabel(PredicateLabel);
-            //     pid = lid.returnPID();
-            //     predBTFile.insert(key, lid);
-            // }
-            // // entry already exists, return existing PID
-            // else {
-            //     pid = ((LabelLeafData)entry.data).getData().returnPID();
-            // }
-            // scan.DestroyBTreeFileScan();
-            // predBTFile.close();
+            // entry is not already in BTree
+            if(entry == null){
+                lid =  predicate_heap_file.insertLabel(PredicateLabel.getBytes());
+                pid = lid.returnPID();
+                predBTFile.insert(key, lid);
+            }
+            // entry already exists, return existing PID
+            else {
+                pid = ((LabelLeafData)entry.data).getData().returnPID();
+            }
+            scan.DestroyBTreeFileScan();
+            predBTFile.close();
         }
         catch(Exception e) {
             System.err.println(e);

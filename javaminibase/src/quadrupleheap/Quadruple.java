@@ -197,7 +197,7 @@ public class Quadruple implements GlobalConst {
       this.subject = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
       this.predicate = new PID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
       this.object = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-      this.confidence = tempBuffer.getFloat();
+      this.confidence = tempBuffer.getDouble();
   }
 
  /**

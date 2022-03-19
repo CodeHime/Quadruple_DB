@@ -66,9 +66,13 @@ public class CommandLine {
 
 				String parts[] = processLine(line);
 
+				if(parts.length != 4){
+					continue;
+				}
 
 				byte quad[] = new byte[32];
 
+				System.out.println(line);
 				EID subjectid = database.insertEntity(parts[0]);
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
 				Convert.setIntValue(subjectid.slotNo, 4, quad);
@@ -84,7 +88,8 @@ public class CommandLine {
 
 				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
 				database.insertQuadruple(quad);
-				break; // TODO DELETE THIS
+				
+				// break; // TODO DELETE THIS
 			}
 			// databases.put(dbname,database);
 
@@ -104,7 +109,8 @@ public class CommandLine {
 
 			try {
 				FileWriter fw;
-				String input = "batchinsert phase2_test_data.txt 1 testDB"; // in.readLine();
+				// String input = "batchinsert phase2_test_data.txt 1 testDB"; 
+				String input =  in.readLine();
 				String parsed[] = input.split(" ");
 				PCounter.initialize();
 

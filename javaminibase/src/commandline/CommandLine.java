@@ -77,6 +77,7 @@ public class CommandLine {
 				Convert.setIntValue(predicateid.pageNo.pid, 8, quad);
 				Convert.setIntValue(predicateid.slotNo, 12, quad);
 
+
 				EID objectid = database.insertEntity(parts[2]);
 				Convert.setIntValue(objectid.pageNo.pid, 16, quad);
 				Convert.setIntValue(objectid.slotNo, 20, quad);

@@ -15,7 +15,7 @@
             "name": "Launch CommandLine",
             "request": "launch",
             "mainClass": "commandline.CommandLine",
-            "projectName": "CSE510_Project_9bd5de81"
+            "projectName": "CSE_510_Project"
         },
         // {
         //     "type": "java",

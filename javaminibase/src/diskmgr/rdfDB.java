@@ -71,7 +71,7 @@ public class rdfDB extends DB {
         // initialize PCounter
         PCounter.initialize();
         indexOption = val;
-        int maxKeySize = 128;
+        int maxKeySize = 32;
         int deleteFashion = 1; // Full Delete
 
         // Create Quad heap file
@@ -83,6 +83,9 @@ public class rdfDB extends DB {
             QuadBTreeFile quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
             LabelBTreeFile predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
             LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            quadBT.close();
+            predBT.close();
+            entityBT.close();
 
         }
         catch(Exception e) {
@@ -198,7 +201,8 @@ public class rdfDB extends DB {
 
         try {
             LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
-            LabelBTFileScan scan = entityBTFile.new_scan(key, key);
+            // LabelBTFileScan scan = entityBTFile.new_scan(key, key);
+            LabelBTFileScan scan = entityBTFile.new_scan(null, null);
             KeyDataEntry entry = scan.get_next();
             // entry is not already in btree
             if(entry == null){

@@ -10,6 +10,7 @@ import java.io.*;
 import global.*;
 import bufmgr.*;
 import diskmgr.*;
+import heap.*;
 
 
 /**	
@@ -35,12 +36,12 @@ public class LScan implements GlobalConst{
   private PageId dirpageId = new PageId();
 
   /** pointer to in-core data of dirpageId (page is pinned) */
-  private LHFPage dirpage = new LHFPage();
+  private HFPage dirpage = new HFPage();
 
   /** record ID of the DataPageInfo struct (in the directory page) which
    * describes the data page where our current record lives.
    */
-  private LID datapageRid = new LID();
+  private RID datapageRid = new RID();
 
   /** the actual PageId of the data page with the current record */
   private PageId datapageId = new PageId();
@@ -78,10 +79,11 @@ public class LScan implements GlobalConst{
    *
    * @param lid Label ID of the record
    * @return the Label of the retrieved record.
+   * @throws InvalidTupleSizeException
    */
   public Label getNext(LID lid) 
     throws InvalidLabelSizeException,
-	   IOException
+	   IOException, InvalidTupleSizeException
   {
     Label recptrlabel = null;
     
@@ -118,10 +120,11 @@ public class LScan implements GlobalConst{
    * @param lid Label ID of the given record
    * @return 	true if successful, 
    *			false otherwise.
+   * @throws InvalidTupleSizeException
    */
   public boolean position(LID lid) 
     throws InvalidLabelSizeException,
-	   IOException
+	   IOException, InvalidTupleSizeException
   { 
     LID    nxtlid = new LID();
     boolean bst;
@@ -238,8 +241,8 @@ public class LScan implements GlobalConst{
     throws InvalidLabelSizeException,
 	   IOException
   {
-    LDataPageInfo dpinfo;
-    Label        reclabel = null;
+    DataPageInfo dpinfo;
+    Tuple        record = null;
     Boolean      bst;
 
     /** copy data about first directory page */
@@ -249,7 +252,7 @@ public class LScan implements GlobalConst{
 
     /** get first directory page and pin it */
     try {
-	    dirpage  = new LHFPage();
+	    dirpage  = new HFPage();
       pinPage(dirpageId, (Page) dirpage, false);	   
     }
     catch (Exception e) {
@@ -258,19 +261,20 @@ public class LScan implements GlobalConst{
 	  }
     
     /** now try to get a pointer to the first datapage */
-	  datapageRid = dirpage.firstLabel();
+	  datapageRid = dirpage.firstRecord();
     
     if (datapageRid != null) {
     /** there is a datapage record on the first directory page: */
 	    try {
-        reclabel = dirpage.getLabel(datapageRid);
+        record = dirpage.getRecord(datapageRid);
+        
+        dpinfo = new DataPageInfo(record);
+        datapageId.pid = dpinfo.pageId.pid;
 	    }	
       catch (Exception e) {
       //	System.err.println("SCAN: Chain Error in Scan: " + e);
         e.printStackTrace();
       }			    
-    	dpinfo = new LDataPageInfo(reclabel);
-      datapageId.pid = dpinfo.pageId.pid;
     } else {
     /** the first directory page is the only one which can possibly remain
      * empty: therefore try to get the next directory page and
@@ -291,7 +295,7 @@ public class LScan implements GlobalConst{
         }
   
         try {
-          dirpage = new LHFPage();
+          dirpage = new HFPage();
           pinPage(nextDirPageId, (Page )dirpage, false);
         }
         catch (Exception e) {
@@ -301,7 +305,7 @@ public class LScan implements GlobalConst{
   
         /** now try again to read a data record: */
         try {
-          datapageRid = dirpage.firstLabel();
+          datapageRid = dirpage.firstRecord();
         }
         catch (Exception e) {
           //  System.err.println("SCAN: Error in 1stdatapg 3 " + e);
@@ -311,18 +315,20 @@ public class LScan implements GlobalConst{
   
         if(datapageRid != null) {
           try {
-            reclabel = dirpage.getLabel(datapageRid);
+            record = dirpage.getRecord(datapageRid);
           }
           catch (Exception e) {
             //    System.err.println("SCAN: Error getLabel 4: " + e);
             e.printStackTrace();
           }
     
-          if (reclabel.getLength() != LDataPageInfo.size)
+          if (record.getLength() != DataPageInfo.size)
             return false;
-  
-          dpinfo = new LDataPageInfo(reclabel);
-          datapageId.pid = dpinfo.pageId.pid;
+          try{
+            dpinfo = new DataPageInfo(record);
+            datapageId.pid = dpinfo.pageId.pid;
+
+          }catch(Exception e){}
         } else {
           // heapfile empty
           datapageId.pid = INVALID_PAGE;
@@ -362,16 +368,17 @@ public class LScan implements GlobalConst{
    *
    * @return 		true if successful
    *			false if unsuccessful
+   * @throws InvalidTupleSizeException
    */
   private boolean nextDataPage() 
     throws InvalidLabelSizeException,
-	   IOException
+	   IOException, InvalidTupleSizeException
   {
-    LDataPageInfo dpinfo;
+    DataPageInfo dpinfo;
     
     boolean nextDataPageStatus;
     PageId nextDirPageId = new PageId();
-    Label reclabel = null;
+    Tuple record = null;
 
   // ASSERTIONS:
   // - this->dirpageId has Id of current directory page
@@ -442,7 +449,7 @@ public class LScan implements GlobalConst{
     return false;
   }
   
-  datapageRid = dirpage.nextLabel(datapageRid);
+  datapageRid = dirpage.nextRecord(datapageRid);
   
   if (datapageRid == null) {
     nextDataPageStatus = false;
@@ -468,7 +475,7 @@ public class LScan implements GlobalConst{
       // - nextDirPageId has correct id of the page which is to get
       dirpageId = nextDirPageId;
       try {
-        dirpage  = new LHFPage();
+        dirpage  = new HFPage();
         pinPage(dirpageId, (Page)dirpage, false);
       }
       catch (Exception e){
@@ -479,7 +486,7 @@ public class LScan implements GlobalConst{
         return false;
       
       try {
-        datapageRid = dirpage.firstLabel();
+        datapageRid = dirpage.firstRecord();
         nextDataPageStatus = true;
       }
       catch (Exception e){
@@ -498,16 +505,16 @@ public class LScan implements GlobalConst{
 
   // data page is not yet loaded: read its record from the directory page
   try {
-	  reclabel = dirpage.getLabel(datapageRid);
+	  record = dirpage.getRecord(datapageRid);
 	}
 	catch (Exception e) {
 	  System.err.println("HeapFile: Error in Scan" + e);
 	}
 	
-	if (reclabel.getLength() != LDataPageInfo.size)
+	if (record.getLength() != DataPageInfo.size)
 	  return false;
                         
-	dpinfo = new LDataPageInfo(reclabel);
+	dpinfo = new DataPageInfo(record);
 	datapageId.pid = dpinfo.pageId.pid;
 	
  	try {
@@ -544,10 +551,11 @@ public class LScan implements GlobalConst{
 
   /** Move to the next record in a sequential scan.
    * Also returns the LID of the (new) current record.
+   * @throws InvalidTupleSizeException
    */
   private boolean mvNext(LID lid) 
     throws InvalidLabelSizeException,
-	   IOException
+	   IOException, InvalidTupleSizeException
   {
     LID nextlid;
     boolean status;

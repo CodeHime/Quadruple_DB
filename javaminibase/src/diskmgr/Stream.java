@@ -99,7 +99,7 @@ public class Stream implements GlobalConst {
 	int SORT_Q_NUM_PAGES = 16;
 	// QuadrupleSort qsort = null;
 	QuadrupleHeapfile _results = null;
-	TScan quadover = null;
+	public TScan quadover = null;
 
 	boolean use_index = true;
 
@@ -148,6 +148,10 @@ public class Stream implements GlobalConst {
 			// e.printStacktrace();
 			// }
 		}
+	}
+
+	public QID getFirstQID(){
+		return this.quadover.get_firstQID();
 	}
 
 	public boolean indexValidForStream() {

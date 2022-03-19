@@ -21,6 +21,8 @@ import diskmgr.rdfDB;
 import global.Convert;
 import global.EID;
 import global.PID;
+import global.QID;
+import quadrupleheap.Quadruple;
 
 public class CommandLine {
 
@@ -34,10 +36,12 @@ public class CommandLine {
 
 
 		Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5], options[6]);
+		
+		QID qid = stream.getFirstQID();
+		for (Quadruple quad = stream.getNext(qid); quad != null; quad = stream.getNext(qid)) {
+			stream.quadover.mvNext(qid);
 
-		// for (QID qid = stream.getNext(); qid != null; qid = stream.getNext()) {
-			
-		// }
+		}
 
 	}
 

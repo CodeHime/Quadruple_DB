@@ -2,13 +2,10 @@
 
 package diskmgr;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 import btree.*;
-import bufmgr.*;
 import global.*;
 import labelheap.*;
 import quadrupleheap.*;
@@ -20,14 +17,16 @@ public class rdfDB extends DB {
     private LabelHeapfile predicate_heap_file;
     private QuadrupleHeapfile quad_heap_file;
     
-    private String rdfDB_name;
-    private int indexOption;
+    public String rdfDB_name;
+    int indexOption;
 
     public LabelHeapfile getEntityHeapFile() { return entity_heap_file; }
     public LabelHeapfile getPredicateHeapFile() { return predicate_heap_file; }
     public QuadrupleHeapfile getQuadHeapFile() { return quad_heap_file; }
+
     public String getName() { return rdfDB_name;}
     public int getIndexOption() { return indexOption; }
+
 
     private rdfDB() {}
 
@@ -55,7 +54,7 @@ public class rdfDB extends DB {
     }
 
     public void openrdfDB(String name, int pages, int type) {
-        rdfDB_name = name;
+        rdfDB_name = name + "_" + Integer.toString(type);
         try {
             openDB(name, pages);
             createRDFDB(type);
@@ -82,7 +81,10 @@ public class rdfDB extends DB {
 
             QuadBTreeFile quadBT = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT", AttrType.attrString, maxKeySize, deleteFashion);
             LabelBTreeFile predBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT", AttrType.attrString, maxKeySize, deleteFashion);
-            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "Integer.toString(indexOption) + EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            LabelBTreeFile entityBT = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT", AttrType.attrString, maxKeySize, deleteFashion);
+            quadBT.close();
+            predBT.close();
+            entityBT.close();
 
         }
         catch(Exception e) {
@@ -197,21 +199,24 @@ public class rdfDB extends DB {
         KeyClass key = new StringKey(EntityLabel);
 
         try {
-            LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
-            LabelBTFileScan scan = entityBTFile.new_scan(key, key);
-            KeyDataEntry entry = scan.get_next();
-            // entry is not already in btree
-            if(entry == null){
-                lid = entity_heap_file.insertLabel(EntityLabel);
-                eid = lid.returnEID();
-                entityBTFile.insert(key, lid);
-            }
-            // entry already exists, return existing EID
-            else{
-                eid = ((LabelLeafData)entry.data).getData().returnEID();
-            }
-            scan.DestroyBTreeFileScan();
-            entityBTFile.close();
+            lid = entity_heap_file.insertLabel(EntityLabel);
+            eid = lid.returnEID();
+            // LabelBTreeFile entityBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "EntityBT");
+            // // LabelBTFileScan scan = entityBTFile.new_scan(key, key);
+            // LabelBTFileScan scan = entityBTFile.new_scan(null, null);
+            // KeyDataEntry entry = scan.get_next();
+            // // entry is not already in btree
+            // if(entry == null){
+            //     lid = entity_heap_file.insertLabel(EntityLabel);
+            //     eid = lid.returnEID();
+            //     entityBTFile.insert(key, lid);
+            // }
+            // // entry already exists, return existing EID
+            // else{
+            //     eid = ((LabelLeafData)entry.data).getData().returnEID();
+            // }
+            // scan.DestroyBTreeFileScan();
+            // entityBTFile.close();
         }
         catch(Exception e) {
             System.err.println(e);
@@ -257,22 +262,24 @@ public class rdfDB extends DB {
         LID lid = null;
         KeyClass key = new StringKey(PredicateLabel);
         try {
-            LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
-            LabelBTFileScan scan = predBTFile.new_scan(key, key);
-            KeyDataEntry entry = scan.get_next();
+            lid =  predicate_heap_file.insertLabel(PredicateLabel);
+            pid = lid.returnPID();
+            // LabelBTreeFile predBTFile = new LabelBTreeFile(rdfDB_name + Integer.toString(indexOption) + "PredBT");
+            // LabelBTFileScan scan = predBTFile.new_scan(key, key);
+            // KeyDataEntry entry = scan.get_next();
 
-            // entry is not already in BTree
-            if(entry == null){
-                lid =  predicate_heap_file.insertLabel(PredicateLabel);
-                pid = lid.returnPID();
-                predBTFile.insert(key, lid);
-            }
-            // entry already exists, return existing PID
-            else {
-                pid = ((LabelLeafData)entry.data).getData().returnPID();
-            }
-            scan.DestroyBTreeFileScan();
-            predBTFile.close();
+            // // entry is not already in BTree
+            // if(entry == null){
+            //     lid =  predicate_heap_file.insertLabel(PredicateLabel);
+            //     pid = lid.returnPID();
+            //     predBTFile.insert(key, lid);
+            // }
+            // // entry already exists, return existing PID
+            // else {
+            //     pid = ((LabelLeafData)entry.data).getData().returnPID();
+            // }
+            // scan.DestroyBTreeFileScan();
+            // predBTFile.close();
         }
         catch(Exception e) {
             System.err.println(e);
@@ -316,6 +323,7 @@ public class rdfDB extends DB {
 
         QID qid = null;
         try {
+          //LOOKUP
           QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
           KeyClass key = getStringKey(quadruplePtr);
           
@@ -326,28 +334,29 @@ public class rdfDB extends DB {
           if(entry == null)
           {
             qid = quad_heap_file.insertQuadruple(quadruplePtr);
-            quadBTFile.insert(key, qid);
+            // quadBTFile.insert(key, qid);
           }
           // btree already contains at least one entry with this key. Must check each of them
           else{
             while(entry != null) {
+                qid = quad_heap_file.insertQuadruple(quadruplePtr); // DELETE THIS
+                // qid = ((QuadLeafData)entry.data).getData();
+                // Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
 
-                qid = ((QuadLeafData)entry.data).getData();
-                Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
+                // // compare subject, predicate, object of the quadruple. These are the first 24 bytes
+                // byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
+                // byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
 
-                // compare subject, predicate, object of the quadruple. These are the first 24 bytes
-                byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
-                byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
-
-                if ( Arrays.equals(oldBytes, newBytes)){
-                    double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
-                    double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
+                // if ( Arrays.equals(oldBytes, newBytes)){
+                //     double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
+                //     double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
     
-                    if (new_confidence > old_confidence){
-                        Quadruple newQuad = new Quadruple(quadruplePtr, 0);
-                        quad_heap_file.updateQuadruple(qid, newQuad);
-                    }
-                }
+                //     if (new_confidence > old_confidence){
+                //         Quadruple newQuad = new Quadruple(quadruplePtr, 0);
+                //         quad_heap_file.updateQuadruple(qid, newQuad);
+                //     }
+                // }
+
                 entry = scan.get_next();
             }
           }
@@ -397,17 +406,17 @@ public class rdfDB extends DB {
 
     }
 
-    // public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, double confidenceFilter){
-    //     Stream stream = null;
-    //     try{
-    //         stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
-    //     }
-    //     catch(Exception e){
-    //         System.err.println(e);
-    //         e.printStackTrace();
-    //     }
-    //     return stream;
-    // }
+    public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, String confidenceFilter){
+        Stream stream = null;
+        try{
+            stream = new Stream(this, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+        }
+        catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+        }
+        return stream;
+    }
 
     // helper method to get the first n(exclusive) bytes from an array
     private byte[] getFirstNBytes(byte[] input, int n) {
@@ -419,28 +428,32 @@ public class rdfDB extends DB {
     }
 
     // gets the key based on the indexing scheme determined when the file was opened
-    private KeyClass getStringKey(byte[] quadruplePtr) {
+    public KeyClass getStringKey(byte[] quadruplePtr) {
         KeyClass key = null;
         try{
-            Quadruple newQuad = new Quadruple(quadruplePtr, 0);
+            Quadruple newQuad = new Quadruple();
+            newQuad.quadrupleInit(quadruplePtr, 0);
             switch(indexOption){
                 // object 
                 case(1):{
                     LID lid = newQuad.getObjectQid().returnLID();
                     String object = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(object);
+                    break;
                 }
                 // predicate
                 case(2):{
                     LID lid = newQuad.getPredicateID().returnLID();
                     String pred = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(pred);
+                    break;
                 }
                 // subject
                 case(3):{
                     LID lid = newQuad.getSubjectQid().returnLID();
                     String subject = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(subject);
+                    break;
                 }
                 // object + predicate
                 case(4):{
@@ -449,6 +462,7 @@ public class rdfDB extends DB {
                     lid = newQuad.getPredicateID().returnLID();
                     String pred = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(object + pred);
+                    break;
                 }
                 // predicate + subject
                 case(5):{
@@ -457,11 +471,20 @@ public class rdfDB extends DB {
                     lid = newQuad.getSubjectQid().returnLID();
                     String subject = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(pred + subject);
+                    break;
 
                 }
                 default:{
-                    System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
-                    Runtime.getRuntime().exit(1); 
+                    System.out.println("Default index");
+                    LID lid = newQuad.getPredicateID().returnLID();
+                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getSubjectQid().returnLID();
+                    String subject = entity_heap_file.getLabel(lid).getLabel();
+                    lid = newQuad.getObjectQid().returnLID();
+                    String object = entity_heap_file.getLabel(lid).getLabel();
+                    key = new StringKey(subject + pred + object);
+                    //System.err.println("ERROR: NO INDEXOPTION IN RDFDB");
+                    //Runtime.getRuntime().exit(1); 
                 }
             }
           }

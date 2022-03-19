@@ -125,8 +125,7 @@ public class LabelBTLeafPage extends LabelBTSortedPage {
           return null;
         }
 
-        entry=LabelBT.getEntryFromBytes(getpage(), getSlotOffset(0), getSlotLength(0),
-				   keyType, NodeType.LEAF);
+        entry=LabelBT.getEntryFromBytes(getpage(), getSlotOffset(0), getSlotLength(0), keyType, NodeType.LEAF);
 	
         return entry;
       }

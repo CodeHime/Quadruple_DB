@@ -329,29 +329,29 @@ public class rdfDB extends DB {
           if(entry == null)
           {
             qid = quad_heap_file.insertQuadruple(quadruplePtr);
-            // quadBTFile.insert(key, qid);
+            quadBTFile.insert(key, qid);
           }
           // btree already contains at least one entry with this key. Must check each of them
           else{
             while(entry != null) {
-                qid = quad_heap_file.insertQuadruple(quadruplePtr); // DELETE THIS
-                // qid = ((QuadLeafData)entry.data).getData();
-                // Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
+                // qid = quad_heap_file.insertQuadruple(quadruplePtr); // DELETE THIS
+                qid = ((QuadLeafData)entry.data).getData();
+                Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
 
-                // // compare subject, predicate, object of the quadruple. These are the first 24 bytes
-                // byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
-                // byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
+                // compare subject, predicate, object of the quadruple. These are the first 24 bytes
+                //byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
+                byte[] oldBytes = getFirstNBytes(oldQuad.returnQuadrupleByteArray(), 24);
+                byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
 
-                // if ( Arrays.equals(oldBytes, newBytes)){
-                //     double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
-                //     double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
+                if ( Arrays.equals(oldBytes, newBytes)){
+                    double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
+                    double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
     
-                //     if (new_confidence > old_confidence){
-                //         Quadruple newQuad = new Quadruple(quadruplePtr, 0);
-                //         quad_heap_file.updateQuadruple(qid, newQuad);
-                //     }
-                // }
-
+                    if (new_confidence > old_confidence){
+                        Quadruple newQuad = new Quadruple(quadruplePtr, 0);
+                        quad_heap_file.updateQuadruple(qid, newQuad);
+                    }
+                }
                 entry = scan.get_next();
             }
           }

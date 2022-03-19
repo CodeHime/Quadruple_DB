@@ -36,9 +36,33 @@ public class CommandLine {
 	public static void query(String options[]) {
 		System.out.println("query");
 
-		// String dbname = options[0] + "_" + options[1];
-		// rdfDB database = rdfDB.getInstance();
-		// database.openrdfDB(dbname, type);
+		String dbname = options[0];
+		rdfDB database = rdfDB.getInstance();
+		System.out.println("rdfdb instance got");
+		int type = Integer.parseInt(dbname.split("_")[1]);
+		database.openrdfDB(dbname, type);
+		System.out.println("rdfdb opened");
+
+		int labelCnt = database.getEntityCnt();
+		int subCnt = database.getSubjectCnt();
+		int predCnt = database.getPredicateCnt();
+		int objCnt = database.getObjectCnt();
+		int quadCnt = database.getQuadrupleCnt();
+
+		System.out.print("Label Count:");
+		System.out.println(labelCnt);
+
+		System.out.print("Subject Count:");
+		System.out.println(subCnt);
+
+		System.out.print("Predicate Count:");
+		System.out.println(predCnt);
+
+		System.out.print("Object Count:");
+		System.out.println(objCnt);
+
+		System.out.print("Quadruple Count:");
+		System.out.println(quadCnt);
 
 		// Stream stream = database.openStream(Integer.parseInt(options[2]), options[3],
 		// options[4], options[5], Double.parseDouble(options[6]));

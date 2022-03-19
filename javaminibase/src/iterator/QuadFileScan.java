@@ -5,6 +5,7 @@ import heap.*;
 import global.*;
 import bufmgr.*;
 import diskmgr.*;
+import quadrupleheap.*;
 
 
 import java.lang.*;
@@ -14,19 +15,13 @@ import java.io.*;
  *open a heapfile and according to the condition expression to get
  *output file, call get_next to get all tuples
  */
-public class FileScan extends  Iterator
+public class QuadFileScan extends  IteratorQ
 {
-  private AttrType[] _in1;
-  private short in1_len;
-  private short[] s_sizes; 
-  private Heapfile f;
-  private Scan scan;
-  private Tuple     tuple1;
-  private Tuple    Jtuple;
-  private int        t1_size;
-  private int nOutFlds;
-  private CondExpr[]  OutputFilter;
-  public FldSpec[] perm_mat;
+  
+  private QuadrupleHeapfile f;
+  private TScan scan;
+  private Quadruple     tuple1;
+  private Quadruple    Jtuple;
 
  
 
@@ -44,42 +39,20 @@ public class FileScan extends  Iterator
    *@exception TupleUtilsException exception from this class
    *@exception InvalidRelation invalid relation 
    */
-  public  FileScan (String  file_name,
-		    AttrType in1[],                
-		    short s1_sizes[], 
-		    short     len_in1,              
-		    int n_out_flds,
-		    FldSpec[] proj_list,
-		    CondExpr[]  outFilter        		    
-		    )
+  public  QuadFileScan (QuadrupleHeapfile file_name)
     throws IOException,
 	   FileScanException,
 	   TupleUtilsException, 
 	   InvalidRelation
     {
-      _in1 = in1; 
-      in1_len = len_in1;
-      s_sizes = s1_sizes;
       
-      Jtuple =  new Tuple();
-      AttrType[] Jtypes = new AttrType[n_out_flds];
-      short[]    ts_size;
-      ts_size = TupleUtils.setup_op_tuple(Jtuple, Jtypes, in1, len_in1, s1_sizes, proj_list, n_out_flds);
-      
-      OutputFilter = outFilter;
-      perm_mat = proj_list;
-      nOutFlds = n_out_flds; 
-      tuple1 =  new Tuple();
+      Jtuple =  new Quadruple();      
 
-      try {
-	tuple1.setHdr(in1_len, _in1, s1_sizes);
-      }catch (Exception e){
-	throw new FileScanException(e, "setHdr() failed");
-      }
-      t1_size = tuple1.size();
+      tuple1 =  new Quadruple();
+
       
       try {
-	f = new Heapfile(file_name);
+	    f = file_name;
 	
       }
       catch(Exception e) {
@@ -93,14 +66,8 @@ public class FileScan extends  Iterator
 	throw new FileScanException(e, "openScan() failed");
       }
     }
-  
-  /**
-   *@return shows what input fields go where in the output tuple
-   */
-  public FldSpec[] show()
-    {
-      return perm_mat;
-    }
+
+   
   
   /**
    *@return the result tuple
@@ -114,7 +81,7 @@ public class FileScan extends  Iterator
    *@exception FieldNumberOutOfBoundException array out of bounds
    *@exception WrongPermat exception for wrong FldSpec argument
    */
-  public Tuple get_next()
+  public Quadruple get_next()
     throws JoinsException,
 	   IOException,
 	   InvalidTupleSizeException,
@@ -125,18 +92,15 @@ public class FileScan extends  Iterator
 	   FieldNumberOutOfBoundException,
 	   WrongPermat
     {     
-      RID rid = new RID();;
+      QID rid = new QID();;
       
       while(true) {
 	if((tuple1 =  scan.getNext(rid)) == null) {
 	  return null;
 	}
 	
-	tuple1.setHdr(in1_len, _in1, s_sizes);
-	if (PredEval.Eval(OutputFilter, tuple1, null, _in1, null) == true){
-	  Projection.Project(tuple1, _in1,  Jtuple, perm_mat, nOutFlds); 
-	  return  Jtuple;
-	}        
+	  return  tuple1;
+	        
       }
     }
 

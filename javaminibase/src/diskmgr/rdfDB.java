@@ -339,13 +339,12 @@ public class rdfDB extends DB {
                 Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
 
                 // compare subject, predicate, object of the quadruple. These are the first 24 bytes
-                //byte[] oldBytes = getFirstNBytes(oldQuad.getQuadrupleByteArray(), 24);
                 byte[] oldBytes = getFirstNBytes(oldQuad.returnQuadrupleByteArray(), 24);
                 byte[] newBytes = getFirstNBytes(quadruplePtr, 24);
 
                 if ( Arrays.equals(oldBytes, newBytes)){
                     double new_confidence = Convert.getDoubleValue(24, quadruplePtr);
-                    double old_confidence = Convert.getDoubleValue(24, oldQuad.getQuadrupleByteArray());
+                    double old_confidence = Convert.getDoubleValue(24, oldQuad.returnQuadrupleByteArray());
     
                     if (new_confidence > old_confidence){
                         Quadruple newQuad = new Quadruple(quadruplePtr, 0);

@@ -228,26 +228,33 @@ public class CommandLine {
 				// if (parsed[0].equals("report") && parsed.length == 1) {
 				if (parsed[0].equals("report") && parsed.length == 2) {
 					report(Arrays.copyOfRange(parsed, 1, parsed.length));
-					File f = new File("../logfile.txt");
+					File f = new File("logfile.txt");
 					Scanner scan = new Scanner(f);
 					while (scan.hasNextLine()) {
 						System.out.println(scan.nextLine());
 					}
 					scan.close();
 				} else if (parsed[0].equals("query") && parsed.length == 9) {
+					Long startTime = new java.util.Date().getTime();
 					query(Arrays.copyOfRange(parsed, 1, parsed.length));
+					Long endTime = new java.util.Date().getTime();
 					// fw = new FileWriter(parsed[1]+"_"+parsed[2]);
-					fw = new FileWriter("../logfile.txt");
-					fw.write(input + "\n");
-					fw.write("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+					fw = new FileWriter("logfile.txt", true);
+					
+					fw.append(input + "\t");
+					fw.append("Execution Time " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n\n");
 					fw.close();
 					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
+					Long startTime = new java.util.Date().getTime();
 					batchinsert(Arrays.copyOfRange(parsed, 1, parsed.length));
+					Long endTime = new java.util.Date().getTime();
 					// fw = new FileWriter(parsed[3]+"_"+parsed[2]);
-					fw = new FileWriter("../logfile.txt");
-					fw.write(input + "\n");
-					fw.write("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+					fw = new FileWriter("logfile.txt", true);
+					fw.append(input + "\t");
+					fw.append("Execution Time " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n\n");
 					fw.close();
 					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {

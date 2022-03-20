@@ -99,7 +99,9 @@ public class Stream implements GlobalConst {
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
+	// int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers();
 	int SORT_Q_NUM_PAGES = 5;
+	
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
 	public TScan quadover = null;
@@ -136,22 +138,26 @@ public class Stream implements GlobalConst {
 				// the given filter as one of the column values used in the index is null
 				use_index = false;
 			}
-			ScanBTreeIndex();
+			if (ScanBTreeIndex()){
+					// Sort results
+				// TODO: set class name and define instance
+				// SORT: don't forget a default case ASK TANNER
+				// quadover = new TScan(_results);
+				try {
+					qfs = new QuadFileScan(_results);
+					// 0 means Ascending
+					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
-			// Sort results
-			// TODO: set class name and define instance
-			// SORT: don't forget a default case ASK TANNER
-			// quadover = new TScan(_results);
-			try {
-				qfs = new QuadFileScan(_results);
-				// 0 means Ascending
-				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
-				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
-
-			} catch (Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			}else {
+				System.out.println("No matching records found");
 			}
+
+			
 		}
 	}
 
@@ -263,16 +269,25 @@ public class Stream implements GlobalConst {
 			byte quadruplePtr[] = new byte[32];
 			if(!_subjectNullFilter){
 				EID subjectid = getEID(_subjectFilter);
+				if(subjectid == null){
+					return false;
+				}
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quadruplePtr);
 				Convert.setIntValue(subjectid.slotNo, 4, quadruplePtr);
 			}
 			if(!_predicateNullFilter){
 				PID predicateid = getPID(_predicateFilter);
+				if(predicateid == null){
+					return false;
+				}
 				Convert.setIntValue(predicateid.pageNo.pid, 8, quadruplePtr);
 				Convert.setIntValue(predicateid.slotNo, 12, quadruplePtr);
 			}
 			if(!_objectNullFilter){
 				EID objectid = getEID(_objectFilter);
+				if(objectid == null){
+					return false;
+				}
 				Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
 				Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
 			}
@@ -305,25 +320,29 @@ public class Stream implements GlobalConst {
 					if (!_subjectNullFilter) {
 						if (!(Convert.getIntValue(0, quadruplePtr) == Convert.getIntValue(0, oldQuad) &&
 								Convert.getIntValue(4, quadruplePtr) == Convert.getIntValue(4, oldQuad))) {
+							entry = scan.get_next();
 							continue;
 						}
 					}
 					if (!_predicateNullFilter) {
 						if (!(Convert.getIntValue(8, quadruplePtr) == Convert.getIntValue(8, oldQuad) &&
 								Convert.getIntValue(12, quadruplePtr) == Convert.getIntValue(12, oldQuad))) {
+							entry = scan.get_next();
 							continue;
 						}
 					}
 					if (!_objectNullFilter) {
 						if (!(Convert.getIntValue(16, quadruplePtr) == Convert.getIntValue(16, oldQuad) &&
 								Convert.getIntValue(20, quadruplePtr) == Convert.getIntValue(20, oldQuad))) {
+							entry = scan.get_next();
 							continue;
 						}
 					}
 					if (!_confidenceNullFilter) {
 						// DESIGN DECISION (Index): Confidence is updatable SO to decrease #of sorts
 						// needed to be done and unreliable Indexes
-						if (Convert.getDoubleValue(24, quadruplePtr) <= Convert.getDoubleValue(24, oldQuad)) {
+						if (Convert.getDoubleValue(24, quadruplePtr) >= Convert.getDoubleValue(24, oldQuad)) {
+							entry = scan.get_next();
 							continue;
 						}
 					}
@@ -358,7 +377,13 @@ public class Stream implements GlobalConst {
 		try {
 			// TODO: ONLY IF DEFAULT CASE COVERED
 			// return quadover.getNext(qid);
-			return qsort.get_next(); 
+			if(qsort != null){
+				return qsort.get_next(); 
+			}
+			else {
+				return null;
+			}
+			
 		} catch (Exception e) {
 			System.out.println("Error in getNext of Steam.java");
 			e.printStackTrace();
@@ -382,16 +407,16 @@ public class Stream implements GlobalConst {
 		_rdfdb = rdfdb;
 		_orderType = orderType;
 
-		if (subjectFilter.compareToIgnoreCase("null") == 0) {
+		if (subjectFilter.compareToIgnoreCase("*") == 0) {
 			_subjectNullFilter = true;
 		}
-		if (predicateFilter.compareToIgnoreCase("null") == 0) {
+		if (predicateFilter.compareToIgnoreCase("*") == 0) {
 			_predicateNullFilter = true;
 		}
-		if (objectFilter.compareToIgnoreCase("null") == 0) {
+		if (objectFilter.compareToIgnoreCase("*") == 0) {
 			_objectNullFilter = true;
 		}
-		if (confidenceFilter.compareToIgnoreCase("null") == 0) {
+		if (confidenceFilter.compareToIgnoreCase("*") == 0) {
 			_confidenceNullFilter = true;
 		}
 		_subjectFilter = subjectFilter;

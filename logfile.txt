@@ -1,0 +1,20 @@
+query testDB_1 1 1 * * * 0.65 1	Reads 14	Writes: 0
+
+query testDB_1 1 1 * title * * 1	Reads 15	Writes: 0
+
+query testDB_1 1 1 * firstName jorunn * 1	Reads 7	Writes: 0
+
+query testDB_1 1 1 * firstName Jorunn * 1	Reads 15	Writes: 0
+
+query testDB_1 1 1 null firstName null 0.73 1	Reads 3	Writes: 0
+
+query testDB_1 1 1 * * * * 1	Reads 14	Writes: 0
+
+query testDB_1 1 1 * firstName Jorunn * 5	Execution Time 61	Reads 19	Writes: 12
+
+query testDB_1 1 1 * firstName Jorunn * 5	Execution Time 109	Reads 19	Writes: 12
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 148	Reads 560	Writes: 479
+
+query testDB_1 1 1 * firstName Jorunn * 1	Execution Time 14	Reads 15	Writes: 0
+

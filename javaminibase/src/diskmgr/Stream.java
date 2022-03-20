@@ -440,6 +440,7 @@ public class Stream implements GlobalConst {
 			}
 		} catch (Exception e) {
 			System.out.println("Error in closing Stream");
+			e.printStackTrace();
 		}
 
 	}

@@ -86,3 +86,145 @@ batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17359	Reads 2	Write
 
 query testDB_1 1 1 * * * * 50	Execution Time 68921	Reads 937788	Writes: 10069
 
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 79	Reads 2	Writes: 19
+
+query testDB_1 1 1 * * * * 10	Execution Time 6	Reads 17	Writes: 12
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 102	Reads 2	Writes: 19
+
+query testDB_1 1 1 * * * * 50	Execution Time 40	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 13	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 26	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 24	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 23	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 19	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 19	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 18	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 19	Reads 15	Writes: 7
+
+query testDB_1 1 1 * * * * 50	Execution Time 19	Reads 15	Writes: 7
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 127	Reads 2	Writes: 25
+
+query testDB_1 1 1 * * * * 50	Execution Time 64	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 36	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 34	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 31	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 28	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 28	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 25	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 24	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 22	Reads 20	Writes: 9
+
+query testDB_1 1 1 * * * * 50	Execution Time 21	Reads 20	Writes: 9
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 146	Reads 2	Writes: 35
+
+query testDB_1 1 1 * * * * 50	Execution Time 82	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 61	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 65	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 37	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 40	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 32	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 64	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 36	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 39	Reads 31	Writes: 14
+
+query testDB_1 1 1 * * * * 50	Execution Time 39	Reads 31	Writes: 14
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 3101	Reads 2	Writes: 383
+
+query testDB_1 1 1 * * * * 50	Execution Time 1044	Reads 408468	Writes: 3933
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 954	Reads 2	Writes: 225
+
+query testDB_1 1 1 * * * * 50	Execution Time 826	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 659	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 653	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 571	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 671	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 650	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 625	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 585	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 605	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 571	Reads 61833	Writes: 1102
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1041	Reads 2	Writes: 225
+
+query testDB_1 1 1 * * * * 50	Execution Time 716	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 559	Reads 61833	Writes: 1102
+
+query testDB_1 1 1 * * * * 50	Execution Time 575	Reads 61833	Writes: 1102
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 2007	Reads 2	Writes: 305
+
+query testDB_1 1 1 * * * * 50	Execution Time 615	Reads 82948	Writes: 2563
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1510	Reads 2	Writes: 265
+
+query testDB_1 1 1 * * * * 50	Execution Time 1054	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 893	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 881	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 896	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 887	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 919	Reads 181037	Writes: 1876
+
+query testDB_1 1 1 * * * * 50	Execution Time 919	Reads 181037	Writes: 1876
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1555	Reads 2	Writes: 284
+
+query testDB_1 1 1 * * * * 50	Execution Time 1315	Reads 271115	Writes: 2247
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1644	Reads 2	Writes: 284
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1579	Reads 2	Writes: 284
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1618	Reads 2	Writes: 284
+
+query testDB_1 1 1 * * * * 50	Execution Time 885309	Reads 271115	Writes: 2247
+
+query testDB_1 1 1 * * * * 50	Execution Time 320482	Reads 271115	Writes: 2247
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1696	Reads 2	Writes: 284
+
+batchinsert phase2_test_data.txt 1 testDB	Execution Time 1591	Reads 2	Writes: 284
+

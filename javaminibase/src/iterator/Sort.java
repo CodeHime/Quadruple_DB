@@ -664,69 +664,69 @@ public class Sort extends IteratorQ implements GlobalConst {
     }
   }
 
-  /**
-   * tries to get n_pages of buffer space
-   * 
-   * @param n_pages the number of pages
-   * @param PageIds the corresponding PageId for each page
-   * @param bufs    the buffer space
-   * @exception IteratorBMException exceptions from bufmgr layer
-   */
-  public void get_buffer_pages(int n_pages, PageId[] PageIds, byte[][] bufs)
-      throws IteratorBMException {
-    Page pgptr = new Page();
-    PageId pgid = null;
+  // /**
+  //  * tries to get n_pages of buffer space
+  //  * 
+  //  * @param n_pages the number of pages
+  //  * @param PageIds the corresponding PageId for each page
+  //  * @param bufs    the buffer space
+  //  * @exception IteratorBMException exceptions from bufmgr layer
+  //  */
+  // public void get_buffer_pages(int n_pages, PageId[] PageIds, byte[][] bufs)
+  //     throws IteratorBMException {
+  //   Page pgptr = new Page();
+  //   PageId pgid = null;
 
-    for (int i = 0; i < n_pages; i++) {
-      pgptr.setpage(bufs[i]);
+  //   for (int i = 0; i < n_pages; i++) {
+  //     pgptr.setpage(bufs[i]);
 
-      pgid = newPage(pgptr, 1);
-      PageIds[i] = new PageId(pgid.pid);
+  //     pgid = newPage(pgptr, 1);
+  //     PageIds[i] = new PageId(pgid.pid);
 
-      bufs[i] = pgptr.getpage();
+  //     bufs[i] = pgptr.getpage();
 
-    }
-  }
+  //   }
+  // }
 
-  /**
-   * free all the buffer pages we requested earlier.
-   * should be called in the destructor
-   * 
-   * @param n_pages the number of pages
-   * @param PageIds the corresponding PageId for each page
-   * @exception IteratorBMException exception from bufmgr class
-   */
-  public void free_buffer_pages(int n_pages, PageId[] PageIds)
-      throws IteratorBMException {
-    for (int i = 0; i < n_pages; i++) {
-      freePage(PageIds[i]);
-    }
-  }
+  // /**
+  //  * free all the buffer pages we requested earlier.
+  //  * should be called in the destructor
+  //  * 
+  //  * @param n_pages the number of pages
+  //  * @param PageIds the corresponding PageId for each page
+  //  * @exception IteratorBMException exception from bufmgr class
+  //  */
+  // public void free_buffer_pages(int n_pages, PageId[] PageIds)
+  //     throws IteratorBMException {
+  //   for (int i = 0; i < n_pages; i++) {
+  //     freePage(PageIds[i]);
+  //   }
+  // }
 
-  private void freePage(PageId pageno)
-      throws IteratorBMException {
+  // private void freePage(PageId pageno)
+  //     throws IteratorBMException {
 
-    try {
-      SystemDefs.JavabaseBM.freePage(pageno);
-    } catch (Exception e) {
-      throw new IteratorBMException(e, "Iterator.java: freePage() failed");
-    }
+  //   try {
+  //     SystemDefs.JavabaseBM.freePage(pageno);
+  //   } catch (Exception e) {
+  //     throw new IteratorBMException(e, "Iterator.java: freePage() failed");
+  //   }
 
-  } // end of freePage
+  // } // end of freePage
 
-  private PageId newPage(Page page, int num)
-      throws IteratorBMException {
+  // private PageId newPage(Page page, int num)
+  //     throws IteratorBMException {
 
-    PageId tmpId = new PageId();
+  //   PageId tmpId = new PageId();
 
-    try {
-      tmpId = SystemDefs.JavabaseBM.newPage(page, num);
-    } catch (Exception e) {
-      throw new IteratorBMException(e, "Iterator.java: newPage() failed");
-    }
+  //   try {
+  //     tmpId = SystemDefs.JavabaseBM.newPage(page, num);
+  //   } catch (Exception e) {
+  //     throw new IteratorBMException(e, "Iterator.java: newPage() failed");
+  //   }
 
-    return tmpId;
+  //   return tmpId;
 
-  } // end of newPage
+  // } // end of newPage
 
 }

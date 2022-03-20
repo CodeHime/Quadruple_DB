@@ -28,3 +28,61 @@ batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 15670	Reads 2	Write
 
 query testDB_1 1 1 * * * * 100	Execution Time 3035	Reads 554346	Writes: 7409
 
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17757	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 5000	Execution Time 1657	Reads 520	Writes: 254
+
+query testDB_1 1 1 * * * * 50000	Execution Time 1543	Reads 521	Writes: 254
+
+query testDB_1 1 1 * * * * 500000	Execution Time 2602	Reads 521	Writes: 254
+
+query testDB_1 1 1 * * * * 75	Execution Time 4336	Reads 613063	Writes: 8903
+
+query testDB_1 1 1 * * * * 26	Execution Time 10630	Reads 2442912	Writes: 11650
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 16871	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 5000	Execution Time 1532	Reads 520	Writes: 254
+
+query testDB_1 1 1 * * * * 50	Execution Time 3869	Reads 655454	Writes: 10317
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 16866	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 50	Execution Time 4551	Reads 937075	Writes: 10058
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 16974	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 5000	Execution Time 1846	Reads 520	Writes: 254
+
+query testDB_1 1 1 * * * * 500	Execution Time 1717	Reads 753	Writes: 481
+
+query testDB_1 1 1 * * * * 50	Execution Time 7052	Reads 1323279	Writes: 10254
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17180	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 500	Execution Time 946	Reads 615	Writes: 403
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17392	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 100	Execution Time 85141	Reads 554348	Writes: 7413
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17621	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 50	Execution Time 318406	Reads 937075	Writes: 10058
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17166	Reads 2	Writes: 620
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17986	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 50	Execution Time 133865	Reads 937075	Writes: 10058
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 16733	Reads 2	Writes: 620
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 16917	Reads 2	Writes: 620
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17454	Reads 2	Writes: 620
+
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time 17359	Reads 2	Writes: 620
+
+query testDB_1 1 1 * * * * 50	Execution Time 68921	Reads 937788	Writes: 10069
+

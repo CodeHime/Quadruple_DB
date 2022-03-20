@@ -154,7 +154,7 @@ public class SpoofIbuf implements GlobalConst  {
   private  QuadrupleHeapfile _fd;
   private  TScan hf_scan;
   private  int    _n_pages;
-  private  int    t_size = 28;
+  private  int    t_size = 32;
   
   private  int    t_proc, t_in_buf;
   private  int    tot_t_proc;

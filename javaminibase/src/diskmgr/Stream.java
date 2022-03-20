@@ -100,7 +100,7 @@ public class Stream implements GlobalConst {
 	EID _objectID = new EID();
 
 	//int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
-	int SORT_Q_NUM_PAGES = 5;
+	int SORT_Q_NUM_PAGES = 16;
 	
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;

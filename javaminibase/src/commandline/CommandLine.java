@@ -104,7 +104,7 @@ public class CommandLine {
 
 		// System.out.print("Quadruple Count:");
 		// System.out.println(quadCnt);
-		Stream stream;
+		Stream stream = null;
 		try {
 			stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
 					options[6]);
@@ -121,15 +121,13 @@ public class CommandLine {
 				}
 			}
 			stream.closestream();
-			try {
-				sysdef.JavabaseBM.flushAllPages();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sysdef.JavabaseBM.flushAllPages();
+			
 		}catch (Exception e) {
 			e.printStackTrace();
-			stream.closestream();
+			if (stream != null){
+				stream.closestream();
+			}
 		}
 
 

@@ -502,7 +502,7 @@ public class Sort extends IteratorQ implements GlobalConst {
       int n_pages) throws IOException, SortException {
 
     if (sort_order._quadruplesortorder == 1) {
-      int temp[] = { 1, 2, 3, 4};
+      int temp[] = { 1, 2, 3, 4 };
       _sort_fld = temp;
     }
     if (sort_order._quadruplesortorder == 2) {

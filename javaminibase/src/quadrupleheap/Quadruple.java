@@ -278,7 +278,7 @@ public class Quadruple implements GlobalConst {
   */
   public short size()
    {
-        return (4 + 4) + (4 + 4) + (4 + 4) + 4;
+        return (4 + 4) + (4 + 4) + (4 + 4) + (4 + 4);
    }
 
     public int getLength()

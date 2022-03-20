@@ -10,6 +10,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
+
+import bufmgr.BufMgrException;
+import bufmgr.HashOperationException;
+import bufmgr.PageNotFoundException;
+import bufmgr.PagePinnedException;
+import bufmgr.PageUnpinnedException;
+
 import java.io.FileWriter;
 
 import diskmgr.DiskMgrException;
@@ -114,9 +121,17 @@ public class CommandLine {
 				}
 			}
 			stream.closestream();
+			try {
+				sysdef.JavabaseBM.flushAllPages();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
+			stream.closestream();
 		}
+
 
 	}
 
@@ -136,7 +151,7 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 30, 10, "Clock");
+			SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);
@@ -209,6 +224,12 @@ public class CommandLine {
 
 			System.out.println("BatchInsert Successful");
 			scanner.close();
+			try {
+				sysdef.JavabaseBM.flushAllPages();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		} catch (FileNotFoundException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();

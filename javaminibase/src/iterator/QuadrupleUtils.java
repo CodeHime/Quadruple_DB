@@ -95,7 +95,7 @@ public class QuadrupleUtils {
                 LID objectLID1 = q1.getObjectQid().returnLID();
                 String object1 = labelHeapfile.getLabel(objectLID1).getLabel();
 
-                LID objectLID2 = q1.getObjectQid().returnLID();
+                LID objectLID2 = q2.getObjectQid().returnLID();
                 String object2 = labelHeapfile.getLabel(objectLID2).getLabel();
 
                 comapred = object1.compareTo(object2);

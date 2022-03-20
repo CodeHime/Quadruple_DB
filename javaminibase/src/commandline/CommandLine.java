@@ -210,7 +210,8 @@ public class CommandLine {
 				String parsed[] = input.split(" ");
 				PCounter.initialize();
 
-				if (parsed[0].equals("report") && parsed.length == 1) {
+				if (parsed[0].equals("report") && parsed.length == 2) {
+					report(Arrays.copyOfRange(parsed, 1, parsed.length));
 					File f = new File("../logfile.txt");
 					Scanner scan = new Scanner(f);
 					while (scan.hasNextLine()) {

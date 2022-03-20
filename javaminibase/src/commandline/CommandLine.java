@@ -71,39 +71,43 @@ public class CommandLine {
 		System.out.println("query");
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
-		int type = Integer.parseInt(dbname.split("_")[1]);
+		SystemDefs sysdef = new SystemDefs(dbname, 0, 1000, "Clock");
+		int type = Integer.parseInt(options[1]);
 		database.openrdfDB(dbname, type);
 
-		int labelCnt = database.getEntityCnt();
-		int subCnt = database.getSubjectCnt();
-		int predCnt = database.getPredicateCnt();
-		int objCnt = database.getObjectCnt();
-		int quadCnt = database.getQuadrupleCnt();
+		// int labelCnt = database.getEntityCnt();
+		// int subCnt = database.getSubjectCnt();
+		// int predCnt = database.getPredicateCnt();
+		// int objCnt = database.getObjectCnt();
+		// int quadCnt = database.getQuadrupleCnt();
 
-		// query testDB_1 1 1 null null null null 1
-		System.out.print("Label Count:");
-		System.out.println(labelCnt);
+		// // query testDB_1 1 1 null null null null 1
+		// System.out.print("Label Count:");
+		// System.out.println(labelCnt);
 
-		System.out.print("Subject Count:");
-		System.out.println(subCnt);
+		// System.out.print("Subject Count:");
+		// System.out.println(subCnt);
 
-		System.out.print("Predicate Count:");
-		System.out.println(predCnt);
+		// System.out.print("Predicate Count:");
+		// System.out.println(predCnt);
 
-		System.out.print("Object Count:");
-		System.out.println(objCnt);
+		// System.out.print("Object Count:");
+		// System.out.println(objCnt);
 
-		System.out.print("Quadruple Count:");
-		System.out.println(quadCnt);
+		// System.out.print("Quadruple Count:");
+		// System.out.println(quadCnt);
 
 		try {
 			Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
 					options[6]);
-			QID qid = stream.getFirstQID();
-			for (Quadruple quad = stream.getNext(qid); quad != null; quad = stream.getNext(qid)) {
+			// QID qid = stream.getFirstQID();
+			// for (Quadruple quad = stream.getNext(); quad != null; quad = stream.getNext()) {
+			Quadruple quad = stream.getNext();
+			while( quad != null){
 				// stream.quadover.mvNext(qid);
-				System.out.println(database.getQuadrupleString(quad));
-
+				// System.out.println(database.getQuadrupleString(quad));
+				database.getQuadrupleString(quad);
+				quad = stream.getNext();
 			}
 
 		} catch (Exception e) {

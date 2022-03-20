@@ -87,6 +87,7 @@ public class Stream implements GlobalConst {
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
 	String _confidenceFilter;
+	QuadFileScan qfs;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -98,7 +99,7 @@ public class Stream implements GlobalConst {
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
-	int SORT_Q_NUM_PAGES = 16;
+	int SORT_Q_NUM_PAGES = 5;
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
 	public TScan quadover = null;
@@ -142,20 +143,22 @@ public class Stream implements GlobalConst {
 			// SORT: don't forget a default case ASK TANNER
 			// quadover = new TScan(_results);
 			try {
-				QuadFileScan qfs = new QuadFileScan(_results);
+				qfs = new QuadFileScan(_results);
 				// 0 means Ascending
 				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
 				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
 			} catch (Exception e) {
+				System.out.println(e);
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public QID getFirstQID() {
-		return this.quadover.get_firstQID();
-	}
+	// public QID getFirstQID() {
+	// 	// return this.quadover.get_firstQID();
+	// 	qsort.get_next();
+	// }
 
 	public boolean indexValidForStream() {
 		if (_rdfdb.getIndexOption() == 1 && !_objectNullFilter) {
@@ -179,7 +182,7 @@ public class Stream implements GlobalConst {
 
 		try {
 			entityBTFile = new LabelBTreeFile(
-					rdfDB.getInstance().rdfDB_name + Integer.toString(rdfDB.getInstance().indexOption) + "EntityBT");
+					rdfDB.getInstance().rdfDB_name + "EntityBT");
 			KeyClass eid_key = new StringKey(EntityLabel);
 
 			KeyDataEntry entry = null;
@@ -210,7 +213,7 @@ public class Stream implements GlobalConst {
 
 		try {
 			predBTFile = new LabelBTreeFile(
-					rdfDB.getInstance().rdfDB_name + Integer.toString(rdfDB.getInstance().indexOption) + "PredBT");
+					rdfDB.getInstance().rdfDB_name + "PredBT");
 			KeyClass pid_key = new StringKey(PredicateLabel);
 
 			KeyDataEntry entry = null;
@@ -244,13 +247,13 @@ public class Stream implements GlobalConst {
 			e1.printStackTrace();
 		}
 
-		if (!use_index) {
-			_rdfdb.createRDFDB(0);
-		}
+		// if (!use_index) {
+		// 	_rdfdb.openrdfDB(name, 0);
+		// }
 
 		try {
 			QuadBTreeFile quadBTFile = new QuadBTreeFile(
-					rdfDB.getInstance().rdfDB_name + Integer.toString(rdfDB.getInstance().indexOption) + "QuadBT");
+					rdfDB.getInstance().rdfDB_name + "QuadBT");
 
 			QuadrupleHeapfile quad_heap_file = _rdfdb.getQuadHeapFile();
 			// LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
@@ -296,7 +299,7 @@ public class Stream implements GlobalConst {
 					// get qid of given entry
 					qid = ((QuadLeafData) entry.data).getData();
 					// Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
-					byte[] oldQuad = quad_heap_file.getQuadruple(qid).getQuadrupleByteArray();
+					byte[] oldQuad = quad_heap_file.getQuadruple(qid).returnQuadrupleByteArray();
 
 					// compare subject, predicate, object of the quadruple.
 					if (!_subjectNullFilter) {
@@ -349,15 +352,16 @@ public class Stream implements GlobalConst {
 	 * @param qid Record ID of the record
 	 * @return the Quadruple of the retrieved record.
 	 */
-	public Quadruple getNext(QID qid)
+	public Quadruple getNext()
 			throws InvalidTupleSizeException,
 			IOException {
 		try {
 			// TODO: ONLY IF DEFAULT CASE COVERED
-			return quadover.getNext(qid);
-			// return qsort.getNext(qid); TODO delete
+			// return quadover.getNext(qid);
+			return qsort.get_next(); 
 		} catch (Exception e) {
 			System.out.println("Error in getNext of Steam.java");
+			e.printStackTrace();
 		}
 		return null;
 	}

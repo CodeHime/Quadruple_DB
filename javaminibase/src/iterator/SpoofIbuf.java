@@ -132,7 +132,7 @@ public class SpoofIbuf implements GlobalConst  {
 	      QID rid =new QID();
 	      try {
 		if ( (t = hf_scan.getNext(rid)) == null) return tot_read;
-		t_copy = t.getQuadrupleByteArray();
+		t_copy = t.returnQuadrupleByteArray();
 		System.arraycopy(t_copy,0,_bufs[curr_page],t_read*t_size,t_size); 
 	      }
 	      catch (Exception e) {

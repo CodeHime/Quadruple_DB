@@ -92,7 +92,7 @@ public class Quadruple implements GlobalConst {
     */
    public Quadruple(Quadruple fromQuadruple)
    {
-       data = fromQuadruple.getQuadrupleByteArray();
+       data = fromQuadruple.returnQuadrupleByteArray();
        quadrupleOffset = 0;
 
        this.subject = new EID();
@@ -106,8 +106,8 @@ public class Quadruple implements GlobalConst {
 
        this.confidence = fromQuadruple.getConfidence();
 
-       fldCnt = fromQuadruple.noOfFlds(); 
-       fldOffset = fromQuadruple.copyFldOffset(); 
+      //  fldCnt = fromQuadruple.noOfFlds(); 
+      //  fldOffset = fromQuadruple.copyFldOffset(); 
    }
    
   /**
@@ -237,7 +237,7 @@ public class Quadruple implements GlobalConst {
   */
   public void quadrupleCopy(Quadruple fromQuadruple)
   {
-      byte [] tempArray = fromQuadruple.getQuadrupleByteArray();
+      byte [] tempArray = fromQuadruple.returnQuadrupleByteArray();
       System.arraycopy(tempArray, 0, data, quadrupleOffset, this.getLength());
       // quadrupleOffset = 0;
 

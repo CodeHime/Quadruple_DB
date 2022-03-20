@@ -405,6 +405,23 @@ public class rdfDB extends DB {
 
     }
 
+    public String getQuadrupleString(Quadruple q){
+        String return_string="";
+        try {
+            return_string += entity_heap_file.getLabel(q.getSubjectQid().returnLID());
+            return_string+=":";
+            return_string += predicate_heap_file.getLabel(q.getPredicateID().returnLID());
+            return_string+=":";
+            return_string += entity_heap_file.getLabel(q.getObjectQid().returnLID());
+            return_string+=":";
+            return_string += q.getConfidence();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return return_string;
+    }
+
     public Stream openStream(int orderType, String subjectFilter, String predicateFilter, String objectFilter, String confidenceFilter){
         Stream stream = null;
         try{

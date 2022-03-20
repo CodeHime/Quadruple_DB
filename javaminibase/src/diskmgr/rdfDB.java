@@ -140,7 +140,7 @@ public class rdfDB extends DB {
     }
 
     public int getSubjectCnt() {
-        ArrayList<EID> eids = new ArrayList<EID>();
+        ArrayList<String> eids = new ArrayList<String>();
 
         try{
             QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
@@ -151,9 +151,11 @@ public class rdfDB extends DB {
             while(entry != null){
                 qid = ((QuadLeafData)entry.data).getData();
                 eid = quad_heap_file.getQuadruple(qid).getSubjectQid();
-                if(!eids.contains(eid)){
-                    eids.add(eid);
+                String eidString = eid.pageNo.pid + ":" + eid.slotNo;
+                if(!eids.contains(eidString)){
+                    eids.add(eidString);
                 }
+                entry = scan.get_next();
             }
 
         }
@@ -167,7 +169,7 @@ public class rdfDB extends DB {
     }
 
     public int getObjectCnt() {
-        ArrayList<EID> eids = new ArrayList<EID>();
+        ArrayList<String> eids = new ArrayList<String>();
 
         try{
             QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB_name + Integer.toString(indexOption) + "QuadBT");
@@ -175,12 +177,15 @@ public class rdfDB extends DB {
             KeyDataEntry entry = scan.get_next();
             QID qid;
             EID eid;
+            
             while(entry != null){
                 qid = ((QuadLeafData)entry.data).getData();
                 eid = quad_heap_file.getQuadruple(qid).getObjectQid();
-                if(!eids.contains(eid)){
-                    eids.add(eid);
+                String eidString = eid.pageNo.pid + ":" + eid.slotNo;
+                if(!eids.contains(eidString)){
+                    eids.add(eidString);
                 }
+                entry = scan.get_next();
             }
 
         }

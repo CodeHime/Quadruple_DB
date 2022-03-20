@@ -33,15 +33,43 @@ import java.io.FileInputStream;
 
 public class CommandLine {
 
+	public static void report(String options[]) {
+		
+		String dbname = options[0];
+		rdfDB database = rdfDB.getInstance();
+		int type = Integer.parseInt(dbname.split("_")[1]);
+		database.openrdfDB(dbname, type);
+
+		int labelCnt = database.getEntityCnt();
+		int subCnt = database.getSubjectCnt();
+		int predCnt = database.getPredicateCnt();
+		int objCnt = database.getObjectCnt();
+		int quadCnt = database.getQuadrupleCnt();
+
+		System.out.print("Label Count:");
+		System.out.println(labelCnt);
+
+		System.out.print("Subject Count:");
+		System.out.println(subCnt);
+
+		System.out.print("Predicate Count:");
+		System.out.println(predCnt);
+
+		System.out.print("Object Count:");
+		System.out.println(objCnt);
+
+		System.out.print("Quadruple Count:");
+		System.out.println(quadCnt);
+
+	}
+
 	public static void query(String options[]) {
 		System.out.println("query");
 
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
-		System.out.println("rdfdb instance got");
 		int type = Integer.parseInt(dbname.split("_")[1]);
 		database.openrdfDB(dbname, type);
-		System.out.println("rdfdb opened");
 
 		int labelCnt = database.getEntityCnt();
 		int subCnt = database.getSubjectCnt();
@@ -84,17 +112,15 @@ public class CommandLine {
 
 	public static void batchinsert(String options[])
 			throws IOException, InvalidPageNumberException, FileIOException, DiskMgrException {
-		System.out.println("batch");
+		// System.out.println("batch");
 
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
 			SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
 			rdfDB database = rdfDB.getInstance();
-			System.out.println("rdfdb instance got");
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);
-			System.out.println("rdfdb opened");
 
 			Scanner scanner = new Scanner(f);
 			while (scanner.hasNextLine()) {
@@ -102,13 +128,22 @@ public class CommandLine {
 
 				String parts[] = processLine(line);
 
-				if(parts.length != 4){
+				boolean isPartsGood = true;
+				for (int i = 0; i < parts.length; i++)
+				{
+					if( parts[i].length() < 1)
+					{
+						isPartsGood = false;
+					}
+				}
+
+				if(parts.length != 4 || !isPartsGood){
 					continue;
 				}
 
 				byte quad[] = new byte[32];
 
-				System.out.println(line);
+				// System.out.println(line);
 				EID subjectid = database.insertEntity(parts[0]);
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
 				Convert.setIntValue(subjectid.slotNo, 4, quad);
@@ -125,35 +160,35 @@ public class CommandLine {
 				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
 				QID qid = database.insertQuadruple(quad);
 				
-				System.out.println(Arrays.toString(quad));
-				System.out.println(qid.pageNo.pid);
-				System.out.println(qid.slotNo);
+				// System.out.println(Arrays.toString(quad));
+				// System.out.println(qid.pageNo.pid);
+				// System.out.println(qid.slotNo);
 			}
 			// databases.put(dbname,database);
 
-			int labelCnt = database.getEntityCnt();
-			int subCnt = database.getSubjectCnt();
-			int predCnt = database.getPredicateCnt();
-			int objCnt = database.getObjectCnt();
-			int quadCnt = database.getQuadrupleCnt();
+			// int labelCnt = database.getEntityCnt();
+			// int subCnt = database.getSubjectCnt();
+			// int predCnt = database.getPredicateCnt();
+			// int objCnt = database.getObjectCnt();
+			// int quadCnt = database.getQuadrupleCnt();
 
-			System.out.print("Label Count:");
-			System.out.println(labelCnt);
+			// System.out.print("Label Count:");
+			// System.out.println(labelCnt);
 
-			System.out.print("Subject Count:");
-			System.out.println(subCnt);
+			// System.out.print("Subject Count:");
+			// System.out.println(subCnt);
 
-			System.out.print("Predicate Count:");
-			System.out.println(predCnt);
+			// System.out.print("Predicate Count:");
+			// System.out.println(predCnt);
 
-			System.out.print("Object Count:");
-			System.out.println(objCnt);
+			// System.out.print("Object Count:");
+			// System.out.println(objCnt);
 
-			System.out.print("Quadruple Count:");
-			System.out.println(quadCnt);
+			// System.out.print("Quadruple Count:");
+			// System.out.println(quadCnt);
 
 
-
+			System.out.println("BatchInsert Successful");
 			scanner.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("An error occurred.");
@@ -211,7 +246,7 @@ public class CommandLine {
 	}
 
 	public static void main(String[] argvs) throws InvalidPageNumberException, FileIOException, DiskMgrException {
-		System.out.println("Hello, It's working");
+		// System.out.println("Hello, It's working");
 		getInput();
 	}
 }

@@ -338,6 +338,7 @@ public class rdfDB extends DB {
           }
           // btree already contains at least one entry with this key. Must check each of them
           else{
+            Boolean changeBool = false;
             while(entry != null) {
                 // qid = quad_heap_file.insertQuadruple(quadruplePtr); // DELETE THIS
                 qid = ((QuadLeafData)entry.data).getData();
@@ -354,9 +355,15 @@ public class rdfDB extends DB {
                     if (new_confidence > old_confidence){
                         Quadruple newQuad = new Quadruple(quadruplePtr, 0);
                         quad_heap_file.updateQuadruple(qid, newQuad);
+
+                        changeBool = true;
                     }
                 }
                 entry = scan.get_next();
+            }
+            if (!changeBool){
+                qid = quad_heap_file.insertQuadruple(quadruplePtr);
+                quadBTFile.insert(key, qid);
             }
           }
 

@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import diskmgr.DiskMgrException;
 import diskmgr.FileIOException;
 import diskmgr.InvalidPageNumberException;
+import diskmgr.OutOfSpaceException;
 import diskmgr.PCounter;
 import diskmgr.Stream;
 import diskmgr.rdfDB;
@@ -71,7 +72,7 @@ public class CommandLine {
 		System.out.println("query");
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
-		SystemDefs sysdef = new SystemDefs(dbname, 0, 1000, "Clock");
+		SystemDefs sysdef = new SystemDefs(dbname, 0, Integer.parseInt(options[options.length-1]), "Clock");
 		int type = Integer.parseInt(options[1]);
 		database.openrdfDB(dbname, type);
 
@@ -81,7 +82,7 @@ public class CommandLine {
 		// int objCnt = database.getObjectCnt();
 		// int quadCnt = database.getQuadrupleCnt();
 
-		// // query testDB_1 1 1 null null null null 1
+		// // query testDB_1 1 1 * * * * 1
 		// System.out.print("Label Count:");
 		// System.out.println(labelCnt);
 
@@ -96,21 +97,24 @@ public class CommandLine {
 
 		// System.out.print("Quadruple Count:");
 		// System.out.println(quadCnt);
-
+		Stream stream;
 		try {
-			Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
+			stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
 					options[6]);
 			// QID qid = stream.getFirstQID();
 			// for (Quadruple quad = stream.getNext(); quad != null; quad = stream.getNext()) {
+			// INSIGHT: for #times query: #total writes < BufferSize-SortBufferSize-#write/iteration, else error
 			Quadruple quad = stream.getNext();
 			while( quad != null){
-				// stream.quadover.mvNext(qid);
-				// System.out.println(database.getQuadrupleString(quad));
-				database.getQuadrupleString(quad);
-				quad = stream.getNext();
+				try{
+					database.getQuadrupleString(quad);
+					quad = stream.getNext();
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-
-		} catch (Exception e) {
+			stream.closestream();
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 

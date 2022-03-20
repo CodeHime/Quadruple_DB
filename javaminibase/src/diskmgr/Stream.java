@@ -99,7 +99,7 @@ public class Stream implements GlobalConst {
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
-	// int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers();
+	//int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
 	int SORT_Q_NUM_PAGES = 5;
 	
 	Sort qsort = null;
@@ -346,7 +346,6 @@ public class Stream implements GlobalConst {
 							continue;
 						}
 					}
-					// TODO:
 					_results.insertQuadruple(oldQuad);
 					entry = scan.get_next();
 				}
@@ -428,9 +427,9 @@ public class Stream implements GlobalConst {
 	/** Closes the Stream object */
 	public void closestream() {
 		try {
-			// if (qsort != null) {
-			// qsort.close();
-			// }
+			if (qsort != null) {
+			qsort.close();
+			}
 
 			if (quadover != null) {
 				quadover.closescan();

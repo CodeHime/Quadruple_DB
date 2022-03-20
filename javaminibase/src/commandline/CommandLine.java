@@ -80,6 +80,7 @@ public class CommandLine {
 		int objCnt = database.getObjectCnt();
 		int quadCnt = database.getQuadrupleCnt();
 
+		// query testDB_1 1 1 null null null null 1
 		System.out.print("Label Count:");
 		System.out.println(labelCnt);
 
@@ -95,9 +96,9 @@ public class CommandLine {
 		System.out.print("Quadruple Count:");
 		System.out.println(quadCnt);
 
-		Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
-				options[6]);
 		try {
+			Stream stream = database.openStream(Integer.parseInt(options[2]), options[3], options[4], options[5],
+					options[6]);
 			QID qid = stream.getFirstQID();
 			for (Quadruple quad = stream.getNext(qid); quad != null; quad = stream.getNext(qid)) {
 				// stream.quadover.mvNext(qid);

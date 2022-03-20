@@ -145,8 +145,8 @@ public class Stream implements GlobalConst {
 				QuadFileScan qfs = new QuadFileScan(_results);
 				// 0 means Ascending
 				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
-
 				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -268,10 +268,14 @@ public class Stream implements GlobalConst {
 			Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
 			Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
 			Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr);
-
-			KeyClass key = _rdfdb.getStringKey(quadruplePtr);
-
-			QuadBTFileScan scan = quadBTFile.new_scan(key, key);
+			QuadBTFileScan scan;
+			if(use_index){
+				KeyClass key = _rdfdb.getStringKey(quadruplePtr);
+				scan = quadBTFile.new_scan(key, key);
+			}
+			else{
+				scan = quadBTFile.new_scan(null, null);
+			}
 			KeyDataEntry entry = scan.get_next();
 
 			// The quadruple is not already in the btree, return false
@@ -376,7 +380,7 @@ public class Stream implements GlobalConst {
 		if (objectFilter.compareToIgnoreCase("null") == 0) {
 			_objectNullFilter = true;
 		}
-		if (_confidenceFilter.compareToIgnoreCase("null") == 0) {
+		if (confidenceFilter.compareToIgnoreCase("null") == 0) {
 			_confidenceNullFilter = true;
 		}
 		_subjectFilter = subjectFilter;

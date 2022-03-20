@@ -460,7 +460,7 @@ public class rdfDB extends DB {
                 // predicate
                 case(2):{
                     LID lid = newQuad.getPredicateID().returnLID();
-                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    String pred = predicate_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(pred);
                     break;
                 }
@@ -476,14 +476,14 @@ public class rdfDB extends DB {
                     LID lid = newQuad.getObjectQid().returnLID();
                     String object = entity_heap_file.getLabel(lid).getLabel();
                     lid = newQuad.getPredicateID().returnLID();
-                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    String pred = predicate_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(object + pred);
                     break;
                 }
                 // predicate + subject
                 case(5):{
                     LID lid = newQuad.getPredicateID().returnLID();
-                    String pred = entity_heap_file.getLabel(lid).getLabel();
+                    String pred = predicate_heap_file.getLabel(lid).getLabel();
                     lid = newQuad.getSubjectQid().returnLID();
                     String subject = entity_heap_file.getLabel(lid).getLabel();
                     key = new StringKey(pred + subject);

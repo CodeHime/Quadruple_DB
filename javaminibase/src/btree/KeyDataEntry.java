@@ -129,7 +129,11 @@ public KeyDataEntry( String key, RID rid) {
      if ( data instanceof IndexData ) 
         this.data= new IndexData(((IndexData)data).getData());
      else if ( data instanceof LeafData ) 
-        this.data= new LeafData(((LeafData)data).getData()); 
+        this.data= new LeafData(((LeafData)data).getData());
+     else if ( data instanceof LabelLeafData )
+        this.data= new LabelLeafData(((LabelLeafData)data).getData());
+     else if ( data instanceof QuadLeafData )
+        this.data= new QuadLeafData(((QuadLeafData)data).getData());  
   }
 
   /** shallow equal. 

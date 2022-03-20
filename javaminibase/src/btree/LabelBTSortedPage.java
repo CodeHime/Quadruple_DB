@@ -114,7 +114,7 @@ public class LabelBTSortedPage extends LHFPage{
      try {
        
        record=LabelBT.getBytesFromEntry(entry);  
-       lid=super.insertLabel(record.toString());
+       lid=super.insertLabel(record);
          if (lid==null) return null;
 	 
          if ( entry.data instanceof LabelLeafData )

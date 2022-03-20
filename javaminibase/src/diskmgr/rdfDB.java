@@ -425,8 +425,8 @@ public class rdfDB extends DB {
     private KeyClass getStringKey(byte[] quadruplePtr) {
         KeyClass key = null;
         try{
-            Quadruple newQuad = new Quadruple();
-            newQuad.quadrupleInit(quadruplePtr, 0);
+            Quadruple newQuad = new Quadruple(quadruplePtr, 0);
+            // newQuad.quadrupleInit(quadruplePtr, 0);
             switch(indexOption){
                 // object 
                 case(1):{

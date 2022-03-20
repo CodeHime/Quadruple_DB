@@ -89,7 +89,7 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 10 + 20, 10, "Clock");
+			SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			System.out.println("rdfdb instance got");
 			int type = Integer.parseInt(options[1]);

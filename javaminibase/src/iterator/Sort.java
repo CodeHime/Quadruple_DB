@@ -21,7 +21,7 @@ import chainexception.*;
 public class Sort extends IteratorQ implements GlobalConst {
   private static final int ARBIT_RUNS = 10;
   public boolean closeFlag = false;
-  private QuadFileScan _am;
+  private TScan _am;
   private int[] _sort_fld;
   private QuadrupleOrder order;
   private int _n_pages;
@@ -168,10 +168,13 @@ public class Sort extends IteratorQ implements GlobalConst {
       }
     }
 
+    QID qid = new QID();
     // maintain a fixed maximum number of elements in the heap
     while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
       try {
-        tuple = _am.get_next(); // according to Iterator.java
+        QID qid2 = new QID();
+
+        tuple = _am.getNext(qid2); // according to Iterator.java
       } catch (Exception e) {
         e.printStackTrace();
         throw new SortException(e, "Sort.java: get_next() failed");
@@ -283,7 +286,8 @@ public class Sort extends IteratorQ implements GlobalConst {
       else if (p_elems_curr_Q == 0) {
         while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
           try {
-            tuple = _am.get_next(); // according to Iterator.java
+            QID qid2 = new QID();
+            tuple = _am.getNext(qid2); // according to Iterator.java
           } catch (Exception e) {
             throw new SortException(e, "get_next() failed");
           }
@@ -497,7 +501,7 @@ public class Sort extends IteratorQ implements GlobalConst {
    * @exception SortException something went wrong in the lower layer.
    */
   public Sort(
-      QuadFileScan am,
+      TScan am,
       QuadrupleOrder sort_order,
       int n_pages) throws IOException, SortException {
 
@@ -635,7 +639,7 @@ public class Sort extends IteratorQ implements GlobalConst {
     if (!closeFlag) {
 
       try {
-        _am.close();
+        _am.closescan();
       } catch (Exception e) {
         throw new SortException(e, "Sort.java: error in closing iterator.");
       }

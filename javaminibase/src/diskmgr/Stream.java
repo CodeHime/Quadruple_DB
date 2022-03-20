@@ -87,7 +87,7 @@ public class Stream implements GlobalConst {
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
 	String _confidenceFilter;
-	QuadFileScan qfs;
+	TScan qfs;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -144,7 +144,8 @@ public class Stream implements GlobalConst {
 				// SORT: don't forget a default case ASK TANNER
 				// quadover = new TScan(_results);
 				try {
-					qfs = new QuadFileScan(_results);
+					qfs = new TScan(_results);
+					// new QuadFileScan(_results);
 					// 0 means Ascending
 					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
 					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);

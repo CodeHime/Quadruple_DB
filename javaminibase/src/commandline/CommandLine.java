@@ -39,7 +39,7 @@ public class CommandLine {
 	public static void report(String options[]) {
 		
 		String dbname = options[0];
-		SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
+		SystemDefs sysdef = new SystemDefs(dbname, 0, 1000, "Clock");
 		rdfDB database = rdfDB.getInstance();
 		int type = Integer.parseInt(dbname.split("_")[1]);
 		database.openrdfDB(dbname, type);
@@ -127,7 +127,7 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
+			SystemDefs sysdef = new SystemDefs(dbname, 30, 10, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);
@@ -220,6 +220,7 @@ public class CommandLine {
 				String parsed[] = input.split(" ");
 				PCounter.initialize();
 
+				// if (parsed[0].equals("report") && parsed.length == 1) {
 				if (parsed[0].equals("report") && parsed.length == 2) {
 					report(Arrays.copyOfRange(parsed, 1, parsed.length));
 					File f = new File("../logfile.txt");

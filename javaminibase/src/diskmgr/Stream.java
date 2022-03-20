@@ -146,7 +146,7 @@ public class Stream implements GlobalConst {
 				// 0 means Ascending
 				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
 				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -256,24 +256,31 @@ public class Stream implements GlobalConst {
 			// LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
 			// LabelHeapfile entity_heap_file = _rdfdb.getEntityHeapFile();
 
-			EID subjectid = getEID(_subjectFilter);
-			PID predicateid = getPID(_predicateFilter);
-			EID objectid = getEID(_objectFilter);
 
-			byte quadruplePtr[] = new byte[28];
-			Convert.setIntValue(subjectid.pageNo.pid, 0, quadruplePtr);
-			Convert.setIntValue(subjectid.slotNo, 4, quadruplePtr);
-			Convert.setIntValue(predicateid.pageNo.pid, 8, quadruplePtr);
-			Convert.setIntValue(predicateid.slotNo, 12, quadruplePtr);
-			Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
-			Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
-			Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr);
+			byte quadruplePtr[] = new byte[32];
+			if(!_subjectNullFilter){
+				EID subjectid = getEID(_subjectFilter);
+				Convert.setIntValue(subjectid.pageNo.pid, 0, quadruplePtr);
+				Convert.setIntValue(subjectid.slotNo, 4, quadruplePtr);
+			}
+			if(!_predicateNullFilter){
+				PID predicateid = getPID(_predicateFilter);
+				Convert.setIntValue(predicateid.pageNo.pid, 8, quadruplePtr);
+				Convert.setIntValue(predicateid.slotNo, 12, quadruplePtr);
+			}
+			if(!_objectNullFilter){
+				EID objectid = getEID(_objectFilter);
+				Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
+				Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
+			}
+			if(!_confidenceNullFilter){
+				Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr);
+			}
 			QuadBTFileScan scan;
-			if(use_index){
+			if (use_index) {
 				KeyClass key = _rdfdb.getStringKey(quadruplePtr);
 				scan = quadBTFile.new_scan(key, key);
-			}
-			else{
+			} else {
 				scan = quadBTFile.new_scan(null, null);
 			}
 			KeyDataEntry entry = scan.get_next();

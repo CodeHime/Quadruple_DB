@@ -428,7 +428,7 @@ public class rdfDB extends DB {
             String object = entity_heap_file.getLabel(q.getObjectQid().returnLID()).getLabel();
 
 
-            System.out.printf("%20s %20s %20s %.17f\n",subject,predicate,object,q.getConfidence());
+            System.out.printf("%20s %20s %40s %.17f\n",subject,predicate,object,q.getConfidence());
 
         } catch (Exception e) {
             // TODO Auto-generated catch block

@@ -529,6 +529,16 @@ public class Sort extends IteratorQ implements GlobalConst {
       int temp[] = { 4, -1, -1, -1 };
       _sort_fld = temp;
     }
+    if (sort_order._quadruplesortorder == 7) {
+      int temp[] = { 2,-1, -1, -1 };
+      _sort_fld = temp;
+    }
+    if (sort_order._quadruplesortorder == 8) {
+      int temp[] = { 1, 3, -1, -1 };
+      _sort_fld = temp;
+    }
+
+
     Quadruple t = new Quadruple(); // need Tuple.java
 
     tuple_size = t.size();

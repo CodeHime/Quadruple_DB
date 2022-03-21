@@ -100,7 +100,7 @@ public class Stream implements GlobalConst {
 	EID _objectID = new EID();
 
 	//int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
-	int SORT_Q_NUM_PAGES = 16;
+	int SORT_Q_NUM_PAGES = 32;
 	
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
@@ -123,6 +123,7 @@ public class Stream implements GlobalConst {
 			throws InvalidTupleSizeException,
 			IOException {
 		// set null filters and filter values
+		_results = null;
 		init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 		// Scan file using index
 		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {

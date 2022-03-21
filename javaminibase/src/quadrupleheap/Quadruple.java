@@ -70,7 +70,7 @@ public class Quadruple implements GlobalConst {
   public Quadruple()
   {
        // Creat a new tuple
-       data = new byte[max_size];
+       data = new byte[QUADRUPLE_SIZE];
        quadrupleOffset = 0;
        quadrupleLength = QUADRUPLE_SIZE; // (4 + 4) + (4 + 4) + (4 + 4) + 8
   }
@@ -92,7 +92,7 @@ public class Quadruple implements GlobalConst {
     */
    public Quadruple(Quadruple fromQuadruple)
    {
-       data = fromQuadruple.getQuadrupleByteArray();
+       data = fromQuadruple.returnQuadrupleByteArray();
        quadrupleOffset = 0;
 
        this.subject = new EID();
@@ -106,52 +106,119 @@ public class Quadruple implements GlobalConst {
 
        this.confidence = fromQuadruple.getConfidence();
 
-       fldCnt = fromQuadruple.noOfFlds(); 
-       fldOffset = fromQuadruple.copyFldOffset(); 
+      //  fldCnt = fromQuadruple.noOfFlds(); 
+      //  fldOffset = fromQuadruple.copyFldOffset(); 
    }
    
   /**
     return subject
    */
    public EID getSubjectQid() {
-     return this.subject;
+    
+    int pageNo = 0;
+    int slotNo = 0;
+    try {
+      pageNo = Convert.getIntValue(0, data);
+      slotNo = Convert.getIntValue(4, data);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    EID eid  = new EID(new LID(new PageId(pageNo), slotNo));
+    return eid;
    }
 
   /**
     return predicate
    */
    public PID getPredicateID() {
-     return this.predicate;
+    int pageNo = 0;
+    int slotNo = 0;
+    try {
+      pageNo = Convert.getIntValue(8, data);
+      slotNo = Convert.getIntValue(12, data);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    PID eid  = new PID(new LID(new PageId(pageNo), slotNo));
+    return eid;
    }
   
   /**
     return object
    */
    public EID getObjectQid() {
-     return this.object;
+    int pageNo = 0;
+    int slotNo = 0;
+    try {
+      pageNo = Convert.getIntValue(16, data);
+      slotNo = Convert.getIntValue(20, data);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    EID eid  = new EID(new LID(new PageId(pageNo), slotNo));
+    return eid;
    }
 
    public double getConfidence() {
-     return this.confidence;
+    double conf =0;
+    try {
+      conf = Convert.getDoubleValue(24, data);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return conf;
    }
 
   public Quadruple setSubjectQid(EID subjectQid) {
-    this.subject = subjectQid;
+    
+    try {
+      Convert.setIntValue(subjectQid.pageNo.pid, 0, data);
+      Convert.setIntValue(subjectQid.slotNo, 4, data);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
     return this;
   }
 
   public Quadruple setPredicateID(PID predicateID) {
-    this.predicate = predicateID;
+    try {
+      Convert.setIntValue(predicateID.pageNo.pid, 8, data);
+      Convert.setIntValue(predicateID.slotNo, 12, data);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return this;
   }
 
   public Quadruple setObjectQid(EID objectQid) {
-    this.object = objectQid;
+    try {
+      Convert.setIntValue(objectQid.pageNo.pid, 16, data);
+      Convert.setIntValue(objectQid.slotNo, 20, data);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return this;
   }
 
   public Quadruple setConfidence(double confidence) {
-    this.confidence = confidence;
+    try {
+      Convert.setDoubleValue(confidence, 24, data);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return this;
   }
 
@@ -170,17 +237,17 @@ public class Quadruple implements GlobalConst {
   */
   public void quadrupleCopy(Quadruple fromQuadruple)
   {
-      byte [] tempArray = fromQuadruple.getQuadrupleByteArray();
+      byte [] tempArray = fromQuadruple.returnQuadrupleByteArray();
       System.arraycopy(tempArray, 0, data, quadrupleOffset, this.getLength());
-      quadrupleOffset = 0;
+      // quadrupleOffset = 0;
 
-      this.subject.copyEid(fromQuadruple.getSubjectQid());
-      this.predicate.copyPid(fromQuadruple.getPredicateID());
-      this.subject.copyEid(fromQuadruple.getObjectQid());
-      this.confidence = fromQuadruple.getConfidence();
+      // this.subject.copyEid(fromQuadruple.getSubjectQid());
+      // this.predicate.copyPid(fromQuadruple.getPredicateID());
+      // this.subject.copyEid(fromQuadruple.getObjectQid());
+      // this.confidence = fromQuadruple.getConfidence();
 
-      fldCnt = fromQuadruple.noOfFlds();
-      fldOffset = fromQuadruple.copyFldOffset();
+      // fldCnt = fromQuadruple.noOfFlds();
+      // fldOffset = fromQuadruple.copyFldOffset();
   }
 
   /** This is used when you don't want to use the constructor
@@ -192,12 +259,6 @@ public class Quadruple implements GlobalConst {
   {
       data = aQuadruple;
       quadrupleOffset = offset;
-      ByteBuffer tempBuffer = ByteBuffer.wrap(aQuadruple, offset, this.getLength());
-
-      this.subject = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-      this.predicate = new PID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-      this.object = new EID(new LID(new PageId(tempBuffer.getInt()), tempBuffer.getInt()));
-      this.confidence = tempBuffer.getDouble();
   }
 
  /**
@@ -217,7 +278,7 @@ public class Quadruple implements GlobalConst {
   */
   public short size()
    {
-        return (4 + 4) + (4 + 4) + (4 + 4) + 4;
+        return (4 + 4) + (4 + 4) + (4 + 4) + (4 + 4);
    }
 
     public int getLength()

@@ -83,10 +83,11 @@ public class Stream implements GlobalConst {
 
 	/** The rdfDB we are using. */
 	private rdfDB _rdfdb;
-	int _orderType=0;
+	int _orderType = 0;
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
 	String _confidenceFilter;
+	TScan qfs;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -98,7 +99,9 @@ public class Stream implements GlobalConst {
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
+	//int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
 	int SORT_Q_NUM_PAGES = 16;
+	
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
 	public TScan quadover = null;
@@ -120,6 +123,7 @@ public class Stream implements GlobalConst {
 			throws InvalidTupleSizeException,
 			IOException {
 		// set null filters and filter values
+		_results = null;
 		init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 		// Scan file using index
 		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
@@ -135,29 +139,34 @@ public class Stream implements GlobalConst {
 				// the given filter as one of the column values used in the index is null
 				use_index = false;
 			}
-			ScanBTreeIndex();
+			if (ScanBTreeIndex()){
+					// Sort results
+				// TODO: set class name and define instance
+				// SORT: don't forget a default case ASK TANNER
+				// quadover = new TScan(_results);
+				try {
+					qfs = new TScan(_results);
+					// new QuadFileScan(_results);
+					// 0 means Ascending
+					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
-			// Sort results
-			// TODO: set class name and define instance
-			// SORT: don't forget a default case ASK TANNER
-			//quadover = new TScan(_results);
-			try{
-				QuadFileScan qfs = new QuadFileScan(_results);
-				//0 means Ascending
-				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType,0);
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			}else {
+				System.out.println("No matching records found");
+			}
+
 			
-				qsort = new Sort(qfs, quadrupleOrder,  SORT_Q_NUM_PAGES);
-			}
-			catch (Exception e)
-			{
-			e.printStackTrace();
-			}
 		}
 	}
 
-	public QID getFirstQID(){
-		return this.quadover.get_firstQID();
-	}
+	// public QID getFirstQID() {
+	// 	// return this.quadover.get_firstQID();
+	// 	qsort.get_next();
+	// }
 
 	public boolean indexValidForStream() {
 		if (_rdfdb.getIndexOption() == 1 && !_objectNullFilter) {
@@ -180,9 +189,10 @@ public class Stream implements GlobalConst {
 		LabelBTreeFile entityBTFile;
 
 		try {
-			entityBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name +  Integer.toString(rdfDB.getInstance().indexOption) + "EntityBT");
+			entityBTFile = new LabelBTreeFile(
+					rdfDB.getInstance().rdfDB_name + "EntityBT");
 			KeyClass eid_key = new StringKey(EntityLabel);
-	
+
 			KeyDataEntry entry = null;
 
 			LabelBTFileScan scan = entityBTFile.new_scan(eid_key, eid_key);
@@ -210,7 +220,8 @@ public class Stream implements GlobalConst {
 		LabelBTreeFile predBTFile;
 
 		try {
-			predBTFile = new LabelBTreeFile(rdfDB.getInstance().rdfDB_name + Integer.toString(rdfDB.getInstance().indexOption) + "PredBT");
+			predBTFile = new LabelBTreeFile(
+					rdfDB.getInstance().rdfDB_name + "PredBT");
 			KeyClass pid_key = new StringKey(PredicateLabel);
 
 			KeyDataEntry entry = null;
@@ -234,107 +245,123 @@ public class Stream implements GlobalConst {
 		return pid;
 	}
 
-	public boolean ScanBTreeIndex(){
-	QID qid = null;
-	//TODO: check
-	try {
-		_results = new QuadrupleHeapfile(Long.toString((new java.util.Date()).getTime()));
-	} catch (HFException | HFBufMgrException | HFDiskMgrException | IOException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
-	
-	if(!use_index)
-	{
-	    _rdfdb.createRDFDB(0);
-	}
-    
-	try {
-		QuadBTreeFile quadBTFile = new QuadBTreeFile(rdfDB.getInstance().rdfDB_name  +  Integer.toString(rdfDB.getInstance().indexOption) + "QuadBT");
-            
-	  QuadrupleHeapfile quad_heap_file = _rdfdb.getQuadHeapFile();
-	  //LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
-	  //LabelHeapfile entity_heap_file = _rdfdb.getEntityHeapFile();
-	  
-	  EID subjectid= getEID(_subjectFilter);
-	  PID predicateid= getPID(_predicateFilter);
-	  EID objectid= getEID(_objectFilter);
-	  
-	  byte quadruplePtr[] = new byte[28];
-	  Convert.setIntValue(subjectid.pageNo.pid,0,quadruplePtr);
-	  Convert.setIntValue(subjectid.slotNo,4,quadruplePtr);
-	  Convert.setIntValue(predicateid.pageNo.pid,8,quadruplePtr);
-	  Convert.setIntValue(predicateid.slotNo,12,quadruplePtr);
-	  Convert.setIntValue(objectid.pageNo.pid,16,quadruplePtr);
-	  Convert.setIntValue(objectid.slotNo,20,quadruplePtr);
-	  Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr); 
+	public boolean ScanBTreeIndex() {
+		QID qid = null;
+		// TODO: check
+		try {
+			_results = new QuadrupleHeapfile(Long.toString((new java.util.Date()).getTime()));
+		} catch (HFException | HFBufMgrException | HFDiskMgrException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-	  KeyClass key = _rdfdb.getStringKey(quadruplePtr);
-	  
-	  QuadBTFileScan scan = quadBTFile.new_scan(key, key);
-	  KeyDataEntry entry = scan.get_next();
+		// if (!use_index) {
+		// 	_rdfdb.openrdfDB(name, 0);
+		// }
 
-	  // The quadruple is not already in the btree, return false
-	  if(entry == null)
-	  {
-	      System.out.println("No match found");
-	      return false;
-	  }
-	  // btree found a match
-	  else{
-	    while(entry != null) {
-		// get qid of given entry
-		qid = ((QuadLeafData)entry.data).getData();
-		// Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
-		byte[] oldQuad = quad_heap_file.getQuadruple(qid).getQuadrupleByteArray();
+		try {
+			QuadBTreeFile quadBTFile = new QuadBTreeFile(
+					rdfDB.getInstance().rdfDB_name + "QuadBT");
 
-		// compare subject, predicate, object of the quadruple.
-		if(!_subjectNullFilter)
-		{
-		    if(!(Convert.getIntValue(0, quadruplePtr)==Convert.getIntValue(0, oldQuad) &&
-			Convert.getIntValue(4, quadruplePtr)==Convert.getIntValue(4, oldQuad)))
-		    {
-				continue;
-		    }
+			QuadrupleHeapfile quad_heap_file = _rdfdb.getQuadHeapFile();
+			// LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
+			// LabelHeapfile entity_heap_file = _rdfdb.getEntityHeapFile();
+
+
+			byte quadruplePtr[] = new byte[32];
+			if(!_subjectNullFilter){
+				EID subjectid = getEID(_subjectFilter);
+				if(subjectid == null){
+					return false;
+				}
+				Convert.setIntValue(subjectid.pageNo.pid, 0, quadruplePtr);
+				Convert.setIntValue(subjectid.slotNo, 4, quadruplePtr);
+			}
+			if(!_predicateNullFilter){
+				PID predicateid = getPID(_predicateFilter);
+				if(predicateid == null){
+					return false;
+				}
+				Convert.setIntValue(predicateid.pageNo.pid, 8, quadruplePtr);
+				Convert.setIntValue(predicateid.slotNo, 12, quadruplePtr);
+			}
+			if(!_objectNullFilter){
+				EID objectid = getEID(_objectFilter);
+				if(objectid == null){
+					return false;
+				}
+				Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
+				Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
+			}
+			if(!_confidenceNullFilter){
+				Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr);
+			}
+			QuadBTFileScan scan;
+			if (use_index) {
+				KeyClass key = _rdfdb.getStringKey(quadruplePtr);
+				scan = quadBTFile.new_scan(key, key);
+			} else {
+				scan = quadBTFile.new_scan(null, null);
+			}
+			KeyDataEntry entry = scan.get_next();
+
+			// The quadruple is not already in the btree, return false
+			if (entry == null) {
+				System.out.println("No match found");
+				return false;
+			}
+			// btree found a match
+			else {
+				while (entry != null) {
+					// get qid of given entry
+					qid = ((QuadLeafData) entry.data).getData();
+					// Quadruple oldQuad = quad_heap_file.getQuadruple(qid);
+					byte[] oldQuad = quad_heap_file.getQuadruple(qid).returnQuadrupleByteArray();
+
+					// compare subject, predicate, object of the quadruple.
+					if (!_subjectNullFilter) {
+						if (!(Convert.getIntValue(0, quadruplePtr) == Convert.getIntValue(0, oldQuad) &&
+								Convert.getIntValue(4, quadruplePtr) == Convert.getIntValue(4, oldQuad))) {
+							entry = scan.get_next();
+							continue;
+						}
+					}
+					if (!_predicateNullFilter) {
+						if (!(Convert.getIntValue(8, quadruplePtr) == Convert.getIntValue(8, oldQuad) &&
+								Convert.getIntValue(12, quadruplePtr) == Convert.getIntValue(12, oldQuad))) {
+							entry = scan.get_next();
+							continue;
+						}
+					}
+					if (!_objectNullFilter) {
+						if (!(Convert.getIntValue(16, quadruplePtr) == Convert.getIntValue(16, oldQuad) &&
+								Convert.getIntValue(20, quadruplePtr) == Convert.getIntValue(20, oldQuad))) {
+							entry = scan.get_next();
+							continue;
+						}
+					}
+					if (!_confidenceNullFilter) {
+						// DESIGN DECISION (Index): Confidence is updatable SO to decrease #of sorts
+						// needed to be done and unreliable Indexes
+						if (Convert.getDoubleValue(24, quadruplePtr) >= Convert.getDoubleValue(24, oldQuad)) {
+							entry = scan.get_next();
+							continue;
+						}
+					}
+					_results.insertQuadruple(oldQuad);
+					entry = scan.get_next();
+				}
+			}
+			scan.DestroyBTreeFileScan();
+			quadBTFile.close();
+		} catch (Exception e) {
+			System.err.println(e);
+			e.printStackTrace();
+			Runtime.getRuntime().exit(1);
 		}
-		if(!_predicateNullFilter)
-		{
-		    if(!(Convert.getIntValue(8, quadruplePtr)==Convert.getIntValue(8, oldQuad) &&
-			Convert.getIntValue(12, quadruplePtr)==Convert.getIntValue(12, oldQuad)))
-		    {
-				continue;
-		    }
-		}
-		if(!_objectNullFilter)
-		{
-		    if(!(Convert.getIntValue(16, quadruplePtr)==Convert.getIntValue(16, oldQuad) &&
-			Convert.getIntValue(20, quadruplePtr)==Convert.getIntValue(20, oldQuad)))
-		    {
-				continue;
-		    }
-		}
-		if (!_confidenceNullFilter){
-		    // DESIGN DECISION (Index): Confidence is updatable SO to decrease #of sorts needed to be done and unreliable Indexes
-		    if (Convert.getDoubleValue(24, quadruplePtr) <= Convert.getDoubleValue(24, oldQuad))
-		    {
-			    continue;
-		    }
-		}
-		//TODO:
-		_results.insertQuadruple(oldQuad);
-		entry = scan.get_next();
-	    }
-	  }
-	  scan.DestroyBTreeFileScan();
-	  quadBTFile.close();
-	}catch(Exception e) {
-	    System.err.println(e);
-	    e.printStackTrace();
-	    Runtime.getRuntime().exit(1);
-	}
 		return true;
-	
-    }
+
+	}
 
 	/**
 	 * Retrieve the next record in a sequential Stream
@@ -345,15 +372,22 @@ public class Stream implements GlobalConst {
 	 * @param qid Record ID of the record
 	 * @return the Quadruple of the retrieved record.
 	 */
-	public Quadruple getNext(QID qid)
+	public Quadruple getNext()
 			throws InvalidTupleSizeException,
 			IOException {
 		try {
 			// TODO: ONLY IF DEFAULT CASE COVERED
-			return quadover.getNext(qid);
-			// return qsort.getNext(qid); TODO delete
+			// return quadover.getNext(qid);
+			if(qsort != null){
+				return qsort.get_next(); 
+			}
+			else {
+				return null;
+			}
+			
 		} catch (Exception e) {
 			System.out.println("Error in getNext of Steam.java");
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -374,16 +408,16 @@ public class Stream implements GlobalConst {
 		_rdfdb = rdfdb;
 		_orderType = orderType;
 
-		if (subjectFilter.compareToIgnoreCase("null") == 0) {
+		if (subjectFilter.compareToIgnoreCase("*") == 0) {
 			_subjectNullFilter = true;
 		}
-		if (predicateFilter.compareToIgnoreCase("null") == 0) {
+		if (predicateFilter.compareToIgnoreCase("*") == 0) {
 			_predicateNullFilter = true;
 		}
-		if (objectFilter.compareToIgnoreCase("null") == 0) {
+		if (objectFilter.compareToIgnoreCase("*") == 0) {
 			_objectNullFilter = true;
 		}
-		if (_confidenceFilter.compareToIgnoreCase("null") == 0) {
+		if (confidenceFilter.compareToIgnoreCase("*") == 0) {
 			_confidenceNullFilter = true;
 		}
 		_subjectFilter = subjectFilter;
@@ -395,9 +429,9 @@ public class Stream implements GlobalConst {
 	/** Closes the Stream object */
 	public void closestream() {
 		try {
-			// if (qsort != null) {
-			// 	qsort.close();
-			// }
+			if (qsort != null) {
+			qsort.close();
+			}
 
 			if (quadover != null) {
 				quadover.closescan();
@@ -408,6 +442,7 @@ public class Stream implements GlobalConst {
 			}
 		} catch (Exception e) {
 			System.out.println("Error in closing Stream");
+			e.printStackTrace();
 		}
 
 	}

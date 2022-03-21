@@ -368,7 +368,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
    *
    * @return the rid of the record
    */
-  public LID insertLabel(String label) 
+  public LID insertLabel(byte[] label) 
     throws InvalidSlotNumberException,  
 	   InvalidTupleSizeException,
 	   SpaceNotAvailableException,
@@ -378,7 +378,7 @@ public class LabelHeapfile implements Filetype,  GlobalConst {
 	   IOException
     {
       int dpinfoLen = 0;	
-      int recLen = label.length();
+      int recLen = label.length;
       boolean found;
       RID currentDataPageRid = new RID();
       Page pageinbuffer = new Page();

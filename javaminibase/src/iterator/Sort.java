@@ -65,7 +65,8 @@ public class Sort extends IteratorQ implements GlobalConst {
       Exception {
     // don't know what will happen if n_R_runs > _n_pages
     if (n_R_runs > _n_pages)
-      throw new LowMemException("Sort.java: Not enough memory to sort in two passes.");
+        _n_pages = 30;
+      //throw new LowMemException("Sort.java: Not enough memory to sort in two passes.");
 
     int i;
     pnode cur_node; // need pq_defs.java

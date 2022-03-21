@@ -79,6 +79,7 @@ public class CommandLine {
 		System.out.println("query");
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
+
 		SystemDefs sysdef = new SystemDefs(dbname, 0, Integer.parseInt(options[options.length-1]), "Clock");
 		int type = Integer.parseInt(options[1]);
 		database.openrdfDB(dbname, type);
@@ -149,7 +150,7 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 10000, 1000, "Clock");
+			SystemDefs sysdef = new SystemDefs(dbname, 1000, 100, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);

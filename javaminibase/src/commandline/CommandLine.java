@@ -136,11 +136,37 @@ public class CommandLine {
 
 	//:Jorunn_Danielsen :knows :Eirik_Newth		0.5232176791516268
 	private static String[] processLine(String line) {
-		line = line.replaceAll(" ", "");
-		line = line.replaceFirst("\t", "");
-		line = line.replaceFirst("\t", ":");
-		line = line.replaceFirst(":", "");
-		return line.split(":");
+
+		char[] characters = line.toCharArray();
+
+		String[] quadComponents = new String[4];
+		String component = "";
+		int componentIndex = 0;
+		for (char c : characters){
+			if ((c >=48 && c <=57) || ( c >= 65 && c<=90 ) || (c >=97 && c <= 122) || c==95 || c==46 || c==45){
+				component+= c;
+			}
+			else{
+				if (!component.equals("")){
+					quadComponents[componentIndex] = component;
+					componentIndex+=1;
+
+					System.out.println(component);
+					component = "";
+				}
+			}
+		}
+
+		if (!component.equals("")){
+			quadComponents[componentIndex] = component;
+		}
+
+		// line = line.replaceAll(" ", "");
+		// line = line.replaceFirst("\t", "");
+		// line = line.replaceFirst("\t", ":");
+		// line = line.replaceFirst(":", "");
+		// return line.split(":");
+		return quadComponents;
 	}
 
 	public static void batchinsert(String options[])
@@ -161,10 +187,14 @@ public class CommandLine {
 
 				String parts[] = processLine(line);
 
+				for(String p: parts){
+					System.out.print(p);
+				}
+				System.out.println("");
 				boolean isPartsGood = true;
 				for (int i = 0; i < parts.length; i++)
 				{
-					if( parts[i].length() < 1)
+					if( parts[i]==null)
 					{
 						isPartsGood = false;
 					}
@@ -174,24 +204,24 @@ public class CommandLine {
 					continue;
 				}
 
-				byte quad[] = new byte[32];
+				// byte quad[] = new byte[32];
 
-				// System.out.println(line);
-				EID subjectid = database.insertEntity(parts[0]);
-				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
-				Convert.setIntValue(subjectid.slotNo, 4, quad);
+				// // System.out.println(line);
+				// EID subjectid = database.insertEntity(parts[0]);
+				// Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
+				// Convert.setIntValue(subjectid.slotNo, 4, quad);
 
-				PID predicateid = database.insertPredicate(parts[1]);
-				Convert.setIntValue(predicateid.pageNo.pid, 8, quad);
-				Convert.setIntValue(predicateid.slotNo, 12, quad);
+				// PID predicateid = database.insertPredicate(parts[1]);
+				// Convert.setIntValue(predicateid.pageNo.pid, 8, quad);
+				// Convert.setIntValue(predicateid.slotNo, 12, quad);
 
 
-				EID objectid = database.insertEntity(parts[2]);
-				Convert.setIntValue(objectid.pageNo.pid, 16, quad);
-				Convert.setIntValue(objectid.slotNo, 20, quad);
+				// EID objectid = database.insertEntity(parts[2]);
+				// Convert.setIntValue(objectid.pageNo.pid, 16, quad);
+				// Convert.setIntValue(objectid.slotNo, 20, quad);
 
-				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
-				QID qid = database.insertQuadruple(quad);
+				// Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
+				// QID qid = database.insertQuadruple(quad);
 				
 				// System.out.println(Arrays.toString(quad));
 				// System.out.println(qid.pageNo.pid);

@@ -1,2 +1,0 @@
-batchinsert phase2_test_data.txt 1 testDB	Execution Time 2214	Reads 1	Writes: 8
-

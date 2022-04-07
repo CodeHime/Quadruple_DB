@@ -58,7 +58,7 @@ public class CommandLine {
 		int objCnt = database.getObjectCnt();
 		int quadCnt = database.getQuadrupleCnt();
 
-		System.out.print("Label Count:");
+		System.out.print("Entity Count:");
 		System.out.println(labelCnt);
 
 		System.out.print("Subject Count:");
@@ -176,7 +176,26 @@ public class CommandLine {
 		try {
 			File f = new File(options[0]);
 			String dbname = options[2] + "_" + options[1];
-			SystemDefs sysdef = new SystemDefs(dbname, 1000, 100, "Clock");
+
+			File dbfile = new File(dbname); //Check if database already exist
+			SystemDefs sysdef;
+			if(dbfile.exists())
+			{
+				//Database already present just open it
+				sysdef = new SystemDefs(dbname,0,1000,"Clock");
+				//System.out.println("*** Opening existing database ***");
+				//existingdb = true;
+			}
+			else
+			{	
+				//Create new database
+				sysdef = new SystemDefs(dbname,10000,1000,"Clock");
+				//System.out.println("*** Creating existing database ***");
+			}
+
+
+
+			//SystemDefs sysdef = new SystemDefs(dbname, 1000, 100, "Clock");
 			rdfDB database = rdfDB.getInstance();
 			int type = Integer.parseInt(options[1]);
 			database.openrdfDB(dbname, type);
@@ -204,28 +223,28 @@ public class CommandLine {
 					continue;
 				}
 
-				// byte quad[] = new byte[32];
+				byte quad[] = new byte[32];
 
-				// // System.out.println(line);
-				// EID subjectid = database.insertEntity(parts[0]);
-				// Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
-				// Convert.setIntValue(subjectid.slotNo, 4, quad);
+				// System.out.println(line);
+				EID subjectid = database.insertEntity(parts[0]);
+				Convert.setIntValue(subjectid.pageNo.pid, 0, quad);
+				Convert.setIntValue(subjectid.slotNo, 4, quad);
 
-				// PID predicateid = database.insertPredicate(parts[1]);
-				// Convert.setIntValue(predicateid.pageNo.pid, 8, quad);
-				// Convert.setIntValue(predicateid.slotNo, 12, quad);
+				PID predicateid = database.insertPredicate(parts[1]);
+				Convert.setIntValue(predicateid.pageNo.pid, 8, quad);
+				Convert.setIntValue(predicateid.slotNo, 12, quad);
 
 
-				// EID objectid = database.insertEntity(parts[2]);
-				// Convert.setIntValue(objectid.pageNo.pid, 16, quad);
-				// Convert.setIntValue(objectid.slotNo, 20, quad);
+				EID objectid = database.insertEntity(parts[2]);
+				Convert.setIntValue(objectid.pageNo.pid, 16, quad);
+				Convert.setIntValue(objectid.slotNo, 20, quad);
 
-				// Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
-				// QID qid = database.insertQuadruple(quad);
+				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
+				QID qid = database.insertQuadruple(quad);
 				
-				// System.out.println(Arrays.toString(quad));
-				// System.out.println(qid.pageNo.pid);
-				// System.out.println(qid.slotNo);
+				System.out.println(Arrays.toString(quad));
+				System.out.println(qid.pageNo.pid);
+				System.out.println(qid.slotNo);
 			}
 			// databases.put(dbname,database);
 
@@ -296,10 +315,10 @@ public class CommandLine {
 					fw = new FileWriter("logfile.txt", true);
 					
 					fw.append(input + "\t");
-					fw.append("Execution Time " + Long.toString(endTime - startTime) + "\t");
-					fw.append("Reads " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n\n");
+					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
-					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+					System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
 					Long startTime = new java.util.Date().getTime();
 					batchinsert(Arrays.copyOfRange(parsed, 1, parsed.length));
@@ -307,8 +326,8 @@ public class CommandLine {
 					// fw = new FileWriter(parsed[3]+"_"+parsed[2]);
 					fw = new FileWriter("logfile.txt", true);
 					fw.append(input + "\t");
-					fw.append("Execution Time " + Long.toString(endTime - startTime) + "\t");
-					fw.append("Reads " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n\n");
+					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
 					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {

@@ -37,7 +37,7 @@ plugins {
 jar {
     manifest {
         // attributes 'Main-Class': 'cli.CLI' 
-        attributes 'Main-Class': 'commandline.CommandLine'
+        attributes 'Main-Class': 'commandline.PhaseThreeQuery'
     }
 
     sourceSets {

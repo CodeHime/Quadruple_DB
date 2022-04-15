@@ -17,6 +17,14 @@
             "mainClass": "commandline.CommandLine",
             "projectName": "CSE_510_Project"
         },
+        {
+            "type": "java",
+            "name": "Phase 3",
+            "request": "launch",
+            "mainClass": "commandline.PhaseThreeQuery",
+            "args": ["test", "query", 1000],
+            "projectName": "CSE_510_Project"
+        },
         // {
         //     "type": "java",
         //     "name": "Launch BMTest",

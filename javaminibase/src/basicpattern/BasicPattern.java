@@ -224,7 +224,7 @@ public class BasicPattern implements GlobalConst{
 	    double val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))
        {
-        val = Convert.getDoubleValue(fldOffset[fldNo -1], data);
+        val = Convert.getDoubleValue(fldNo*8, data);
         return val;
        }
       else 
@@ -319,8 +319,8 @@ public class BasicPattern implements GlobalConst{
       EID val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))      
       {
-        int pageNo = Convert.getIntValue(fldOffset[fldNo - 1], data);
-        int slotNo = Convert.getIntValue(fldOffset[fldNo - 1] + 4, data);
+        int pageNo = Convert.getIntValue(fldNo*8, data);
+        int slotNo = Convert.getIntValue(fldNo*8 + 4, data);
 
        val = new EID(new LID(new PageId(pageNo), slotNo));
        return val;

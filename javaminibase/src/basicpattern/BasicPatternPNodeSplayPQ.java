@@ -43,10 +43,11 @@ public class BasicPatternPNodeSplayPQ extends BasicPatternPNodePQ
    * @param fldType the type of the field for sorting
    * @param order   the order of sorting (Ascending or Descending)
    */  
-  public BasicPatternPNodeSplayPQ(int fldNo, BasicPatternOrder order)
+  public BasicPatternPNodeSplayPQ(int fldNo, AttrType at, BasicPatternOrder order)
   {
     root = null;
     count = 0;
+    fld_type = at;
     fld_no   = fldNo;
     sort_order = order;
   }

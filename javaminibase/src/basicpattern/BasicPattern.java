@@ -3,6 +3,8 @@
 package basicpattern;
 
 import java.io.*;
+import java.util.Arrays;
+
 import diskmgr.rdfDB;
 import heap.*;
 import labelheap.*;
@@ -429,12 +431,30 @@ public class BasicPattern implements GlobalConst{
    public BasicPattern setEIDFld(int fldNo, EID val) 
    throws IOException, FieldNumberOutOfBoundException  
   {
+    if ( fldNo == fldCnt + 1)
+    {
+       // We need to expand the bp size and update all instance variables.
+       try{
+          // update the header. This will update fldCnt and FldOffset.
+          setHdr((short)(this.noOfFlds() + 1));
+          // add length of 8, that is the size of the NodeID
+          bp_length += 8;
+          // set data to be a copy of itself, but with the new longer length
+          data = Arrays.copyOf(data, bp_length);
+        }
+        catch(Exception e){
+          System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
+          e.printStackTrace();
+          Runtime.getRuntime().exit(1);
+        }
+    }
     if ( (fldNo > 0) && (fldNo <= fldCnt))        
-     {
-        Convert.setIntValue (val.pageNo.pid, fldOffset[fldNo -1], data);
-        Convert.setIntValue (val.slotNo, fldOffset[fldNo -1] + 4, data);
-        return this;
-     }
+    {
+      Convert.setIntValue (val.pageNo.pid, fldOffset[fldNo -1], data);
+      Convert.setIntValue (val.slotNo, fldOffset[fldNo -1] + 4, data);
+      return this;
+    }
+
     else 
       throw new FieldNumberOutOfBoundException (null, "BasicPattern:BP_FLDNO_OUT_OF_BOUND");
    }
@@ -469,21 +489,17 @@ public void setHdr (short numFlds)
   int i;
 
 
-  for (i=1; i<numFlds; i++)
+  for (i=1; i<=numFlds; i++)
   {
     fldOffset[i]  = (short) (fldOffset[i-1] + incr);
     Convert.setShortValue(fldOffset[i], pos, data);
     pos +=2;
   }
- 
-
-  fldOffset[numFlds] = (short) (fldOffset[i-1] + incr);
-  Convert.setShortValue(fldOffset[numFlds], pos, data);
   
   bp_length = fldOffset[numFlds] - bp_offset;
 
   if(bp_length > max_size)
-    throw new InvalidTupleSizeException (null, "TUPLE: TUPLE_TOOBIG_ERROR");
+    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
    
 }
      
@@ -529,9 +545,12 @@ public void setHdr (short numFlds)
   
   try
   {
-    i = 1;
     System.out.print("[");
-    while (i < fldCnt)
+    
+    System.out.print(getDoubleFld(1) + " ");
+    i = 2;
+
+    while (i <= fldCnt)
     {
       Label nodeID = entity_heap_file.getLabel(this.getEIDFld(i).returnLID());
       String nodeString = nodeID.getLabel();
@@ -539,7 +558,6 @@ public void setHdr (short numFlds)
       i++;
     }
 
-    System.out.print(getDoubleFld(fldCnt));
     System.out.println("]");
 
   } catch(Exception e) {

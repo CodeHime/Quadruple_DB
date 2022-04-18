@@ -89,39 +89,39 @@ public class BasicPattern implements GlobalConst{
        fldOffset = fromBP.copyFldOffset(); 
    }
 
-    /** Constructor(used as Quadruple convert)
-    * @param quad   the source Quadruple
-    * 
-    */
-    public BasicPattern(Quadruple quad)
+  /** Constructor(used as Quadruple convert)
+  * @param quad   the source Quadruple
+  * 
+  */
+  public BasicPattern(Quadruple quad)
+  {
+    data = new byte[max_size];
+    bp_offset = 0;
+    bp_length = max_size;
+
+    try
     {
-      data = new byte[max_size];
-      bp_offset = 0;
-      bp_length = max_size;
+      // set header to have 3 fields
+      setHdr((short)3);
+      
+      //set first field to be the confidence of the quadruple
+      setDoubleFld(1, quad.getConfidence());
+      
+      // set the EID fields for subject and object
+      setEIDFld(2, quad.getSubjectQid());
+      setEIDFld(3, quad.getObjectQid());
 
-      try
-      {
-        // set header to have 3 fields
-        setHdr((short)3);
-        
-        //set first field to be the confidence of the quadruple
-        setDoubleFld(1, quad.getConfidence());
-        
-        // set the EID fields for subject and object
-        setEIDFld(2, quad.getSubjectQid());
-        setEIDFld(3, quad.getObjectQid());
-
-      }
-      catch(Exception e){
-        System.out.println(e);
-        e.printStackTrace();
-      }
     }
+    catch(Exception e){
+      System.out.println(e);
+      e.printStackTrace();
+    }
+  }
 
-   /**  
-    * Class constructor
-    * Creat a new tuple with length = size,tuple offset = 0.
-    */
+  /**  
+  * Class constructor
+  * Creat a new tuple with length = size,tuple offset = 0.
+  */
  
   public  BasicPattern(int size)
   {

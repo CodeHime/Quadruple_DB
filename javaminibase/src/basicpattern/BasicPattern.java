@@ -3,7 +3,6 @@
 package basicpattern;
 
 import java.io.*;
-import java.util.Arrays;
 
 import diskmgr.rdfDB;
 import heap.*;
@@ -77,21 +76,21 @@ public class BasicPattern implements GlobalConst{
     //  fldCnt = getShortValue(offset, data);
    }
    
-   /** Constructor(used as tuple copy)
-    * @param fromBP   a byte array which contains the tuple
+   /** Constructor(used as bp copy)
+    * @param fromBP   The source bp
     * 
     */
    public BasicPattern(BasicPattern fromBP)
    {
        data = fromBP.returnBasicPatternArray();
        bp_length = fromBP.getLength();
-       bp_offset = 0;
+       bp_offset = fromBP.getOffset();
        fldCnt = fromBP.noOfFlds(); 
        fldOffset = fromBP.copyFldOffset(); 
    }
 
-      /** Constructor(used as tuple copy)
-    * @param fromBP   a byte array which contains the tuple
+    /** Constructor(used as Quadruple convert)
+    * @param quad   the source Quadruple
     * 
     */
     public BasicPattern(Quadruple quad)
@@ -111,7 +110,7 @@ public class BasicPattern implements GlobalConst{
         // set the EID fields for subject and object
         setEIDFld(2, quad.getSubjectQid());
         setEIDFld(3, quad.getObjectQid());
-        
+
       }
       catch(Exception e){
         System.out.println(e);

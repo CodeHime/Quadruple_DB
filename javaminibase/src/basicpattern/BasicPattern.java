@@ -3,11 +3,13 @@
 package basicpattern;
 
 import java.io.*;
+
 import diskmgr.rdfDB;
 import heap.*;
 import labelheap.*;
 import labelheap.FieldNumberOutOfBoundException;
 import labelheap.InvalidTypeException;
+import quadrupleheap.Quadruple;
 import global.*;
 
 
@@ -74,23 +76,52 @@ public class BasicPattern implements GlobalConst{
     //  fldCnt = getShortValue(offset, data);
    }
    
-   /** Constructor(used as tuple copy)
-    * @param fromBP   a byte array which contains the tuple
+   /** Constructor(used as bp copy)
+    * @param fromBP   The source bp
     * 
     */
    public BasicPattern(BasicPattern fromBP)
    {
        data = fromBP.returnBasicPatternArray();
        bp_length = fromBP.getLength();
-       bp_offset = 0;
+       bp_offset = fromBP.getOffset();
        fldCnt = fromBP.noOfFlds(); 
        fldOffset = fromBP.copyFldOffset(); 
    }
 
-   /**  
-    * Class constructor
-    * Creat a new tuple with length = size,tuple offset = 0.
-    */
+  /** Constructor(used as Quadruple convert)
+  * @param quad   the source Quadruple
+  * 
+  */
+  public BasicPattern(Quadruple quad)
+  {
+    data = new byte[max_size];
+    bp_offset = 0;
+    bp_length = max_size;
+
+    try
+    {
+      // set header to have 3 fields
+      setHdr((short)3);
+      
+      //set first field to be the confidence of the quadruple
+      setDoubleFld(1, quad.getConfidence());
+      
+      // set the EID fields for subject and object
+      setEIDFld(2, quad.getSubjectQid());
+      setEIDFld(3, quad.getObjectQid());
+
+    }
+    catch(Exception e){
+      System.out.println(e);
+      e.printStackTrace();
+    }
+  }
+
+  /**  
+  * Class constructor
+  * Creat a new tuple with length = size,tuple offset = 0.
+  */
  
   public  BasicPattern(int size)
   {
@@ -429,12 +460,27 @@ public class BasicPattern implements GlobalConst{
    public BasicPattern setEIDFld(int fldNo, EID val) 
    throws IOException, FieldNumberOutOfBoundException  
   {
+    if ( fldNo == fldCnt + 1)
+    {
+       // We need to expand the bp size and update all instance variables.
+       try{
+          // update the header to have one more field. This will update fldCnt and FldOffset.
+          setHdr((short)(this.noOfFlds() + 1));
+ 
+        }
+        catch(Exception e){
+          System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
+          e.printStackTrace();
+          Runtime.getRuntime().exit(1);
+        }
+    }
     if ( (fldNo > 0) && (fldNo <= fldCnt))        
-     {
-        Convert.setIntValue (val.pageNo.pid, fldOffset[fldNo -1], data);
-        Convert.setIntValue (val.slotNo, fldOffset[fldNo -1] + 4, data);
-        return this;
-     }
+    {
+      Convert.setIntValue (val.pageNo.pid, fldOffset[fldNo -1], data);
+      Convert.setIntValue (val.slotNo, fldOffset[fldNo -1] + 4, data);
+      return this;
+    }
+
     else 
       throw new FieldNumberOutOfBoundException (null, "BasicPattern:BP_FLDNO_OUT_OF_BOUND");
    }
@@ -469,21 +515,17 @@ public void setHdr (short numFlds)
   int i;
 
 
-  for (i=1; i<numFlds; i++)
+  for (i=1; i<=numFlds; i++)
   {
     fldOffset[i]  = (short) (fldOffset[i-1] + incr);
     Convert.setShortValue(fldOffset[i], pos, data);
     pos +=2;
   }
- 
-
-  fldOffset[numFlds] = (short) (fldOffset[i-1] + incr);
-  Convert.setShortValue(fldOffset[numFlds], pos, data);
   
   bp_length = fldOffset[numFlds] - bp_offset;
 
   if(bp_length > max_size)
-    throw new InvalidTupleSizeException (null, "TUPLE: TUPLE_TOOBIG_ERROR");
+    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
    
 }
      
@@ -529,9 +571,12 @@ public void setHdr (short numFlds)
   
   try
   {
-    i = 1;
     System.out.print("[");
-    while (i < fldCnt)
+    
+    System.out.print(getDoubleFld(1) + " ");
+    i = 2;
+
+    while (i <= fldCnt)
     {
       Label nodeID = entity_heap_file.getLabel(this.getEIDFld(i).returnLID());
       String nodeString = nodeID.getLabel();
@@ -539,7 +584,6 @@ public void setHdr (short numFlds)
       i++;
     }
 
-    System.out.print(getDoubleFld(fldCnt));
     System.out.println("]");
 
   } catch(Exception e) {

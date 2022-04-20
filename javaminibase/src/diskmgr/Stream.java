@@ -122,8 +122,11 @@ public class Stream implements GlobalConst {
 			String confidenceFilter)
 			throws InvalidTupleSizeException,
 			IOException {
+		// TODO: KRima check if works for exact match
+		
 		// set null filters and filter values
 		_results = null;
+		_needSort=true;
 		init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 		// Scan file using index
 		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
@@ -146,10 +149,6 @@ public class Stream implements GlobalConst {
 				// quadover = new TScan(_results);
 				try {
 					qfs = new TScan(_results);
-					// new QuadFileScan(_results);
-					// 0 means Ascending
-					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
-					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
 				} catch (Exception e) {
 					System.out.println(e);
@@ -168,6 +167,7 @@ public class Stream implements GlobalConst {
 			IOException {
 		// set null filters and filter values
 		_results = null;
+		_needSort=false;
 		init(rdfdatabase, 0, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 		// Scan file using index
 		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
@@ -183,7 +183,19 @@ public class Stream implements GlobalConst {
 				// the given filter as one of the column values used in the index is null
 				use_index = false;
 			}
+			if (ScanBTreeIndex()) {
+				try {
+					qfs = new TScan(_results);
+					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("No matching records found");
+			}
 		}
 	}
 
@@ -401,10 +413,17 @@ public class Stream implements GlobalConst {
 		try {
 			// TODO: ONLY IF DEFAULT CASE COVERED
 			// return quadover.getNext(qid);
-			if (qsort != null) {
-				return qsort.get_next();
-			} else {
-				return null;
+			if(_needSort){
+				if (qsort != null) {
+					return qsort.get_next();
+				} else {
+					return null;
+				}
+			}
+			else{
+				// TODO: CHECK
+				QID qid=new QID();
+				return quadover.getNext(qid);
 			}
 
 		} catch (Exception e) {

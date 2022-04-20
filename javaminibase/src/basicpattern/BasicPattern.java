@@ -48,6 +48,7 @@ public class BasicPattern implements GlobalConst{
    */
  
   private short [] fldOffset; 
+  int confidence_fld_num = 1;
 
    /**
     * Class constructor
@@ -465,6 +466,8 @@ public class BasicPattern implements GlobalConst{
        // We need to expand the bp size and update all instance variables.
        try{
           // update the header to have one more field. This will update fldCnt and FldOffset.
+
+          //TODO: Jack: Would this cause any memory errors internaly withour raising errors?
           setHdr((short)(this.noOfFlds() + 1));
  
         }

@@ -12,9 +12,16 @@ import global.*;
 import heap.HFBufMgrException;
 import heap.HFDiskMgrException;
 import heap.HFException;
+import heap.Heapfile;
 import heap.InvalidTupleSizeException;
+import heap.InvalidTypeException;
+import heap.Scan;
+import iterator.LowMemException;
 import iterator.QuadFileScan;
 import iterator.Sort;
+import iterator.SortException;
+import iterator.TupleUtilsException;
+import iterator.UnknownKeyTypeException;
 import quadrupleheap.Quadruple;
 import quadrupleheap.QuadrupleHeapfile;
 import quadrupleheap.TScan;
@@ -31,8 +38,9 @@ public class BP_Triple_Join implements GlobalConst {
 	int _orderType = 0;
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
-	String _confidenceFilter;
-	TScan qfs;
+	double _minConfidence = 0.6;
+	String _minConfidenceFilter = Double.toString(_minConfidence);
+	Scan qfs;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -48,7 +56,8 @@ public class BP_Triple_Join implements GlobalConst {
 	int SORT_Q_NUM_PAGES = 16;
 	
 	Sort qsort = null;
-	QuadrupleHeapfile _results = null;
+	Heapfile _results=null;
+	QuadrupleHeapfile _rightQuads = null;
 	public TScan quadover = null;
 
 	boolean use_index = true;
@@ -63,13 +72,62 @@ public class BP_Triple_Join implements GlobalConst {
 	 *
 	 * @param rdfdb A rdfDB object
 	 */
-	public BP_Triple_Join(int amt_of_mem, int num_left_nodes, BPIterator left_itr,
+	public BP_Triple_Join(int amt_of_mem, int num_left_nodes, BasicPatternIterator left_itr,
     int BPJoinNodePosition, int JoinOnSubjectorObject, java.lang.String
     RightSubjectFilter, java.lang.String RightPredicateFilter, java.lang.String
     RightObjectFilter, double RightConfidenceFilter, int [] LeftOutNodePositions,
     int OutputRightSubject, int OutputRightObject) throws InvalidTupleSizeException,
 			IOException {
+            // Get filtered resultant right heap file
+            // from quadrupleFile to BasicPattern
+            // 
+
+            try{
+                rdfDB database = rdfDB.getInstance();
+                Stream rstream = null;
+                Stream lstream = null;
+                QuadrupleHeapfile _leftQuads;
+
+                // Get all quads with minimum confidence
+                lstream = new Stream(database, "*","*", "*", _minConfidenceFilter);            
+                _leftQuads =  lstream.getResults();
                 
+				
+                // Get all filtered Quads for the join
+                rstream = new Stream(database, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, Double.toString(RightConfidenceFilter));            
+                _rightQuads =  rstream.getResults();
+
+				// JOIN
+                _results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
+				
+				
+
+				// qfs = new Scan(_results);
+
+
+				lstream.closestream();
+                rstream.closestream();
+				// qfs.closescan();
+            }
+            catch(Exception e){
+                System.err.println(e);
+                e.printStackTrace();
+            } 
+
+
 	}
 
+	public BasicPattern get_next() 
+	throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException, LowMemException, UnknownKeyTypeException, Exception
+	{
+		QID qid = new QID();
+
+
+	}
+
+	public void close() throws IOException, SortException{
+		// try{
+		// 	if()
+		// }
+	}
 }

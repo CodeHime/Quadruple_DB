@@ -109,6 +109,7 @@ throw new FileScanException(e, "openScan() failed");
 	   UnknowAttrType,
 	   UnknownKeyTypeException,
 	   Exception{
+       // TODO: QID?
       RID rid = new RID();;
       
         while(true) {

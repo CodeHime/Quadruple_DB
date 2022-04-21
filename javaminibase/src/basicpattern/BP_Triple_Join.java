@@ -16,6 +16,7 @@ import heap.Heapfile;
 import heap.InvalidTupleSizeException;
 import heap.InvalidTypeException;
 import heap.Scan;
+import heap.Tuple;
 import iterator.LowMemException;
 import iterator.QuadFileScan;
 import iterator.Sort;
@@ -30,7 +31,20 @@ import diskmgr.*;
 import btree.*;
 import basicpattern.*;
 
-/**
+/** TODO:
+ *  - Join: Index 3 strategies @Krima
+ *  - Join: Create result Heapfile @Krima
+ *  - Iterator: @Tanner
+ *  - BasicPattern from tuple @Jack
+ * 	- 
+ *  - Report
+ *  - Test Cases:
+ *  - Eval: 
+ * 		# page accesses
+ * 		Cost - formula from page accesses [Start with a very large buffer size]
+ * 		M input1 length, N input2 length, Get length of results
+ * 		Or should not deviate from given formula
+ *   
  */
 public class BP_Triple_Join implements GlobalConst {
 
@@ -38,13 +52,13 @@ public class BP_Triple_Join implements GlobalConst {
 	private rdfDB _rdfdb;
 	double _minConfidence = 0.6;
 	String _minConfidenceFilter = Double.toString(_minConfidence);
+	BasicPatternSort bp_sort=null;
 	Scan qfs;
 
 	EID _subjectID = new EID();
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
-	Sort qsort = null;
 	// Heapfile _results=null;
 	// QuadrupleHeapfile _rightQuads = null;
 	public TScan quadover = null;
@@ -64,6 +78,7 @@ public class BP_Triple_Join implements GlobalConst {
 
 	String RightSubjectFilter, RightPredicateFilter, RightObjectFilter;
 	double RightConfidenceFilter;
+	boolean COMPLETED_FLAG=false;
 
 	/**
 	 * The constructor pins the first directory page in the file
@@ -87,6 +102,7 @@ public class BP_Triple_Join implements GlobalConst {
 
 		try {
 			_rdfdb = rdfDB.getInstance();
+			COMPLETED_FLAG=false;
 			// Stream lstream = null;
 			// QuadrupleHeapfile _leftQuads;
 
@@ -123,17 +139,49 @@ public class BP_Triple_Join implements GlobalConst {
 		}
 
 	}
+	public Tuple fromBP(BasicPattern basicPattern){
+        Tuple tuple = new Tuple();
+		int basicPatternLength = basicPattern.getLength();
+        short numberOfTupleFields = 1;
+        while (basicPatternLength > 0) {
+          basicPatternLength -= 8;
+          numberOfTupleFields += 2;
+        }
+        AttrType[] tupletypes = new AttrType[numberOfTupleFields];
+        short[] strSizes = new short[1];
+        short tuplesize = 8;
+        tupletypes[0] = new AttrType(AttrType.attrD);
+        for (int i = 1; i < numberOfTupleFields; i++) {
+          tupletypes[i] = new AttrType(AttrType.attrInteger);
+          tuplesize += 4;
+        }
+        tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
+        tuple.setDFld(0, basicPattern.getDoubleFld(0));
+        for (int i = 1; i < numberOfTupleFields / 2; i++) {
+          tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
+          tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
+        } // according to Iterator.java
 
-	public BasicPattern get_next()
+		return tuple;
+	}
+
+	public BasicPattern basic_nlj()
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
-		do {
+		
+			if(bp_sort==null){
+				//Apend to heapfile
+			do {
+			// Scan for tuple
+			// 
+
 			// Check if end of right stream (inner loop)
 			if (rstream == null) {
 				rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, RightObjectFilter,
 						Double.toString(RightConfidenceFilter));
 				// Check if end of BP iteration (outer loop)
 				if ((outer_bp = left_itr.get_next()) == null) {
+					COMPLETED_FLAG=true;
 					// All elements in outer loop have been processed, i.e. JOIN is complete
 					return null;
 				}
@@ -154,7 +202,7 @@ public class BP_Triple_Join implements GlobalConst {
 				}
 				if (join_eid_outer.equals(join_eid_inner)) {
 					// Match found so calculate new confidence
-					double new_confidence = Math.max(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
+					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 							inner_quad.getConfidence());
 					outer_bp.setDoubleFld(outer_bp.confidence_fld_num, new_confidence);
 
@@ -162,10 +210,10 @@ public class BP_Triple_Join implements GlobalConst {
 					if (OutputRightSubject == 1) {
 						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
 						if (OutputRightObject == 1) {
-							outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getSubjectQid());
+							outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
 						}
 					} else if (OutputRightObject == 1) {
-						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
 					}
 					return outer_bp;
 				}
@@ -174,6 +222,83 @@ public class BP_Triple_Join implements GlobalConst {
 				if (rstream != null) {
 					rstream.closestream();
 					rstream = null;
+				}
+			} catch (Exception e) {
+				System.out.println("Error in closing stream in BT_Triple_Join");
+				e.printStackTrace();
+			}
+		} while (outer_bp != null);
+
+		BasicPatternIteratorScan am = BasicPatternIteratorScan(bp_file);
+		bp_sort = new BasicPatternSort(am, sort_fld, sort_order, n_pages);
+	}
+	}
+
+	public BasicPattern get_next(){	
+		return bp_sort.get_next();
+	}
+	
+	public BasicPattern get_index_next()
+			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
+			LowMemException, UnknownKeyTypeException, Exception {
+		// Sorted Index Join?
+		do {
+			// Check if end of right stream (inner loop)
+			// Sorted Index join
+			if (rstream == null) {
+				// Check if end of BP iteration (outer loop)
+				if ((outer_bp = left_itr.get_next()) == null) {
+					COMPLETED_FLAG=true;
+					// All elements in outer loop have been processed, i.e. JOIN is complete
+					return null;
+				}
+				if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+					continue;
+				}
+
+				if (JoinOnSubjectorObject == 0){
+					rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, 
+					outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
+					RightPredicateFilter, RightObjectFilter, Double.toString(RightConfidenceFilter));
+				}
+				else{
+					rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, 
+					RightSubjectFilter, RightPredicateFilter, 
+					outer_bp.getEIDFld(BPJoinNodePosition).getValue(), Double.toString(RightConfidenceFilter));
+				}
+			}
+
+			while ((inner_quad = rstream.getNext()) != null) {
+				EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
+				EID join_eid_inner;
+				if (JoinOnSubjectorObject == 0) {
+					join_eid_inner = inner_quad.getSubjectQid();
+				} else {
+					join_eid_inner = inner_quad.getObjectQid();
+				}
+				if (join_eid_outer.equals(join_eid_inner)) {
+					// Match found so calculate new confidence
+					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
+							inner_quad.getConfidence());
+					outer_bp.setDoubleFld(outer_bp.confidence_fld_num, new_confidence);
+
+					// Insert values into Basic Pattern
+					if (OutputRightSubject == 1) {
+						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+						if (OutputRightObject == 1) {
+							outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+						}
+					} else if (OutputRightObject == 1) {
+						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+					}
+					return outer_bp;
+				}
+			}
+			try {
+				if (rstream != null) {
+					rstream.closestream();
+					rstream = null;
+					COMPLETED_FLAG=true;
 				}
 			} catch (Exception e) {
 				System.out.println("Error in closing stream in BT_Triple_Join");

@@ -20,6 +20,7 @@ import chainexception.*;
  * After the sorting is done, the user should call <code>close()</code>
  * to clean up.
  */
+//TODO: take in Quads
 public class BasicPatternSort extends BasicPatternIterator implements GlobalConst {
   private static final int ARBIT_RUNS = 10;
 

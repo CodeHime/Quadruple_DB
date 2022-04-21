@@ -149,6 +149,8 @@ public class Stream implements GlobalConst {
 				// quadover = new TScan(_results);
 				try {
 					qfs = new TScan(_results);
+					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
 				} catch (Exception e) {
 					System.out.println(e);
@@ -186,8 +188,8 @@ public class Stream implements GlobalConst {
 			if (ScanBTreeIndex()) {
 				try {
 					qfs = new TScan(_results);
-					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
-					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+					// QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					// qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
 				} catch (Exception e) {
 					System.out.println(e);

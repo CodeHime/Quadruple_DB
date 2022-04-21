@@ -370,7 +370,8 @@ public class CommandLine {
 					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("query") && parsed.length == 4){
 					Long startTime = new java.util.Date().getTime();
-
+					query2(Arrays.copyOfRange(parsed, 1, parsed.length));
+					
 					Long endTime = new java.util.Date().getTime();
 					fw = new FileWriter("logfile.txt", true);
 					fw.append(input + "\t");

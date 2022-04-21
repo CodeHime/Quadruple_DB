@@ -90,6 +90,41 @@ public class BasicPattern implements GlobalConst{
        fldOffset = fromBP.copyFldOffset(); 
    }
 
+  public BasicPattern(Tuple tup)
+  {
+    data = new byte[max_size];
+    bp_offset = 0;
+    bp_length = max_size;
+    int slotNo;
+    int pageNo;
+
+    try
+    {
+      // The tup has the slotno and pageno as two fields, but bp will just store the EID as just one field.
+      // Hence the bp has half the number of fields as the tup has
+      setHdr((short)(tup.noOfFlds()/2 + 1));
+
+      int tupField = 1;
+
+      setDoubleFld(1, tup.getDFld(tupField++));
+
+      for (int i = 2; i < fldCnt; i++)
+      {
+        pageNo = tup.getIntFld(tupField++);
+        slotNo = tup.getIntFld(tupField++);
+
+        EID eid = new EID( new LID(new PageId(pageNo), slotNo));
+        setEIDFld(i, eid);
+      }
+    }
+    catch(Exception e){
+      System.out.println(e);
+      e.printStackTrace();
+    }
+
+
+  }
+
   /** Constructor(used as Quadruple convert)
   * @param quad   the source Quadruple
   * 
@@ -467,7 +502,6 @@ public class BasicPattern implements GlobalConst{
        try{
           // update the header to have one more field. This will update fldCnt and FldOffset.
 
-          //TODO: Jack: Would this cause any memory errors internaly withour raising errors?
           setHdr((short)(this.noOfFlds() + 1));
  
         }

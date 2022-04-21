@@ -87,7 +87,7 @@ public class Stream implements GlobalConst {
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
 	String _confidenceFilter;
-	TScan qfs;
+	TScan qfs = null;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -475,11 +475,27 @@ public class Stream implements GlobalConst {
 		_confidenceFilter = confidenceFilter;
 	}
 
+	public void reset_scan(){
+		try {
+			qfs = new TScan(_results);
+			// QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+			// qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+
+		} catch (Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+	}
+
 	/** Closes the Stream object */
 	public void closestream() {
 		try {
 			if (qsort != null) {
 				qsort.close();
+			}
+
+			if (qfs != null) {
+				qfs.closescan();
 			}
 
 			if (quadover != null) {

@@ -1,4 +1,4 @@
-package diskmgr;
+package basicpattern;
 
 /** JAVA */
 /**
@@ -9,6 +9,7 @@ package diskmgr;
 import java.io.*;
 
 import global.*;
+import heap.FieldNumberOutOfBoundException;
 import heap.HFBufMgrException;
 import heap.HFDiskMgrException;
 import heap.HFException;
@@ -52,7 +53,6 @@ public class BP_Triple_Join implements GlobalConst {
 	private rdfDB _rdfdb;
 	double _minConfidence = 0.6;
 	String _minConfidenceFilter = Double.toString(_minConfidence);
-	BasicPatternSort bp_sort=null;
 	Scan qfs;
 
 	EID _subjectID = new EID();
@@ -63,7 +63,7 @@ public class BP_Triple_Join implements GlobalConst {
 	// QuadrupleHeapfile _rightQuads = null;
 	public TScan quadover = null;
 
-	BasicPatternIterator left_itr = null;
+	BPIterator left_itr = null;
 	Stream rstream = null;
 
 	int amt_of_mem;
@@ -90,7 +90,7 @@ public class BP_Triple_Join implements GlobalConst {
 	 *
 	 * @param rdfdb A rdfDB object
 	 */
-	public BP_Triple_Join(int amt_of_mem, int num_left_nodes, BasicPatternIterator left_itr,
+	public BP_Triple_Join(int amt_of_mem, int num_left_nodes, BPIterator left_itr,
 			int BPJoinNodePosition, int JoinOnSubjectorObject, java.lang.String RightSubjectFilter,
 			java.lang.String RightPredicateFilter, java.lang.String RightObjectFilter, double RightConfidenceFilter,
 			int[] LeftOutNodePositions,
@@ -141,7 +141,7 @@ public class BP_Triple_Join implements GlobalConst {
 	}
 	public Tuple fromBP(BasicPattern basicPattern){
         Tuple tuple = new Tuple();
-		int basicPatternLength = basicPattern.getLength();
+		int basicPatternLength = basicPattern.getLength()-8;
         short numberOfTupleFields = 1;
         while (basicPatternLength > 0) {
           basicPatternLength -= 8;
@@ -155,12 +155,24 @@ public class BP_Triple_Join implements GlobalConst {
           tupletypes[i] = new AttrType(AttrType.attrInteger);
           tuplesize += 4;
         }
-        tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-        tuple.setDFld(0, basicPattern.getDoubleFld(0));
+        try {
+			tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
+			tuple.setDFld(0, basicPattern.getDoubleFld(0));
         for (int i = 1; i < numberOfTupleFields / 2; i++) {
           tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
           tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
         } // according to Iterator.java
+		} catch (InvalidTypeException | InvalidTupleSizeException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FieldNumberOutOfBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (labelheap.FieldNumberOutOfBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 
 		return tuple;
 	}
@@ -169,7 +181,6 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		
-			if(bp_sort==null){
 				//Apend to heapfile
 			do {
 			// Scan for tuple
@@ -229,16 +240,22 @@ public class BP_Triple_Join implements GlobalConst {
 			}
 		} while (outer_bp != null);
 
-		BasicPatternIteratorScan am = BasicPatternIteratorScan(bp_file);
-		bp_sort = new BasicPatternSort(am, sort_fld, sort_order, n_pages);
-	}
+		//save data to 
+		//left_itr.getFileName()+"tuple"
+	
 	}
 
 	public BasicPattern get_next(){	
-		return bp_sort.get_next();
+		try {
+			return left_itr.get_next();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
-	public BasicPattern get_index_next()
+	public void get_index_next()
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		// Sorted Index Join?

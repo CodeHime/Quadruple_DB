@@ -27,7 +27,7 @@ public abstract class BasicPatternPNodePQ
   protected AttrType              fld_type;
 
   /** the sorting order (Ascending or Descending) */
-  protected BasicPatternOrder            sort_order;
+  protected BPOrder            sort_order;
 
   /**
    * class constructor, set <code>count</code> to <code>0</code>.

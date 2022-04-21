@@ -11,6 +11,10 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import basicpattern.BPSort;
+import basicpattern.BP_Triple_Join;
+import basicpattern.BasicPattern;
+import basicpattern.BasicPatternIteratorScan;
 import bufmgr.BufMgrException;
 import bufmgr.HashOperationException;
 import bufmgr.PageNotFoundException;
@@ -284,6 +288,39 @@ public class CommandLine {
 		}
 	}
 
+	public static void query2(String options[]){
+		String dbname = options[0];
+		rdfDB database = rdfDB.getInstance();
+
+		SystemDefs sysdef = new SystemDefs(dbname, 0, Integer.parseInt(options[options.length-1]), "Clock");
+		int type = Integer.parseInt(options[0].split("_")[1]);
+		database.openrdfDB(dbname, type);
+
+		//Parse join text file
+
+		BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(options[0]);
+
+		//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+		BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+
+		left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", nOutFlds);
+
+		//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+		btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+
+		left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", nOutFlds);
+
+		//The final name will be options[0]tupletuple
+		BPSort sort = new BPSort(left_itr, sort_order, SortNodeIDPos, n_pages)
+
+		BasicPattern bp = sort.get_next();
+		while(bp!=null){
+			//Only printing confi
+			System.out.println(database.getBasicPatternString(bp));
+			bp = sort.get_next();
+		}
+	}
+
 	public static void getInput() throws InvalidPageNumberException, FileIOException, DiskMgrException {
 
 		int end = 0;
@@ -307,19 +344,20 @@ public class CommandLine {
 						System.out.println(scan.nextLine());
 					}
 					scan.close();
-				} else if (parsed[0].equals("query") && parsed.length == 9) {
-					Long startTime = new java.util.Date().getTime();
-					query(Arrays.copyOfRange(parsed, 1, parsed.length));
-					Long endTime = new java.util.Date().getTime();
-					// fw = new FileWriter(parsed[1]+"_"+parsed[2]);
-					fw = new FileWriter("logfile.txt", true);
+				// } else if (parsed[0].equals("query") && parsed.length == 9) {
+				// 	Long startTime = new java.util.Date().getTime();
+				// 	query(Arrays.copyOfRange(parsed, 1, parsed.length));
+				// 	Long endTime = new java.util.Date().getTime();
+				// 	// fw = new FileWriter(parsed[1]+"_"+parsed[2]);
+				// 	fw = new FileWriter("logfile.txt", true);
 					
-					fw.append(input + "\t");
-					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
-					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
-					fw.close();
-					System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
-				} else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
+				// 	fw.append(input + "\t");
+				// 	fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
+				// 	fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
+				// 	fw.close();
+				// 	System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+				// } 
+				else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
 					Long startTime = new java.util.Date().getTime();
 					batchinsert(Arrays.copyOfRange(parsed, 1, parsed.length));
 					Long endTime = new java.util.Date().getTime();
@@ -330,7 +368,18 @@ public class CommandLine {
 					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
 					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
-				} else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {
+				} else if (parsed[0].equals("query") && parsed.length == 4){
+					Long startTime = new java.util.Date().getTime();
+
+					Long endTime = new java.util.Date().getTime();
+					fw = new FileWriter("logfile.txt", true);
+					fw.append(input + "\t");
+					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
+					fw.close();
+
+				}
+				else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {
 					end = 1;
 				} else {
 					System.out.println("Unrecgonized command. Leave with 'exit'.");

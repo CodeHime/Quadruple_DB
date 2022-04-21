@@ -22,7 +22,7 @@ import iterator.UnknownKeyTypeException;
 /**
  *All the relational operators and access methods are iterators.
  */
-public abstract class BasicPatternIterator implements Flags {
+public abstract class BPIterator implements Flags {
   
   /**
    * a flag to indicate whether this iterator has been closed.
@@ -143,4 +143,6 @@ public abstract class BasicPatternIterator implements Flags {
     return tmpId;
 
   } // end of newPage
+
+  public abstract String getFileName();
 }

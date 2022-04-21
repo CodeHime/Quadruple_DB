@@ -5,7 +5,7 @@ package basicpattern;
  * 
  */
 
-public class BasicPatternOrder {
+public class BPOrder {
 
   public static final int Ascending  = 0;
   public static final int Descending = 1;
@@ -28,7 +28,7 @@ public class BasicPatternOrder {
    * @param _tupleOrder The possible ordering of the tuples 
    */
 
-  public BasicPatternOrder (int _tupleOrder) {
+  public BPOrder (int _tupleOrder) {
     basicPatternOrder = _tupleOrder;
   }
 

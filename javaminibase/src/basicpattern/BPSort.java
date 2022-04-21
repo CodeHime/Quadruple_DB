@@ -21,16 +21,16 @@ import chainexception.*;
  * to clean up.
  */
 //TODO: take in Quads
-public class BasicPatternSort extends BasicPatternIterator implements GlobalConst {
+public class BPSort extends BPIterator implements GlobalConst {
   private static final int ARBIT_RUNS = 10;
 
   private AttrType[] _in;
   private short n_cols;
   private short[] str_lens;
-  private BasicPatternIterator _am;
+  private BPIterator _am;
   private int _sort_fld;
   private AttrType _sort_fld_type;
-  private BasicPatternOrder order;
+  private BPOrder order;
   private int _n_pages;
   private byte[][] bufs;
   private boolean first_time;
@@ -170,7 +170,7 @@ public class BasicPatternSort extends BasicPatternIterator implements GlobalCons
     while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
       try {
         basicPattern = _am.get_next();
-        int basicPatternLength = basicPattern.getLength();
+        int basicPatternLength = basicPattern.getLength()-8;
         short numberOfTupleFields = 1;
         while (basicPatternLength > 0) {
           basicPatternLength -= 8;
@@ -385,7 +385,7 @@ public class BasicPatternSort extends BasicPatternIterator implements GlobalCons
         while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
           try {
             basicPattern = _am.get_next();
-            int basicPatternLength = basicPattern.getLength();
+            int basicPatternLength = basicPattern.getLength() -8;
             short numberOfTupleFields = 1;
             while (basicPatternLength > 0) {
               basicPatternLength -= 8;
@@ -661,19 +661,27 @@ public class BasicPatternSort extends BasicPatternIterator implements GlobalCons
    * @exception IOException   from lower layers
    * @exception SortException something went wrong in the lower layer.
    */
-  public BasicPatternSort(
-      BasicPatternIterator am,
-      int sort_fld,
-      BasicPatternOrder sort_order,
+  public BPSort(
+      BPIterator input_itr,
+      BPOrder sort_order,
+      int SortNodeIDPos,
       int n_pages) throws IOException, SortException {
 
-    _am = am;
-    _sort_fld = sort_fld;
+
+        if (SortNodeIDPos == -1){
+          SortNodeIDPos = 0;
+        }
+
+    _am = input_itr;
+    _sort_fld = SortNodeIDPos;
     order = sort_order;
     _n_pages = n_pages;
 
     if(_sort_fld == 0){
       _sort_fld_type = new AttrType(AttrType.attrD);
+    }
+    else{
+      _sort_fld_type = new AttrType(AttrType.attrInteger);
     }
 
 
@@ -767,6 +775,12 @@ public class BasicPatternSort extends BasicPatternIterator implements GlobalCons
       }
       closeFlag = true;
     }
+  }
+
+  @Override
+  public String getFileName() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

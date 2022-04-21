@@ -140,8 +140,9 @@ public class PhaseThreeQuery {
 
 
             String[] lastStrs = secondStrs[1].split(",");
-            Integer so = processInteger(lastStrs[0]), np = processInteger(lastStrs[1]);
+            Integer so = processInteger(lastStrs[0]), snp = processInteger(lastStrs[1]), np = processInteger(lastStrs[2]);
             System.out.println("so: " + so);
+            System.out.println("so: " + snp);
             System.out.println("np: " + np);
             
         } catch (IOException e) {

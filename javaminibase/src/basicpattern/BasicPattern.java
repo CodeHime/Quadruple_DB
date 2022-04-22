@@ -430,7 +430,7 @@ public class BasicPattern implements GlobalConst{
   public BasicPattern setDoubleFld(int fldNo, double val) 
   	throws IOException, FieldNumberOutOfBoundException
   { 
-   if ( (fldNo > 0) && (fldNo <= fldCnt))
+   if ( (fldNo > 0))
     {
      Convert.setDoubleValue(val, (fldNo-1)*8, data);
      return this;
@@ -495,22 +495,24 @@ public class BasicPattern implements GlobalConst{
    public BasicPattern setEIDFld(int fldNo, EID val) 
    throws IOException, FieldNumberOutOfBoundException  
   {
-    // if ( fldNo == fldCnt + 1)
-    // {
-    //    // We need to expand the bp size and update all instance variables.
-    //    try{
-    //       // update the header to have one more field. This will update fldCnt and FldOffset.
-
-    //       setHdr((short)(this.noOfFlds() + 1));
- 
-    //     }
-    //     catch(Exception e){
-    //       System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
-    //       e.printStackTrace();
-    //       Runtime.getRuntime().exit(1);
-    //     }
-    // }
-    if ( (fldNo > 0) && (fldNo <= fldCnt))        
+    if ( fldNo*8 > this.bp_length)
+    {
+       // We need to expand the bp size and update all instance variables.
+       try{
+          // update the header to have one more field. This will update fldCnt and FldOffset.
+          this.bp_length+=8;
+          // setHdr((short)(this.noOfFlds() + 1));
+          byte[] newdata = new byte[this.bp_length];
+          System.arraycopy(data, 0, newdata, 0, data.length);
+          data = newdata;
+        }
+        catch(Exception e){
+          System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
+          e.printStackTrace();
+          Runtime.getRuntime().exit(1);
+        }
+    }
+    if ( (fldNo > 0))        
     {
       Convert.setIntValue (val.pageNo.pid, (fldNo-1)*8, data);
       Convert.setIntValue (val.slotNo, (fldNo-1)*8 + 4, data);

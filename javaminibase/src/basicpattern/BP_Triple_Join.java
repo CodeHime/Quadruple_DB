@@ -77,8 +77,13 @@ public class BP_Triple_Join implements GlobalConst {
 	BasicPattern outer_bp = null;
 
 	String RightSubjectFilter, RightPredicateFilter, RightObjectFilter;
-	double RightConfidenceFilter;
+	String RightConfidenceFilter;
 	boolean COMPLETED_FLAG=false;
+
+	public int getNumLeftNodes()
+	{
+		return num_left_nodes;
+	}
 
 	/**
 	 * The constructor pins the first directory page in the file
@@ -92,7 +97,7 @@ public class BP_Triple_Join implements GlobalConst {
 	 */
 	public BP_Triple_Join(int amt_of_mem, int num_left_nodes, BasicPatternIteratorScan left_itr,
 			int BPJoinNodePosition, int JoinOnSubjectorObject, java.lang.String RightSubjectFilter,
-			java.lang.String RightPredicateFilter, java.lang.String RightObjectFilter, double RightConfidenceFilter,
+			java.lang.String RightPredicateFilter, java.lang.String RightObjectFilter, String RightConfidenceFilter,
 			int[] LeftOutNodePositions,
 			int OutputRightSubject, int OutputRightObject) throws InvalidTupleSizeException,
 			IOException {
@@ -197,7 +202,7 @@ public class BP_Triple_Join implements GlobalConst {
 			// Check if end of right stream (inner loop)
 			if (rstream == null) {
 				rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, RightObjectFilter,
-						Double.toString(RightConfidenceFilter));
+						RightConfidenceFilter);
 				// Check if end of BP iteration (outer loop)
 				if ((outer_bp = left_itr.get_next()) == null) {
 					COMPLETED_FLAG=true;
@@ -245,7 +250,10 @@ public class BP_Triple_Join implements GlobalConst {
 				e.printStackTrace();
 			}
 		} while (outer_bp != null);
+		
 		// BasicPatternIteratorScan am = BasicPatternIteratorScan(bp_file);
+		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
+			
 		return COMPLETED_FLAG;
 	}
 	
@@ -269,11 +277,11 @@ public class BP_Triple_Join implements GlobalConst {
 
 				if (JoinOnSubjectorObject == 0){
 					rstream = new Stream(_rdfdb, outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
-					RightPredicateFilter, RightObjectFilter, Double.toString(RightConfidenceFilter));
+					RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
 				}
 				else{
 					rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, 
-					outer_bp.getEIDFld(BPJoinNodePosition).getValue(), Double.toString(RightConfidenceFilter));
+					outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
 				}
 			}
 
@@ -305,6 +313,8 @@ public class BP_Triple_Join implements GlobalConst {
 				e.printStackTrace();
 			}
 		} while (outer_bp != null);
+
+		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;
 	}
 	
@@ -344,16 +354,16 @@ public class BP_Triple_Join implements GlobalConst {
 					if (JoinOnSubjectorObject == 0){
 						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, 
 						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
-						RightPredicateFilter, RightObjectFilter, Double.toString(RightConfidenceFilter));
+						RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
 					}
 					else{
 						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, 
 						RightSubjectFilter, RightPredicateFilter, 
-						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), Double.toString(RightConfidenceFilter));
+						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
 					}
 				}
 			}
-
+		
 			while ((inner_quad = rstream.getNext()) != null) {
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
@@ -372,6 +382,8 @@ public class BP_Triple_Join implements GlobalConst {
 				_results.insertRecord(outer_bp.getBasicPatternByteArray());
 			}
 		} while (outer_bp != null);
+
+		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;
 	}
 

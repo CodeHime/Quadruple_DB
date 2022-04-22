@@ -161,7 +161,8 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
           return null;
         }
 
-        return new BasicPattern(tuple.returnTupleByteArray(), 0, tuple.returnTupleByteArray().length);
+        // return new BasicPattern(tuple.returnTupleByteArray(), 0, tuple.returnTupleByteArray().length);
+        return new BasicPattern(tuple);
 
       }
     } else {
@@ -170,16 +171,18 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
           return null;
         }
         //return new BasicPattern(quadruple.returnQuadrupleByteArray(), 0, 32);
-        byte[] quad = new byte[32];
-        Convert.setDoubleValue(quadruple.getConfidence(), 0, quad);
-        Convert.setIntValue(quadruple.getSubjectQid().pageNo.pid, 8, quad);
-        Convert.setIntValue(quadruple.getSubjectQid().slotNo, 12, quad);
-        Convert.setIntValue(quadruple.getPredicateID().pageNo.pid, 16, quad);
-        Convert.setIntValue(quadruple.getPredicateID().slotNo, 20, quad);
-        Convert.setIntValue(quadruple.getObjectQid().pageNo.pid, 24, quad);
-        Convert.setIntValue(quadruple.getObjectQid().slotNo, 28, quad);
+        // byte[] quad = new byte[32];
+        // Convert.setDoubleValue(quadruple.getConfidence(), 0, quad);
+        // Convert.setIntValue(quadruple.getSubjectQid().pageNo.pid, 8, quad);
+        // Convert.setIntValue(quadruple.getSubjectQid().slotNo, 12, quad);
+        // Convert.setIntValue(quadruple.getPredicateID().pageNo.pid, 16, quad);
+        // Convert.setIntValue(quadruple.getPredicateID().slotNo, 20, quad);
+        // Convert.setIntValue(quadruple.getObjectQid().pageNo.pid, 24, quad);
+        // Convert.setIntValue(quadruple.getObjectQid().slotNo, 28, quad);
 
-        return new BasicPattern(quad, 0, 32);
+        // return new BasicPattern(quad, 0, 32);
+
+        return new BasicPattern(quadruple);
         
         
         

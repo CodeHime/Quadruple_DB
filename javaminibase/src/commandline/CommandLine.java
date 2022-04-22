@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import basicpattern.BPOrder;
 import basicpattern.BPSort;
 import basicpattern.BP_Triple_Join;
 import basicpattern.BasicPattern;
@@ -288,6 +289,7 @@ public class CommandLine {
 		}
 	}
 
+	// query testDB_1 logfile.txt 1000
 	public static void query2(String options[]){
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
@@ -298,26 +300,61 @@ public class CommandLine {
 
 		//Parse join text file
 
-		BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(options[0]);
+		// TODO: DELETE THESE
+		int amt_of_mem = 1000;
+		int num_left_nodes = 2;
 
-		//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-		BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+		int BPJoinNodePosition = 1;
+		int JoinOnSubjectorObject = 0;
+		String RightSubjectFilter = "*";
+		String RightPredicateFilter = "*"; 
+		String RightObjectFilter = "*";
+		String RightConfidenceFilter = "*";
 
-		left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", nOutFlds);
+		int[] LeftOutNodePositions = {0,1};
+		int OutputRightSubject = 1;
+		int OutputRightObject = 1;		
 
-		//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-		btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+		int sort_order = 0;
+		int SortNodeIDPos = 2;
+		int n_pages = 1000;
 
-		left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", nOutFlds);
 
-		//The final name will be options[0]tupletuple
-		BPSort sort = new BPSort(left_itr, sort_order, SortNodeIDPos, n_pages)
+		try
+		{
 
-		BasicPattern bp = sort.get_next();
-		while(bp!=null){
-			//Only printing confi
-			System.out.println(database.getBasicPatternString(bp));
-			bp = sort.get_next();
+			
+
+			// BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.db_name() + "_" + Integer.toString(type) + "QuadHF");
+			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.getName() + "QuadHF");
+
+			System.out.println(left_itr.get_next());
+			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+
+			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+
+			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+
+			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+
+			//The final name will be options[0]tupletuple
+			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+
+			// BasicPattern bp = sort.get_next();
+			BasicPattern bp = left_itr.get_next();
+			while(bp!=null){
+				//Only printing confi
+				System.out.println(database.getBasicPatternString(bp));
+				// bp = sort.get_next();
+				bp = left_itr.get_next();
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 

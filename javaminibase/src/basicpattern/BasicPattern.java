@@ -69,13 +69,13 @@ public class BasicPattern implements GlobalConst{
     * @param length the length of the tuple
     */
 
-   public BasicPattern(byte [] aBP, int offset, int length)
-   {
-      data = aBP;
-      bp_offset = offset;
-      bp_length = length;
-    //  fldCnt = getShortValue(offset, data);
-   }
+  //  public BasicPattern(byte [] aBP, int offset, int length)
+  //  {
+  //     data = aBP;
+  //     bp_offset = offset;
+  //     bp_length = length;
+  //   //  fldCnt = getShortValue(offset, data);
+  //  }
    
    /** Constructor(used as bp copy)
     * @param fromBP   The source bp
@@ -128,30 +128,30 @@ public class BasicPattern implements GlobalConst{
   * @param quad   the source Quadruple
   * 
   */
-  // public BasicPattern(Quadruple quad)
-  // {
-  //   data = new byte[max_size];
-  //   bp_offset = 0;
-  //   bp_length = max_size;
+  public BasicPattern(Quadruple quad)
+  {
+    data = new byte[max_size];
+    bp_offset = 0;
+    bp_length = max_size;
 
-  //   try
-  //   {
-  //     // set header to have 3 fields
-  //     setHdr((short)3);
+    try
+    {
+      // set header to have 3 fields
+      setHdr((short)3);
       
-  //     //set first field to be the confidence of the quadruple
-  //     setDoubleFld(1, quad.getConfidence());
+      //set first field to be the confidence of the quadruple
+      setDoubleFld(1, quad.getConfidence());
       
-  //     // set the EID fields for subject and object
-  //     setEIDFld(2, quad.getSubjectQid());
-  //     setEIDFld(3, quad.getObjectQid());
+      // set the EID fields for subject and object
+      setEIDFld(2, quad.getSubjectQid());
+      setEIDFld(3, quad.getObjectQid());
 
-  //   }
-  //   catch(Exception e){
-  //     System.out.println(e);
-  //     e.printStackTrace();
-  //   }
-  // }
+    }
+    catch(Exception e){
+      System.out.println(e);
+      e.printStackTrace();
+    }
+  }
 
   /**  
   * Class constructor
@@ -170,13 +170,13 @@ public class BasicPattern implements GlobalConst{
     *  you must make sure the tuple lengths must be equal
     * @param fromBP the tuple being copied
     */
-  //  public void basicPatternCopy(BasicPattern fromBP)
-  //  {
-  //     byte [] temparray = fromBP.getBasicPatternByteArray();
-  //     System.arraycopy(temparray, 0, data, bp_offset, bp_length);   
-  //     fldCnt = fromBP.noOfFlds(); 
-  //     fldOffset = fromBP.copyFldOffset(); 
-  //  }
+   public void basicPatternCopy(BasicPattern fromBP)
+   {
+      byte [] temparray = fromBP.getBasicPatternByteArray();
+      System.arraycopy(temparray, 0, data, bp_offset, bp_length);   
+      fldCnt = fromBP.noOfFlds(); 
+      fldOffset = fromBP.copyFldOffset(); 
+   }
 
    /** This is used when you don't want to use the constructor
     * @param aBP  a byte array which contains the tuple
@@ -535,37 +535,37 @@ public class BasicPattern implements GlobalConst{
     *
     */
 
-// public void setHdr (short numFlds)
-//  throws IOException, InvalidTypeException, InvalidTupleSizeException		
-// {
-//   if((numFlds +2)*2 > max_size)
-//     throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
+public void setHdr (short numFlds)
+ throws IOException, InvalidTypeException, InvalidTupleSizeException		
+{
+  if((numFlds +2)*2 > max_size)
+    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
   
-//   fldCnt = numFlds;
-//   Convert.setShortValue(numFlds, bp_offset, data);
-//   fldOffset = new short[numFlds+1];
-//   int pos = bp_offset+2;  // start position for fldOffset[]
-//   fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
+  fldCnt = numFlds;
+  Convert.setShortValue(numFlds, bp_offset, data);
+  fldOffset = new short[numFlds+1];
+  int pos = bp_offset+2;  // start position for fldOffset[]
+  fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
    
-//   Convert.setShortValue(fldOffset[0], pos, data);
-//   pos +=2;
-//   short incr = 8;
-//   int i;
+  Convert.setShortValue(fldOffset[0], pos, data);
+  pos +=2;
+  short incr = 8;
+  int i;
 
 
-//   for (i=1; i<=numFlds; i++)
-//   {
-//     fldOffset[i]  = (short) (fldOffset[i-1] + incr);
-//     Convert.setShortValue(fldOffset[i], pos, data);
-//     pos +=2;
-//   }
+  for (i=1; i<=numFlds; i++)
+  {
+    fldOffset[i]  = (short) (fldOffset[i-1] + incr);
+    Convert.setShortValue(fldOffset[i], pos, data);
+    pos +=2;
+  }
   
-//   bp_length = fldOffset[numFlds] - bp_offset;
+  bp_length = fldOffset[numFlds] - bp_offset;
 
-//   if(bp_length > max_size)
-//     throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
+  if(bp_length > max_size)
+    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
    
-// }
+}
      
   /**
    * Returns number of fields in this tuple
@@ -574,10 +574,10 @@ public class BasicPattern implements GlobalConst{
    *
    */
 
-  // public short noOfFlds() 
-  //  {
-  //    return fldCnt;
-  //  }
+  public short noOfFlds() 
+   {
+     return fldCnt;
+   }
 
   /**
    * Makes a copy of the fldOffset array
@@ -586,15 +586,15 @@ public class BasicPattern implements GlobalConst{
    *
    */
 
-  // public short[] copyFldOffset() 
-  //  {
-  //    short[] newFldOffset = new short[fldCnt + 1];
-  //    for (int i=0; i<=fldCnt; i++) {
-  //      newFldOffset[i] = fldOffset[i];
-  //    }
+  public short[] copyFldOffset() 
+   {
+     short[] newFldOffset = new short[fldCnt + 1];
+     for (int i=0; i<=fldCnt; i++) {
+       newFldOffset[i] = fldOffset[i];
+     }
      
-  //    return newFldOffset;
-  //  }
+     return newFldOffset;
+   }
 
  /**
   * Print out the bp

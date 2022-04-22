@@ -425,7 +425,7 @@ public class Stream implements GlobalConst {
 			else{
 				// TODO: CHECK
 				QID qid=new QID();
-				return quadover.getNext(qid);
+				return qfs.getNext(qid);
 			}
 
 		} catch (Exception e) {
@@ -498,9 +498,9 @@ public class Stream implements GlobalConst {
 				qfs.closescan();
 			}
 
-			if (quadover != null) {
-				quadover.closescan();
-			}
+			// if (quadover != null) {
+			// 	quadover.closescan();
+			// }
 
 			if (_results != null && _results != _rdfdb.getQuadHeapFile()) {
 				_results.deleteFile();

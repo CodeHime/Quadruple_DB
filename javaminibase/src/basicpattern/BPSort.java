@@ -662,7 +662,7 @@ public class BPSort extends BPIterator implements GlobalConst {
    * @exception SortException something went wrong in the lower layer.
    */
   public BPSort(
-      BPIterator input_itr,
+      BasicPatternIteratorScan input_itr,
       BPOrder sort_order,
       int SortNodeIDPos,
       int n_pages) throws IOException, SortException {
@@ -731,7 +731,8 @@ public class BPSort extends BPIterator implements GlobalConst {
     if (output_tuple != null) {
       op_buf.tupleCopy(output_tuple);
 
-      return new BasicPattern(op_buf.returnTupleByteArray(),0,op_buf.returnTupleByteArray().length);
+      // return new BasicPattern(op_buf.returnTupleByteArray(),0,op_buf.returnTupleByteArray().length);
+      return new BasicPattern(op_buf);
     } else
       return null;
   }

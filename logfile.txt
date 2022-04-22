@@ -1,0 +1,5 @@
+batchinsert phase2_test_data.txt 1 testDB	Execution Time: 22457	Reads: 2	Writes: 284
+query testDB_1 logfile.txt 1000	Execution Time: 170	Reads: 183	Writes: 0
+query testDB_1 logfile.txt 1000	Execution Time: 309	Reads: 183	Writes: 0
+query testDB_1 logfile.txt 1000	Execution Time: 14563	Reads: 183	Writes: 0
+query testDB_1 logfile.txt 1000	Execution Time: 41738	Reads: 181	Writes: 0

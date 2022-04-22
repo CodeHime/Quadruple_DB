@@ -1,4 +1,4 @@
-package diskmgr;
+package basicpattern;
 
 /** JAVA */
 /**
@@ -156,19 +156,31 @@ public class BP_Triple_Join implements GlobalConst {
           tupletypes[i] = new AttrType(AttrType.attrInteger);
           tuplesize += 4;
         }
-        tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-        tuple.setDFld(0, basicPattern.getDoubleFld(0));
+        try {
+			tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
+			tuple.setDFld(0, basicPattern.getDoubleFld(0));
         for (int i = 1; i < numberOfTupleFields / 2; i++) {
           tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
           tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
         } // according to Iterator.java
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
 
 		return tuple;
 	}
 
 	public BasicPattern get_next(){	
 		RID rid=new RID();
-		return new BasicPattern(bp_scan.getNext(rid));
+		try {
+			return new BasicPattern(bp_scan.getNext(rid));
+		} catch (InvalidTupleSizeException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public boolean basic_nlj()

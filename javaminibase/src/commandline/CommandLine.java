@@ -344,6 +344,7 @@ public class CommandLine {
 						System.out.println(scan.nextLine());
 					}
 					scan.close();
+				}
 				// } else if (parsed[0].equals("query") && parsed.length == 9) {
 				// 	Long startTime = new java.util.Date().getTime();
 				// 	query(Arrays.copyOfRange(parsed, 1, parsed.length));

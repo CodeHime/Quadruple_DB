@@ -454,9 +454,9 @@ public class rdfDB extends DB {
                 numberOfTupleFields += 2;
             }
             return_string += bp.getDoubleFld(0);
-            for (int i = 1; i < numberOfTupleFields; i += 2) {
+            for (int i = 1; i < numberOfTupleFields; i++) {
                 return_string += "\t" + entity_heap_file
-                        .getLabel(new LID(new PageId(bp.getIntFld(i)), bp.getIntFld(i + 1))).getLabel();
+                        .getLabel(new LID(new PageId(bp.getEIDFld(i).pageNo.pid), bp.getEIDFld(i).slotNo)).getLabel();
             }
 
         } catch (Exception e) {

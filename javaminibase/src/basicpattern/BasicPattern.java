@@ -86,8 +86,8 @@ public class BasicPattern implements GlobalConst{
        data = fromBP.returnBasicPatternArray();
        bp_length = fromBP.getLength();
        bp_offset = fromBP.getOffset();
-       fldCnt = fromBP.noOfFlds(); 
-       fldOffset = fromBP.copyFldOffset(); 
+      //  fldCnt = fromBP.noOfFlds(); 
+      //  fldOffset = fromBP.copyFldOffset(); 
    }
 
   public BasicPattern(Tuple tup)
@@ -102,8 +102,7 @@ public class BasicPattern implements GlobalConst{
     {
       // The tup has the slotno and pageno as two fields, but bp will just store the EID as just one field.
       // Hence the bp has half the number of fields as the tup has
-      setHdr((short)(tup.noOfFlds()/2 + 1));
-
+      bp_length = (tup.noOfFlds()/2+1)*8;
       int tupField = 1;
 
       setDoubleFld(1, tup.getDFld(tupField++));
@@ -129,30 +128,30 @@ public class BasicPattern implements GlobalConst{
   * @param quad   the source Quadruple
   * 
   */
-  public BasicPattern(Quadruple quad)
-  {
-    data = new byte[max_size];
-    bp_offset = 0;
-    bp_length = max_size;
+  // public BasicPattern(Quadruple quad)
+  // {
+  //   data = new byte[max_size];
+  //   bp_offset = 0;
+  //   bp_length = max_size;
 
-    try
-    {
-      // set header to have 3 fields
-      setHdr((short)3);
+  //   try
+  //   {
+  //     // set header to have 3 fields
+  //     setHdr((short)3);
       
-      //set first field to be the confidence of the quadruple
-      setDoubleFld(1, quad.getConfidence());
+  //     //set first field to be the confidence of the quadruple
+  //     setDoubleFld(1, quad.getConfidence());
       
-      // set the EID fields for subject and object
-      setEIDFld(2, quad.getSubjectQid());
-      setEIDFld(3, quad.getObjectQid());
+  //     // set the EID fields for subject and object
+  //     setEIDFld(2, quad.getSubjectQid());
+  //     setEIDFld(3, quad.getObjectQid());
 
-    }
-    catch(Exception e){
-      System.out.println(e);
-      e.printStackTrace();
-    }
-  }
+  //   }
+  //   catch(Exception e){
+  //     System.out.println(e);
+  //     e.printStackTrace();
+  //   }
+  // }
 
   /**  
   * Class constructor
@@ -171,13 +170,13 @@ public class BasicPattern implements GlobalConst{
     *  you must make sure the tuple lengths must be equal
     * @param fromBP the tuple being copied
     */
-   public void basicPatternCopy(BasicPattern fromBP)
-   {
-      byte [] temparray = fromBP.getBasicPatternByteArray();
-      System.arraycopy(temparray, 0, data, bp_offset, bp_length);   
-      fldCnt = fromBP.noOfFlds(); 
-      fldOffset = fromBP.copyFldOffset(); 
-   }
+  //  public void basicPatternCopy(BasicPattern fromBP)
+  //  {
+  //     byte [] temparray = fromBP.getBasicPatternByteArray();
+  //     System.arraycopy(temparray, 0, data, bp_offset, bp_length);   
+  //     fldCnt = fromBP.noOfFlds(); 
+  //     fldOffset = fromBP.copyFldOffset(); 
+  //  }
 
    /** This is used when you don't want to use the constructor
     * @param aBP  a byte array which contains the tuple
@@ -262,18 +261,18 @@ public class BasicPattern implements GlobalConst{
     * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
     */
 
-  public int getIntFld(int fldNo) 
-  	throws IOException, FieldNumberOutOfBoundException
-  {           
-    int val;
-    if ( (fldNo > 0) && (fldNo <= fldCnt))
-     {
-      val = Convert.getIntValue(fldOffset[fldNo -1], data);
-      return val;
-     }
-    else 
-     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
-  }
+  // public int getIntFld(int fldNo) 
+  // 	throws IOException, FieldNumberOutOfBoundException
+  // {           
+  //   int val;
+  //   if ( (fldNo > 0) && (fldNo <= fldCnt))
+  //    {
+  //     val = Convert.getIntValue(fldOffset[fldNo -1], data);
+  //     return val;
+  //    }
+  //   else 
+  //    throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  // }
     
   /**
     * Convert this field into a double
@@ -291,7 +290,7 @@ public class BasicPattern implements GlobalConst{
 	    double val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))
        {
-        val = Convert.getDoubleValue(fldNo*8, data);
+        val = Convert.getDoubleValue((fldNo-1)*8, data);
         return val;
        }
       else 
@@ -308,18 +307,18 @@ public class BasicPattern implements GlobalConst{
     * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
     */
 
-    public float getFloFld(int fldNo) 
-    	throws IOException, FieldNumberOutOfBoundException
-     {
-	float val;
-      if ( (fldNo > 0) && (fldNo <= fldCnt))
-       {
-        val = Convert.getFloValue(fldOffset[fldNo -1], data);
-        return val;
-       }
-      else 
-       throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
-     }
+  //   public float getFloFld(int fldNo) 
+  //   	throws IOException, FieldNumberOutOfBoundException
+  //    {
+	// float val;
+  //     if ( (fldNo > 0) && (fldNo <= fldCnt))
+  //      {
+  //       val = Convert.getFloValue(fldOffset[fldNo -1], data);
+  //       return val;
+  //      }
+  //     else 
+  //      throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  //    }
 
 
    /**
@@ -332,19 +331,19 @@ public class BasicPattern implements GlobalConst{
     * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
     */
 
-   public String getStrFld(int fldNo) 
-   	throws IOException, FieldNumberOutOfBoundException 
-   { 
-         String val;
-    if ( (fldNo > 0) && (fldNo <= fldCnt))      
-     {
-        val = Convert.getStrValue(fldOffset[fldNo -1], data, 
-		fldOffset[fldNo] - fldOffset[fldNo -1]); //strlen+2
-        return val;
-     }
-    else 
-     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
-  }
+  //  public String getStrFld(int fldNo) 
+  //  	throws IOException, FieldNumberOutOfBoundException 
+  //  { 
+  //        String val;
+  //   if ( (fldNo > 0) && (fldNo <= fldCnt))      
+  //    {
+  //       val = Convert.getStrValue(fldOffset[fldNo -1], data, 
+	// 	fldOffset[fldNo] - fldOffset[fldNo -1]); //strlen+2
+  //       return val;
+  //    }
+  //   else 
+  //    throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  // }
  
    /**
     * Convert this field into a character
@@ -356,19 +355,19 @@ public class BasicPattern implements GlobalConst{
     * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
     */
 
-   public char getCharFld(int fldNo) 
-   	throws IOException, FieldNumberOutOfBoundException 
-    {   
-       char val;
-      if ( (fldNo > 0) && (fldNo <= fldCnt))      
-       {
-        val = Convert.getCharValue(fldOffset[fldNo -1], data);
-        return val;
-       }
-      else 
-       throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  //  public char getCharFld(int fldNo) 
+  //  	throws IOException, FieldNumberOutOfBoundException 
+  //   {   
+  //      char val;
+  //     if ( (fldNo > 0) && (fldNo <= fldCnt))      
+  //      {
+  //       val = Convert.getCharValue(fldOffset[fldNo -1], data);
+  //       return val;
+  //      }
+  //     else 
+  //      throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
  
-    }
+  //   }
 
      /**
     * Convert this field into a EID
@@ -386,8 +385,8 @@ public class BasicPattern implements GlobalConst{
       EID val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))      
       {
-        int pageNo = Convert.getIntValue(fldNo*8, data);
-        int slotNo = Convert.getIntValue(fldNo*8 + 4, data);
+        int pageNo = Convert.getIntValue((fldNo-1)*8, data);
+        int slotNo = Convert.getIntValue((fldNo-1)*8 + 4, data);
 
        val = new EID(new LID(new PageId(pageNo), slotNo));
        return val;
@@ -407,17 +406,17 @@ public class BasicPattern implements GlobalConst{
    * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
    */
 
-  public BasicPattern setIntFld(int fldNo, int val) 
-  	throws IOException, FieldNumberOutOfBoundException
-  { 
-    if ( (fldNo > 0) && (fldNo <= fldCnt))
-     {
-	Convert.setIntValue (val, fldOffset[fldNo -1], data);
-	return this;
-     }
-    else 
-     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND"); 
-  }
+  // public BasicPattern setIntFld(int fldNo, int val) 
+  // 	throws IOException, FieldNumberOutOfBoundException
+  // { 
+  //   if ( (fldNo > 0) && (fldNo <= fldCnt))
+  //    {
+	// Convert.setIntValue (val, fldOffset[fldNo -1], data);
+	// return this;
+  //    }
+  //   else 
+  //    throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND"); 
+  // }
 
   /**
    * Set this field to double value
@@ -433,7 +432,7 @@ public class BasicPattern implements GlobalConst{
   { 
    if ( (fldNo > 0) && (fldNo <= fldCnt))
     {
-     Convert.setDoubleValue(val, fldOffset[fldNo -1], data);
+     Convert.setDoubleValue(val, (fldNo-1)*8, data);
      return this;
     }
     else  
@@ -450,18 +449,18 @@ public class BasicPattern implements GlobalConst{
    * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
    */
 
-  public BasicPattern setFloFld(int fldNo, float val) 
-  	throws IOException, FieldNumberOutOfBoundException
-  { 
-   if ( (fldNo > 0) && (fldNo <= fldCnt))
-    {
-     Convert.setFloValue (val, fldOffset[fldNo -1], data);
-     return this;
-    }
-    else  
-     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND"); 
+  // public BasicPattern setFloFld(int fldNo, float val) 
+  // 	throws IOException, FieldNumberOutOfBoundException
+  // { 
+  //  if ( (fldNo > 0) && (fldNo <= fldCnt))
+  //   {
+  //    Convert.setFloValue (val, fldOffset[fldNo -1], data);
+  //    return this;
+  //   }
+  //   else  
+  //    throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND"); 
      
-  }
+  // }
 
   /**
    * Set this field to String value
@@ -472,17 +471,17 @@ public class BasicPattern implements GlobalConst{
    * @exception   FieldNumberOutOfBoundException Tuple field number out of bound
    */
 
-   public BasicPattern setStrFld(int fldNo, String val) 
-		throws IOException, FieldNumberOutOfBoundException  
-   {
-     if ( (fldNo > 0) && (fldNo <= fldCnt))        
-      {
-         Convert.setStrValue (val, fldOffset[fldNo -1], data);
-         return this;
-      }
-     else 
-       throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
-    }
+  //  public BasicPattern setStrFld(int fldNo, String val) 
+	// 	throws IOException, FieldNumberOutOfBoundException  
+  //  {
+  //    if ( (fldNo > 0) && (fldNo <= fldCnt))        
+  //     {
+  //        Convert.setStrValue (val, fldOffset[fldNo -1], data);
+  //        return this;
+  //     }
+  //    else 
+  //      throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  //   }
 
   /**
    * Set this field to String value
@@ -496,25 +495,25 @@ public class BasicPattern implements GlobalConst{
    public BasicPattern setEIDFld(int fldNo, EID val) 
    throws IOException, FieldNumberOutOfBoundException  
   {
-    if ( fldNo == fldCnt + 1)
-    {
-       // We need to expand the bp size and update all instance variables.
-       try{
-          // update the header to have one more field. This will update fldCnt and FldOffset.
+    // if ( fldNo == fldCnt + 1)
+    // {
+    //    // We need to expand the bp size and update all instance variables.
+    //    try{
+    //       // update the header to have one more field. This will update fldCnt and FldOffset.
 
-          setHdr((short)(this.noOfFlds() + 1));
+    //       setHdr((short)(this.noOfFlds() + 1));
  
-        }
-        catch(Exception e){
-          System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
-          e.printStackTrace();
-          Runtime.getRuntime().exit(1);
-        }
-    }
+    //     }
+    //     catch(Exception e){
+    //       System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
+    //       e.printStackTrace();
+    //       Runtime.getRuntime().exit(1);
+    //     }
+    // }
     if ( (fldNo > 0) && (fldNo <= fldCnt))        
     {
-      Convert.setIntValue (val.pageNo.pid, fldOffset[fldNo -1], data);
-      Convert.setIntValue (val.slotNo, fldOffset[fldNo -1] + 4, data);
+      Convert.setIntValue (val.pageNo.pid, (fldNo-1)*8, data);
+      Convert.setIntValue (val.slotNo, (fldNo-1)*8 + 4, data);
       return this;
     }
 
@@ -534,37 +533,37 @@ public class BasicPattern implements GlobalConst{
     *
     */
 
-public void setHdr (short numFlds)
- throws IOException, InvalidTypeException, InvalidTupleSizeException		
-{
-  if((numFlds +2)*2 > max_size)
-    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
+// public void setHdr (short numFlds)
+//  throws IOException, InvalidTypeException, InvalidTupleSizeException		
+// {
+//   if((numFlds +2)*2 > max_size)
+//     throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
   
-  fldCnt = numFlds;
-  Convert.setShortValue(numFlds, bp_offset, data);
-  fldOffset = new short[numFlds+1];
-  int pos = bp_offset+2;  // start position for fldOffset[]
-  fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
+//   fldCnt = numFlds;
+//   Convert.setShortValue(numFlds, bp_offset, data);
+//   fldOffset = new short[numFlds+1];
+//   int pos = bp_offset+2;  // start position for fldOffset[]
+//   fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
    
-  Convert.setShortValue(fldOffset[0], pos, data);
-  pos +=2;
-  short incr = 8;
-  int i;
+//   Convert.setShortValue(fldOffset[0], pos, data);
+//   pos +=2;
+//   short incr = 8;
+//   int i;
 
 
-  for (i=1; i<=numFlds; i++)
-  {
-    fldOffset[i]  = (short) (fldOffset[i-1] + incr);
-    Convert.setShortValue(fldOffset[i], pos, data);
-    pos +=2;
-  }
+//   for (i=1; i<=numFlds; i++)
+//   {
+//     fldOffset[i]  = (short) (fldOffset[i-1] + incr);
+//     Convert.setShortValue(fldOffset[i], pos, data);
+//     pos +=2;
+//   }
   
-  bp_length = fldOffset[numFlds] - bp_offset;
+//   bp_length = fldOffset[numFlds] - bp_offset;
 
-  if(bp_length > max_size)
-    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
+//   if(bp_length > max_size)
+//     throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
    
-}
+// }
      
   /**
    * Returns number of fields in this tuple
@@ -573,10 +572,10 @@ public void setHdr (short numFlds)
    *
    */
 
-  public short noOfFlds() 
-   {
-     return fldCnt;
-   }
+  // public short noOfFlds() 
+  //  {
+  //    return fldCnt;
+  //  }
 
   /**
    * Makes a copy of the fldOffset array
@@ -585,15 +584,15 @@ public void setHdr (short numFlds)
    *
    */
 
-  public short[] copyFldOffset() 
-   {
-     short[] newFldOffset = new short[fldCnt + 1];
-     for (int i=0; i<=fldCnt; i++) {
-       newFldOffset[i] = fldOffset[i];
-     }
+  // public short[] copyFldOffset() 
+  //  {
+  //    short[] newFldOffset = new short[fldCnt + 1];
+  //    for (int i=0; i<=fldCnt; i++) {
+  //      newFldOffset[i] = fldOffset[i];
+  //    }
      
-     return newFldOffset;
-   }
+  //    return newFldOffset;
+  //  }
 
  /**
   * Print out the bp

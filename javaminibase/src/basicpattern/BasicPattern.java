@@ -103,7 +103,23 @@ public class BasicPattern implements GlobalConst{
       // The tup has the slotno and pageno as two fields, but bp will just store the EID as just one field.
       // Hence the bp has half the number of fields as the tup has
       bp_length = (tup.noOfFlds()/2+1)*8;
+
+      short[] arr = {(short)(tup.getLength())};
+      AttrType[] aaar = new AttrType[tup.noOfFlds()];
+
+      aaar[0] = new AttrType(AttrType.attrD);
+
+      for (int i = 1; i < tup.noOfFlds(); i++){
+        aaar[i] = new AttrType(AttrType.attrInteger);
+      }
+
+      tup.setHdr(tup.noOfFlds(), aaar, arr);
+
+    
+
       int tupField = 1;
+
+      setHdr((short)(bp_length/8));
 
       setDoubleFld(1, tup.getDFld(tupField++));
 
@@ -495,16 +511,16 @@ public class BasicPattern implements GlobalConst{
    public BasicPattern setEIDFld(int fldNo, EID val) 
    throws IOException, FieldNumberOutOfBoundException  
   {
-    if ( fldNo*8 > this.bp_length)
+    if ( fldNo > fldCnt )
     {
        // We need to expand the bp size and update all instance variables.
        try{
           // update the header to have one more field. This will update fldCnt and FldOffset.
-          this.bp_length+=8;
-          // setHdr((short)(this.noOfFlds() + 1));
-          byte[] newdata = new byte[this.bp_length];
-          System.arraycopy(data, 0, newdata, 0, data.length);
-          data = newdata;
+          // this.bp_length+=8;
+          setHdr((short)(fldNo));
+          // byte[] newdata = new byte[this.bp_length];
+          // System.arraycopy(data, 0, newdata, 0, data.length);
+          // data = newdata;
         }
         catch(Exception e){
           System.out.print("ERROR: Cannot expand Basic Pattern size\n" + e);
@@ -601,7 +617,7 @@ public void setHdr (short numFlds)
   * @param type  the types in the bp
   * @Exception IOException I/O exception
   */
- public void print(AttrType type[])
+ public void print()
     throws IOException 
  {
   int i;

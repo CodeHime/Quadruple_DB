@@ -160,7 +160,7 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
         if ((tuple = scan.getNext(rid)) == null) {
           return null;
         }
-
+        
         // return new BasicPattern(tuple.returnTupleByteArray(), 0, tuple.returnTupleByteArray().length);
         return new BasicPattern(tuple);
 

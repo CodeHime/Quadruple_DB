@@ -148,11 +148,8 @@ public class BP_Triple_Join implements GlobalConst {
 	public Tuple fromBP(BasicPattern basicPattern){
         Tuple tuple = new Tuple();
 		int basicPatternLength = basicPattern.getLength();
-        short numberOfTupleFields = 1;
-        while (basicPatternLength > 0) {
-          basicPatternLength -= 8;
-          numberOfTupleFields += 2;
-        }
+        short numberOfTupleFields = (short)(basicPattern.noOfFlds()* 2 - 1);
+        
         AttrType[] tupletypes = new AttrType[numberOfTupleFields];
         short[] strSizes = new short[1];
         short tuplesize = 8;
@@ -163,10 +160,10 @@ public class BP_Triple_Join implements GlobalConst {
         }
         try {
 			tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-			tuple.setDFld(0, basicPattern.getDoubleFld(0));
-        for (int i = 1; i < numberOfTupleFields / 2; i++) {
-          tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
-          tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
+			tuple.setDFld(1, basicPattern.getDoubleFld(1));
+        for (int i = 2; i <= numberOfTupleFields / 2; i++) {
+          tuple.setIntFld(i*2 - 2, basicPattern.getEIDFld(i).pageNo.pid);
+          tuple.setIntFld(i*2 - 1, basicPattern.getEIDFld(i).slotNo);
         } // according to Iterator.java
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -192,7 +189,8 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 			
-			_results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
+			// _results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
+			_results = new Heapfile(left_itr.getFileName()+"tuple");
 
 			//Apend to heapfile
 			do {

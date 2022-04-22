@@ -212,7 +212,7 @@ public class CommandLine {
 				String parts[] = processLine(line);
 
 				for(String p: parts){
-					System.out.print(p);
+					// System.out.print(p);
 				}
 				System.out.println("");
 				boolean isPartsGood = true;
@@ -247,9 +247,9 @@ public class CommandLine {
 				Convert.setDoubleValue(Double.parseDouble(parts[3]), 24, quad);
 				QID qid = database.insertQuadruple(quad);
 				
-				System.out.println(Arrays.toString(quad));
-				System.out.println(qid.pageNo.pid);
-				System.out.println(qid.slotNo);
+				// System.out.println(Arrays.toString(quad));
+				// System.out.println(qid.pageNo.pid);
+				// System.out.println(qid.slotNo);
 			}
 			// databases.put(dbname,database);
 
@@ -289,7 +289,8 @@ public class CommandLine {
 		}
 	}
 
-	// query testDB_1 logfile.txt 1000
+	// batchinsert phase3_test_data_small.txt 1 testDB
+	// query testDB_1 q1.txt 1000
 	public static void query2(String options[]){
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
@@ -304,14 +305,14 @@ public class CommandLine {
 		int amt_of_mem = 1000;
 		int num_left_nodes = 2;
 
-		int BPJoinNodePosition = 1;
+		int BPJoinNodePosition = 2;
 		int JoinOnSubjectorObject = 0;
 		String RightSubjectFilter = "*";
 		String RightPredicateFilter = "*"; 
 		String RightObjectFilter = "*";
 		String RightConfidenceFilter = "*";
 
-		int[] LeftOutNodePositions = {0,1};
+		int[] LeftOutNodePositions = {1,2,3};
 		int OutputRightSubject = 1;
 		int OutputRightObject = 1;		
 
@@ -323,30 +324,30 @@ public class CommandLine {
 		try
 		{
 
-			
-
-			// BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.db_name() + "_" + Integer.toString(type) + "QuadHF");
 			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.getName() + "QuadHF");
 
-			System.out.println(left_itr.get_next());
-			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+			// BasicPattern tempBP = left_itr.get_next();
+			// System.out.println(tempBP);
+			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
 
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
 
 			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+			// btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
 
-			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+			// left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
 
-			//The final name will be options[0]tupletuple
-			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+			// //The final name will be options[0]tupletuple
+			// // BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			// BasicPattern bp = sort.get_next();
+			// // BasicPattern bp = sort.get_next();
 			BasicPattern bp = left_itr.get_next();
 			while(bp!=null){
+				
+				bp.print();
 				//Only printing confi
-				System.out.println(database.getBasicPatternString(bp));
+				// System.out.println(database.getBasicPatternString(bp));
 				// bp = sort.get_next();
 				bp = left_itr.get_next();
 			}
@@ -382,19 +383,19 @@ public class CommandLine {
 					}
 					scan.close();
 				}
-				// } else if (parsed[0].equals("query") && parsed.length == 9) {
-				// 	Long startTime = new java.util.Date().getTime();
-				// 	query(Arrays.copyOfRange(parsed, 1, parsed.length));
-				// 	Long endTime = new java.util.Date().getTime();
-				// 	// fw = new FileWriter(parsed[1]+"_"+parsed[2]);
-				// 	fw = new FileWriter("logfile.txt", true);
+				else if (parsed[0].equals("query") && parsed.length == 9) {
+					Long startTime = new java.util.Date().getTime();
+					query(Arrays.copyOfRange(parsed, 1, parsed.length));
+					Long endTime = new java.util.Date().getTime();
+					// fw = new FileWriter(parsed[1]+"_"+parsed[2]);
+					fw = new FileWriter("logfile.txt", true);
 					
-				// 	fw.append(input + "\t");
-				// 	fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
-				// 	fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
-				// 	fw.close();
-				// 	System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
-				// } 
+					fw.append(input + "\t");
+					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
+					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
+					fw.close();
+					System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+				} 
 				else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
 					Long startTime = new java.util.Date().getTime();
 					batchinsert(Arrays.copyOfRange(parsed, 1, parsed.length));

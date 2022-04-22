@@ -66,8 +66,9 @@ public class Tuple implements GlobalConst{
    {
       data = atuple;
       tuple_offset = offset;
+      fldCnt = (short)(length/8 * 2 - 1);
       tuple_length = length;
-    //  fldCnt = getShortValue(offset, data);
+      
    }
    
    /** Constructor(used as tuple copy)
@@ -210,7 +211,7 @@ public class Tuple implements GlobalConst{
     double val;
     if ( (fldNo > 0) && (fldNo <= fldCnt))
      {
-      val = Convert.getDoubleValue(fldOffset[fldNo -1], data);
+      val = Convert.getDoubleValue(0, data);
       return val;
      }
     else 

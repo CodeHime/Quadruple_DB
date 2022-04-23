@@ -214,7 +214,7 @@ public class CommandLine {
 				for(String p: parts){
 					// System.out.print(p);
 				}
-				System.out.println("");
+				// System.out.println("");
 				boolean isPartsGood = true;
 				for (int i = 0; i < parts.length; i++)
 				{
@@ -346,20 +346,22 @@ public class CommandLine {
 
 			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+			btj.runJoinType(1);
 			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 
-			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 
 			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes2, left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
+			btj.runJoinType(1);
 			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 			
-			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 			//The final name will be options[0]tupletuple
-			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+			BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			// BasicPattern bp = sort.get_next();
-			BasicPattern bp = left_itr.get_next();
+			BasicPattern bp = sort.get_next();
+			// BasicPattern bp = left_itr.get_next();
 			int bpCount = 0;
 			while(bp!=null){
 				bpCount++;

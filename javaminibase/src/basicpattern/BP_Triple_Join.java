@@ -135,16 +135,43 @@ public class BP_Triple_Join implements GlobalConst {
 
 			// _rightQuads = rstream.getResults();
 			// TODO: reset heapfile and close scan
-			_results=null;
-			basic_nlj();
+			// _results=null;
+			// basic_nlj();
 			// basic_index_nlj();
-			bp_scan = new Scan(_results);
+			// bp_scan = new Scan(_results);
 			// JOIN
 		} catch (Exception e) {
 			System.err.println(e);
 			e.printStackTrace();
 		}
 
+	}
+
+	public boolean runJoinType(int jointType)
+			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
+			LowMemException, UnknownKeyTypeException, Exception {
+		switch(jointType) {
+
+			case 1:
+				_results=null;
+				COMPLETED_FLAG = basic_nlj();
+				bp_scan = new Scan(_results);
+				break;
+			case 2:
+				_results=null;
+				COMPLETED_FLAG = basic_index_nlj();
+				bp_scan = new Scan(_results);
+				break;
+			case 3:
+				_results=null;
+				COMPLETED_FLAG = basic_sorted_index_nlj();
+				bp_scan = new Scan(_results);
+				break;
+			default:
+				throw new InvalidTypeException (null, "jointType: JOIN_TYPE_ERROR");
+		}
+		
+		return COMPLETED_FLAG;
 	}
 	
 	public Tuple fromBP(BasicPattern basicPattern){
@@ -192,7 +219,7 @@ public class BP_Triple_Join implements GlobalConst {
 			LowMemException, UnknownKeyTypeException, Exception {
 			
 		// _results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
-		_results = new Heapfile(left_itr.getFileName()+"tuple");
+		_results = new Heapfile(left_itr.getFileName()+"basic_nlj");
 
 		//Apend to heapfile
 		do {
@@ -265,7 +292,7 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 			outer_bp=null;
-			_results = new Heapfile(left_itr.getFileName()+"tuple");
+			_results = new Heapfile(left_itr.getFileName()+"basic_index_nlj");
 
 			do {
 				// Check if end of right stream (inner loop)
@@ -383,12 +410,11 @@ public class BP_Triple_Join implements GlobalConst {
 			return COMPLETED_FLAG;
 	}
 	
-	
 	public boolean basic_sorted_index_nlj()
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		outer_bp=null;
-		_results = new Heapfile(left_itr.getFileName()+"tuple");
+		_results = new Heapfile(left_itr.getFileName()+"bsi_nlj");
 		do {
 			// Check if end of right stream (inner loop)
 			// Sorted Index join
@@ -400,12 +426,40 @@ public class BP_Triple_Join implements GlobalConst {
 					// All elements in outer loop have been processed, i.e. JOIN is complete
 					return COMPLETED_FLAG;
 				}
-				if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
-					continue;
-				}
-				if (older_bp!=null &&
-				 outer_bp.getEIDFld(BPJoinNodePosition).getValue().equals(older_bp.getEIDFld(BPJoinNodePosition).getValue())){
-					rstream.reset_scan();
+				// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+				// 	continue;
+				// }
+
+				LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
+				String outer_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+
+				if (older_bp!=null){
+					labelID = older_bp.getEIDFld(BPJoinNodePosition).returnLID();
+					String older_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+
+					if(older_bp_label.equals(outer_bp_label)){
+						rstream.reset_scan();
+					} else{
+						try {
+							if (rstream != null) {
+								rstream.closestream();
+								rstream = null;
+							}
+						} catch (Exception e) {
+							System.out.println("Error in closing stream in BT_Triple_Join");
+							e.printStackTrace();
+						}
+						if (JoinOnSubjectorObject == 0){
+							rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, 
+							outer_bp_label, 
+							RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+						}
+						else{
+							rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, 
+							RightSubjectFilter, RightPredicateFilter, 
+							outer_bp_label, RightConfidenceFilter);
+						}
+					}
 				}
 				else{
 					try {
@@ -419,13 +473,13 @@ public class BP_Triple_Join implements GlobalConst {
 					}
 					if (JoinOnSubjectorObject == 0){
 						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, 
-						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
+						outer_bp_label, 
 						RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
 					}
 					else{
 						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, 
 						RightSubjectFilter, RightPredicateFilter, 
-						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
+						outer_bp_label, RightConfidenceFilter);
 					}
 				}
 			}
@@ -450,6 +504,16 @@ public class BP_Triple_Join implements GlobalConst {
 				//_results.insertRecord(outer_bp.getBasicPatternByteArray());
 				_results.insertRecord(tempBP.returnTupleArray());
 			}
+			// try {
+			// 	if (rstream != null) {
+			// 		rstream.closestream();
+			// 		rstream = null;
+			// 		COMPLETED_FLAG=true;
+			// 	}
+			// } catch (Exception e) {
+			// 	System.out.println("Error in closing stream in BT_Triple_Join");
+			// 	e.printStackTrace();
+			// }
 		} while (outer_bp != null);
 
 		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;

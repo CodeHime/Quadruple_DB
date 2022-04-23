@@ -95,6 +95,25 @@ query testDB_1 testQuery 1000	Execution Time: 35	Reads: 8	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 26832	Reads: 11	Writes: 0
 batchinsert phase3_test_data_small.txt 1 testDB	Execution Time: 1517	Reads: 14	Writes: 23
 batchinsert phase3_test_data_small.txt 1 testDB	Execution Time: 445	Reads: 22	Writes: 23
+<<<<<<< Updated upstream
 query testDB_1 testQuery 1000	Execution Time: 1456	Reads: 25	Writes: 11
 query testDB_1 testQuery 1000	Execution Time: 2276	Reads: 28	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 1441	Reads: 25	Writes: 11
+=======
+query testDB_1 testQuery 1000	Execution Time: 1373	Reads: 25	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 34	Reads: 7	Writes: 0
+batchinsert phase3_test_data_extra_small.txt 1 testDB	Execution Time: 42	Reads: 2	Writes: 14
+query testDB_1 testQuery 1000	Execution Time: 26	Reads: 11	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 36	Reads: 7	Writes: 0
+>>>>>>> Stashed changes
+query testDB_1 testQuery 1000	Execution Time: 1367	Reads: 25	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 2185	Reads: 28	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 29	Reads: 14	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 29	Reads: 14	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 25	Reads: 14	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 29	Reads: 14	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 23196	Reads: 9	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 4655	Reads: 25	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 85105	Reads: 25	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 1519	Reads: 25	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 1211	Reads: 23	Writes: 11

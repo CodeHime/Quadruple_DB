@@ -340,6 +340,7 @@ public class CommandLine {
 
 			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.getName() + "QuadHF");
 
+			// query testDB_1 q1.txt 1000
 			// BasicPattern tempBP = left_itr.get_next();
 			// System.out.println(tempBP);
 

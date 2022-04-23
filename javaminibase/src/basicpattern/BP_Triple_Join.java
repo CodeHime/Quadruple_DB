@@ -281,42 +281,51 @@ public class BP_Triple_Join implements GlobalConst {
 				// 	continue;
 				// }
 
+				LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
+				String label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+
 				if (JoinOnSubjectorObject == 0){
 					try{
-						rstream = new Stream(_rdfdb, outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
+						rstream = new Stream(_rdfdb, label, 
 						RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
 					}
 					catch(Exception e){
 						try{
 							rstream.closestream();
 							rstream = null;
-							continue;
+							//continue;
 						}
 						catch(Exception ex){
 							rstream = null;
-							continue;
+							//continue;
 						}
 					}
 				}
 				else{
 					try{
 						rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, 
-						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
+						label, RightConfidenceFilter);
 					}
 					catch(Exception e){
 						try{
 							rstream.closestream();
 							rstream = null;
-							continue;
+							//continue;
 						}
 						catch(Exception ex){
 							rstream = null;
-							continue;
+							//continue;
 						}
 					}
 				}
 			}
+			System.out.println(outer_bp.getDoubleFld(1));
 
+			if(rstream == null)
+			{
+				System.out.println("rstream null");
+				continue;
+			}
 			while ((inner_quad = rstream.getNext()) != null) {
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),

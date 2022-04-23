@@ -290,6 +290,7 @@ public class BP_Triple_Join implements GlobalConst {
 							continue;
 						}
 						catch(Exception ex){
+							rstream = null;
 							continue;
 						}
 					}

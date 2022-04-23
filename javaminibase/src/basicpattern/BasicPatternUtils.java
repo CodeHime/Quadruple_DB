@@ -45,10 +45,22 @@ public class BasicPatternUtils {
   public static int CompareTupleWithValue(AttrType fldType,
       Tuple t1, int t1_fld_no,
       Tuple t2) throws TupleUtilsException, UnknowAttrType, IOException{
-
+    
     switch (fldType.attrType) {
       case AttrType.attrInteger: // Compare two integers.
         try {
+
+          if (t1.getIntFld(t1_fld_no)==Integer.MAX_VALUE){
+            return 1;
+          }
+          else if (t1.getIntFld(t1_fld_no)==Integer.MIN_VALUE)
+            return -1;
+          else if (t2.getIntFld(t1_fld_no)==Integer.MAX_VALUE){
+              return -1;
+            }
+          else if (t2.getIntFld(t1_fld_no)==Integer.MIN_VALUE)
+              return 1;
+
           LabelHeapfile labelHeapfile = rdfDB.getInstance().getEntityHeapFile();
           
           String s1 = labelHeapfile.getLabel(new LID(new PageId(t1.getIntFld(t1_fld_no)),t1.getIntFld(t1_fld_no+1))).getLabel();
@@ -80,50 +92,6 @@ public class BasicPatternUtils {
     }
   }
 
-  /**
-   * This function Compares two Tuple inn all fields
-   * 
-   * @param t1     the first tuple
-   * @param t2     the secocnd tuple
-   * @param type[] the field types
-   * @param len    the field numbers
-   * @return 0 if the two are not equal,
-   *         1 if the two are equal,
-   * @exception UnknowAttrType      don't know the attribute type
-   * @exception IOException         some I/O fault
-   * @exception TupleUtilsException exception from this class
-   */
-
-  public static boolean Equal(Tuple t1, Tuple t2, AttrType types[], int len)
-      throws IOException, UnknowAttrType, TupleUtilsException {
-    int i;
-
-    for (i = 1; i <= len; i++)
-      if (CompareTupleWithValue(types[i - 1], t1, i, t2) != 0)
-        return false;
-    return true;
-  }
-
-  /**
-   * get the string specified by the field number
-   * 
-   * @param tuple the tuple
-   * @param fidno the field number
-   * @return the content of the field number
-   * @exception IOException         some I/O fault
-   * @exception TupleUtilsException exception from this class
-   */
-  public static String Value(Tuple tuple, int fldno)
-      throws IOException,
-      TupleUtilsException {
-    String temp;
-    try {
-      temp = tuple.getStrFld(fldno);
-    } catch (FieldNumberOutOfBoundException e) {
-      throw new TupleUtilsException(e, "FieldNumberOutOfBoundException is caught by TupleUtils.java");
-    }
-    return temp;
-  }
 
   /**
    * set up a tuple in specified field from a tuple

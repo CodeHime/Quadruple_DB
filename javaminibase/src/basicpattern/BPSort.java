@@ -20,7 +20,7 @@ import chainexception.*;
  * After the sorting is done, the user should call <code>close()</code>
  * to clean up.
  */
-//TODO: take in Quads
+// TODO: take in Quads
 public class BPSort extends BPIterator implements GlobalConst {
   private static final int ARBIT_RUNS = 10;
 
@@ -151,7 +151,6 @@ public class BPSort extends BPIterator implements GlobalConst {
     BasicPatternPNodeSplayPQ Q2 = new BasicPatternPNodeSplayPQ(_sort_fld, _sort_fld_type, order);
     BasicPatternPNodeSplayPQ pcurr_Q = Q1;
     BasicPatternPNodeSplayPQ pother_Q = Q2;
-    
 
     int run_num = 0; // keeps track of the number of runs
 
@@ -164,18 +163,13 @@ public class BPSort extends BPIterator implements GlobalConst {
     int comp_res;
 
     // set the lastElem to be the minimum value for the sort field
-    
 
     // maintain a fixed maximum number of elements in the heap
     while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
       try {
         basicPattern = _am.get_next();
-        int basicPatternLength = basicPattern.getLength()-8;
-        short numberOfTupleFields = 1;
-        while (basicPatternLength > 0) {
-          basicPatternLength -= 8;
-          numberOfTupleFields += 2;
-        }
+        short numberOfTupleFields = (short) (basicPattern.noOfFlds() * 2 - 1);
+
         AttrType[] tupletypes = new AttrType[numberOfTupleFields];
         short[] strSizes = new short[1];
         short tuplesize = 8;
@@ -186,10 +180,13 @@ public class BPSort extends BPIterator implements GlobalConst {
         }
         tuple = new Tuple();
         tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-        tuple.setDFld(0, basicPattern.getDoubleFld(0));
-        for (int i = 1; i < numberOfTupleFields / 2; i++) {
-          tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
-          tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
+        tuple.setDFld(1, basicPattern.getDoubleFld(0));
+        int tupleIntIndex = 2;
+        for (int i = 2; i <= basicPattern.noOfFlds(); i++) {
+          tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).pageNo.pid);
+          tupleIntIndex += 1;
+          tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).slotNo);
+          tupleIntIndex += 1;
         } // according to Iterator.java
 
         if (first_time) {
@@ -216,7 +213,6 @@ public class BPSort extends BPIterator implements GlobalConst {
             for (int k = 0; k < _n_pages; k++)
               bufs[k] = new byte[MAX_SPACE];
           }
-
 
           // as a heuristic, we set the number of runs to an arbitrary value
           // of ARBIT_RUNS
@@ -297,8 +293,9 @@ public class BPSort extends BPIterator implements GlobalConst {
         break;
       p_elems_curr_Q--;
 
+  
       comp_res = BasicPatternUtils.CompareTupleWithValue(_sort_fld_type, cur_node.tuple, _sort_fld, lastElem); // need
-                                                                                                            // tuple_utils.java
+      // tuple_utils.java
 
       if ((comp_res < 0 && order.basicPatternOrder == TupleOrder.Ascending)
           || (comp_res > 0 && order.basicPatternOrder == TupleOrder.Descending)) {
@@ -385,12 +382,8 @@ public class BPSort extends BPIterator implements GlobalConst {
         while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
           try {
             basicPattern = _am.get_next();
-            int basicPatternLength = basicPattern.getLength() -8;
-            short numberOfTupleFields = 1;
-            while (basicPatternLength > 0) {
-              basicPatternLength -= 8;
-              numberOfTupleFields += 2;
-            }
+            short numberOfTupleFields = (short) (basicPattern.noOfFlds() * 2 - 1);
+
             AttrType[] tupletypes = new AttrType[numberOfTupleFields];
             short[] strSizes = new short[1];
             short tuplesize = 8;
@@ -401,11 +394,14 @@ public class BPSort extends BPIterator implements GlobalConst {
             }
             tuple = new Tuple();
             tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-            tuple.setDFld(0, basicPattern.getDoubleFld(0));
-            for (int i = 1; i < numberOfTupleFields / 2; i++) {
-              tuple.setIntFld(i, basicPattern.getEIDFld(i).pageNo.pid);
-              tuple.setIntFld(i + 1, basicPattern.getEIDFld(i).slotNo);
-            }
+            tuple.setDFld(1, basicPattern.getDoubleFld(0));
+            int tupleIntIndex = 2;
+            for (int i = 2; i <= basicPattern.noOfFlds(); i++) {
+              tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).pageNo.pid);
+              tupleIntIndex += 1;
+              tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).slotNo);
+              tupleIntIndex += 1;
+            } // according to Iterator.java
 
             // according to
             // Iterator.java
@@ -581,6 +577,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     String s = new String(c);
     // short fld_no = 1;
 
+
     switch (sortFldType.attrType) {
       case AttrType.attrInteger:
         // lastElem.setHdr(fld_no, junk, null);
@@ -593,6 +590,9 @@ public class BPSort extends BPIterator implements GlobalConst {
       case AttrType.attrString:
         // lastElem.setHdr(fld_no, junk, s_size);
         lastElem.setStrFld(_sort_fld, s);
+        break;
+      case AttrType.attrD:
+        lastElem.setDFld(_sort_fld, Double.MIN_VALUE);
         break;
       default:
         // don't know how to handle attrSymbol, attrNull
@@ -623,7 +623,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     c[0] = Character.MAX_VALUE;
     String s = new String(c);
     // short fld_no = 1;
-
+    
     switch (sortFldType.attrType) {
       case AttrType.attrInteger:
         // lastElem.setHdr(fld_no, junk, null);
@@ -637,6 +637,8 @@ public class BPSort extends BPIterator implements GlobalConst {
         // lastElem.setHdr(fld_no, junk, s_size);
         lastElem.setStrFld(_sort_fld, s);
         break;
+      case AttrType.attrD:
+        lastElem.setDFld(_sort_fld, Double.MAX_VALUE);
       default:
         // don't know how to handle attrSymbol, attrNull
         // System.err.println("error in sort.java");
@@ -667,23 +669,23 @@ public class BPSort extends BPIterator implements GlobalConst {
       int SortNodeIDPos,
       int n_pages) throws IOException, SortException {
 
-
-        if (SortNodeIDPos == -1){
-          SortNodeIDPos = 0;
-        }
+    if (SortNodeIDPos == -1) {
+      SortNodeIDPos = 0;
+    }
 
     _am = input_itr;
     _sort_fld = SortNodeIDPos;
     order = sort_order;
     _n_pages = n_pages;
 
-    if(_sort_fld == 0){
+    if (_sort_fld == 0 || _sort_fld == 1) {
       _sort_fld_type = new AttrType(AttrType.attrD);
+      _sort_fld = 1;
     }
-    else{
+     else {
+       _sort_fld = _sort_fld*2-2;
       _sort_fld_type = new AttrType(AttrType.attrInteger);
     }
-
 
     first_time = true;
 
@@ -731,7 +733,8 @@ public class BPSort extends BPIterator implements GlobalConst {
     if (output_tuple != null) {
       op_buf.tupleCopy(output_tuple);
 
-      // return new BasicPattern(op_buf.returnTupleByteArray(),0,op_buf.returnTupleByteArray().length);
+      // return new
+      // BasicPattern(op_buf.returnTupleByteArray(),0,op_buf.returnTupleByteArray().length);
       return new BasicPattern(op_buf);
     } else
       return null;

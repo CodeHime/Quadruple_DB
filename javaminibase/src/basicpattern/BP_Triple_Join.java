@@ -120,7 +120,7 @@ public class BP_Triple_Join implements GlobalConst {
 			this.amt_of_mem = amt_of_mem;
 			// Number of entites in given BP
 			this.num_left_nodes = num_left_nodes;
-			this.BPJoinNodePosition = BPJoinNodePosition;
+			this.BPJoinNodePosition = BPJoinNodePosition+1;
 			this.JoinOnSubjectorObject = JoinOnSubjectorObject;
 			this.LeftOutNodePositions = LeftOutNodePositions;
 			this.OutputRightSubject = OutputRightSubject;
@@ -227,17 +227,17 @@ public class BP_Triple_Join implements GlobalConst {
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 							inner_quad.getConfidence());
 
-					BasicPattern tempBP = new BasicPattern(outer_bp);
+					BasicPattern tempBP = new BasicPattern(LeftOutNodePositions,outer_bp);
 					tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 					// Insert values into Basic Pattern
 					if (OutputRightSubject == 1) {
-						tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getSubjectQid());
 						if (OutputRightObject == 1) {
-							tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+							tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 						}
 					} else if (OutputRightObject == 1) {
-						tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 					}
 					System.out.println(tempBP.getLength());
 					System.out.println(tempBP.getDoubleFld(tempBP.confidence_fld_num));
@@ -295,18 +295,21 @@ public class BP_Triple_Join implements GlobalConst {
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
-				outer_bp.setDoubleFld(outer_bp.confidence_fld_num, new_confidence);
+				
+				BasicPattern tempBP = new BasicPattern(outer_bp);
+				tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 				// Insert values into Basic Pattern
 				if (OutputRightSubject == 1) {
-					outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
 					if (OutputRightObject == 1) {
-						outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+						tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
 					}
 				} else if (OutputRightObject == 1) {
-					outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
 				}
-				_results.insertRecord(outer_bp.getBasicPatternByteArray());
+				//_results.insertRecord(outer_bp.getBasicPatternByteArray());
+				_results.insertRecord(tempBP.returnTupleArray());
 			}
 			try {
 				if (rstream != null) {
@@ -374,18 +377,21 @@ public class BP_Triple_Join implements GlobalConst {
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
-				outer_bp.setDoubleFld(outer_bp.confidence_fld_num, new_confidence);
+				
+				BasicPattern tempBP = new BasicPattern(outer_bp);
+				tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 				// Insert values into Basic Pattern
 				if (OutputRightSubject == 1) {
-					outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
 					if (OutputRightObject == 1) {
-						outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+						tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
 					}
 				} else if (OutputRightObject == 1) {
-					outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
 				}
-				_results.insertRecord(outer_bp.getBasicPatternByteArray());
+				//_results.insertRecord(outer_bp.getBasicPatternByteArray());
+				_results.insertRecord(tempBP.returnTupleArray());
 			}
 		} while (outer_bp != null);
 

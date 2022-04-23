@@ -93,6 +93,29 @@ public class BasicPattern implements GlobalConst{
       //  fldOffset = fromBP.copyFldOffset(); 
    }
 
+   /** Constructor(used as bp copy)
+    * @param fromBP   The source bp
+    * 
+    */
+    public BasicPattern(int[] arr, BasicPattern fromBP)
+    {
+        data = new byte[max_size];
+        bp_offset = fromBP.getOffset();
+        fldCnt = (short)(arr.length+1);
+
+        try {
+          this.setHdr(fldCnt);
+          this.setDoubleFld(1, fromBP.getDoubleFld(1));
+          for(int i=0; i<arr.length; i++)
+          {
+            this.setEIDFld(i+2, fromBP.getEIDFld(arr[i]+1));
+          }
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+    }
+
   public BasicPattern(Tuple tup)
   {
     data = new byte[max_size];

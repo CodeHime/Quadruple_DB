@@ -305,16 +305,30 @@ public class CommandLine {
 		int amt_of_mem = 1000;
 		int num_left_nodes = 3;
 
-		int BPJoinNodePosition = 2;
+		int BPJoinNodePosition = 1;
 		int JoinOnSubjectorObject = 0;
 		String RightSubjectFilter = "*";
 		String RightPredicateFilter = "*"; 
 		String RightObjectFilter = "*";
 		String RightConfidenceFilter = "*";
 
-		int[] LeftOutNodePositions = {1,2,3};
+		int[] LeftOutNodePositions = {};
 		int OutputRightSubject = 1;
-		int OutputRightObject = 1;		
+		int OutputRightObject = 1;
+		//------------------------------------------------
+		// Second Join
+		int num_left_nodes2 = 5;
+		
+		int BPJoinNodePosition2 = 2;
+		int JoinOnSubjectorObject2 = 0;
+		String RightSubjectFilter2 = "*";
+		String RightPredicateFilter2 = "*"; 
+		String RightObjectFilter2 = "*";
+		String RightConfidenceFilter2 = "*";
+
+		int[] LeftOutNodePositions2 = {1,2};
+		int OutputRightSubject2 = 1;
+		int OutputRightObject2 = 1;
 
 		int sort_order = 0;
 		int SortNodeIDPos = 2;
@@ -335,9 +349,9 @@ public class CommandLine {
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
 
 			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-			// btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes2, left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
 
-			// left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
 
 			// //The final name will be options[0]tupletuple
 			// // BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);

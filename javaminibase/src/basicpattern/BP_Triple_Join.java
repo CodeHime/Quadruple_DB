@@ -279,12 +279,36 @@ public class BP_Triple_Join implements GlobalConst {
 				}
 
 				if (JoinOnSubjectorObject == 0){
-					rstream = new Stream(_rdfdb, outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
-					RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+					try{
+						rstream = new Stream(_rdfdb, outer_bp.getEIDFld(BPJoinNodePosition).getValue(), 
+						RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+					}
+					catch(Exception e){
+						try{
+							rstream.closestream();
+							rstream = null;
+							continue;
+						}
+						catch(Exception ex){
+							continue;
+						}
+					}
 				}
 				else{
-					rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, 
-					outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
+					try{
+						rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, 
+						outer_bp.getEIDFld(BPJoinNodePosition).getValue(), RightConfidenceFilter);
+					}
+					catch(Exception e){
+						try{
+							rstream.closestream();
+							rstream = null;
+							continue;
+						}
+						catch(Exception ex){
+							continue;
+						}
+					}
 				}
 			}
 

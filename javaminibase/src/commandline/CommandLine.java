@@ -156,7 +156,7 @@ public class CommandLine {
 					quadComponents[componentIndex] = component;
 					componentIndex+=1;
 
-					System.out.println(component);
+					// System.out.println(component);
 					component = "";
 				}
 			}
@@ -307,7 +307,7 @@ public class CommandLine {
 
 		int BPJoinNodePosition = 1;
 		int JoinOnSubjectorObject = 0;
-		String RightSubjectFilter = "*";
+		String RightSubjectFilter = "Jorunn_Danielsen";
 		String RightPredicateFilter = "*"; 
 		String RightObjectFilter = "*";
 		String RightConfidenceFilter = "*";
@@ -321,7 +321,7 @@ public class CommandLine {
 		
 		int BPJoinNodePosition2 = 2;
 		int JoinOnSubjectorObject2 = 0;
-		String RightSubjectFilter2 = "*";
+		String RightSubjectFilter2 = "Jorunn_Danielsen";
 		String RightPredicateFilter2 = "*"; 
 		String RightObjectFilter2 = "*";
 		String RightConfidenceFilter2 = "*";
@@ -345,18 +345,19 @@ public class CommandLine {
 
 			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
 
 			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes2, left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
-
+			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+			
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"tuple", btj.getNumLeftNodes());
+			//The final name will be options[0]tupletuple
+			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			// //The final name will be options[0]tupletuple
-			// // BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
-
-			// // BasicPattern bp = sort.get_next();
+			// BasicPattern bp = sort.get_next();
 			BasicPattern bp = left_itr.get_next();
 			while(bp!=null){
 				
@@ -366,6 +367,7 @@ public class CommandLine {
 				// bp = sort.get_next();
 				bp = left_itr.get_next();
 			}
+			System.out.println("Query Complete!\n");
 		}
 		catch(Exception e)
 		{

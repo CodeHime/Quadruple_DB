@@ -136,7 +136,7 @@ public class BP_Triple_Join implements GlobalConst {
 			// _rightQuads = rstream.getResults();
 			// TODO: reset heapfile and close scan
 			_results=null;
-			basic_nlj();		
+			basic_nlj();
 			bp_scan = new Scan(_results);
 			// JOIN
 		} catch (Exception e) {
@@ -145,6 +145,7 @@ public class BP_Triple_Join implements GlobalConst {
 		}
 
 	}
+	
 	public Tuple fromBP(BasicPattern basicPattern){
         Tuple tuple = new Tuple();
 		int basicPatternLength = basicPattern.getLength();
@@ -189,11 +190,11 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 			
-			// _results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
-			_results = new Heapfile(left_itr.getFileName()+"tuple");
+		// _results = new Heapfile(Long.toString((new java.util.Date()).getTime()));
+		_results = new Heapfile(left_itr.getFileName()+"tuple");
 
-			//Apend to heapfile
-			do {
+		//Apend to heapfile
+		do {
 			// Scan for tuple
 			// 
 
@@ -222,8 +223,6 @@ public class BP_Triple_Join implements GlobalConst {
 				}
 				if (join_eid_outer.equals(join_eid_inner)) {
 					// Match found so calculate new confidence
-					System.out.println(outer_bp.getDoubleFld(outer_bp.confidence_fld_num));
-					System.out.println(inner_quad.getConfidence());
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 							inner_quad.getConfidence());
 
@@ -239,8 +238,6 @@ public class BP_Triple_Join implements GlobalConst {
 					} else if (OutputRightObject == 1) {
 						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 					}
-					System.out.println(tempBP.getLength());
-					System.out.println(tempBP.getDoubleFld(tempBP.confidence_fld_num));
 					//_results.insertRecord(outer_bp.returnBasicPatternArray());
 					_results.insertRecord(tempBP.returnTupleArray());
 					//_results.insertRecord(outer_bp.getBasicPatternByteArray());
@@ -258,7 +255,7 @@ public class BP_Triple_Join implements GlobalConst {
 		} while (outer_bp != null);
 		
 		// BasicPatternIteratorScan am = BasicPatternIteratorScan(bp_file);
-		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
+		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 			
 		return COMPLETED_FLAG;
 	}
@@ -296,17 +293,17 @@ public class BP_Triple_Join implements GlobalConst {
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
 				
-				BasicPattern tempBP = new BasicPattern(outer_bp);
+				BasicPattern tempBP = new BasicPattern(LeftOutNodePositions,outer_bp);
 				tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 				// Insert values into Basic Pattern
 				if (OutputRightSubject == 1) {
-					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+					tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getSubjectQid());
 					if (OutputRightObject == 1) {
-						tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 					}
 				} else if (OutputRightObject == 1) {
-					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+					tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 				}
 				//_results.insertRecord(outer_bp.getBasicPatternByteArray());
 				_results.insertRecord(tempBP.returnTupleArray());
@@ -323,7 +320,7 @@ public class BP_Triple_Join implements GlobalConst {
 			}
 		} while (outer_bp != null);
 
-		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
+		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;
 	}
 	
@@ -378,24 +375,24 @@ public class BP_Triple_Join implements GlobalConst {
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
 				
-				BasicPattern tempBP = new BasicPattern(outer_bp);
+				BasicPattern tempBP = new BasicPattern(LeftOutNodePositions,outer_bp);
 				tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 				// Insert values into Basic Pattern
 				if (OutputRightSubject == 1) {
-					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+					tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getSubjectQid());
 					if (OutputRightObject == 1) {
-						tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 					}
 				} else if (OutputRightObject == 1) {
-					tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+					tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
 				}
 				//_results.insertRecord(outer_bp.getBasicPatternByteArray());
 				_results.insertRecord(tempBP.returnTupleArray());
 			}
 		} while (outer_bp != null);
 
-		num_left_nodes = num_left_nodes + OutputRightSubject + OutputRightObject;
+		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;
 	}
 

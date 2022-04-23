@@ -77,3 +77,10 @@ query testDB_1 testQuery 1000	Execution Time: 121	Reads: 10	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 39	Reads: 8	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 123	Reads: 10	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 86	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 47	Reads: 10	Writes: 0
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 5621	Reads: 2	Writes: 383
+query testDB_1 testQuery 1000	Execution Time: 628	Reads: 132	Writes: 3
+query testDB_1 testQuery 1000	Execution Time: 646	Reads: 165	Writes: 2
+query testDB_1 testQuery 1000	Execution Time: 376019	Reads: 252	Writes: 15
+query testDB_1 testQuery 1000	Execution Time: 331574	Reads: 252	Writes: 15
+query testDB_1 testQuery 1000	Execution Time: 282979	Reads: 260	Writes: 9

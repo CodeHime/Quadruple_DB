@@ -83,10 +83,13 @@ public class BasicPattern implements GlobalConst{
     */
    public BasicPattern(BasicPattern fromBP)
    {
-       data = fromBP.returnBasicPatternArray();
+       data = new byte[max_size];
        bp_length = fromBP.getLength();
        bp_offset = fromBP.getOffset();
-      //  fldCnt = fromBP.noOfFlds(); 
+       fldCnt = fromBP.noOfFlds();
+       
+       byte [] temparray = fromBP.returnBasicPatternArray();
+       System.arraycopy(temparray, 0, data, bp_offset, bp_length);
       //  fldOffset = fromBP.copyFldOffset(); 
    }
 
@@ -102,7 +105,6 @@ public class BasicPattern implements GlobalConst{
     {
       // The tup has the slotno and pageno as two fields, but bp will just store the EID as just one field.
       // Hence the bp has half the number of fields as the tup has
-      bp_length = (tup.noOfFlds()/2+1)*8;
 
       short[] arr = {(short)(tup.getLength())};
       AttrType[] aaar = new AttrType[tup.noOfFlds()];
@@ -119,14 +121,16 @@ public class BasicPattern implements GlobalConst{
 
       int tupField = 1;
 
-      setHdr((short)(bp_length/8));
+      setHdr((short)(tup.noOfFlds()/2+1));
 
-      setDoubleFld(1, tup.getDFld(tupField++));
+      setDoubleFld(1, tup.getDFld(tupField));
 
-      for (int i = 2; i < fldCnt; i++)
+      for (int i = 2; i <= fldCnt; i++)
       {
-        pageNo = tup.getIntFld(tupField++);
-        slotNo = tup.getIntFld(tupField++);
+        tupField++;
+        pageNo = tup.getIntFld(tupField);
+        tupField++;
+        slotNo = tup.getIntFld(tupField);
 
         EID eid = new EID( new LID(new PageId(pageNo), slotNo));
         setEIDFld(i, eid);
@@ -254,9 +258,45 @@ public class BasicPattern implements GlobalConst{
    public byte [] getBasicPatternByteArray() 
    {
        byte [] tuplecopy = new byte [bp_length];
-       System.arraycopy(data, bp_offset, tuplecopy, 0, bp_length);
+       //System.arraycopy(data, bp_offset, tuplecopy, 0, bp_length);
+       System.arraycopy(data, 2, tuplecopy, 0, bp_length);
        return tuplecopy;
    }
+
+   /** return the data byte array 
+    *  @return  data byte array 		
+    */
+    
+    public byte [] returnTupleArray()
+    {
+        Tuple tup = new Tuple();
+
+        short[] arr = {(short)(tup.getLength())};
+        AttrType[] aaar = new AttrType[fldCnt*2-1];
+
+        aaar[0] = new AttrType(AttrType.attrD);
+
+        for (int i = 1; i < fldCnt*2-1; i++){
+          aaar[i] = new AttrType(AttrType.attrInteger);
+        }
+
+        try {
+          tup.setHdr((short)(fldCnt*2-1), aaar, arr);
+          tup.setDFld(1, this.getDoubleFld(1));
+
+          int tup_index = 2;
+          for (int i = 2; i <= fldCnt; i++, tup_index += 2){
+            tup.setIntFld(tup_index, this.getEIDFld(i).pageNo.pid);
+            tup.setIntFld(tup_index+1, this.getEIDFld(i).slotNo);
+          }
+
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+
+        return tup.getTupleByteArray();
+    }
    
    /** return the data byte array 
     *  @return  data byte array 		
@@ -306,7 +346,8 @@ public class BasicPattern implements GlobalConst{
 	    double val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))
        {
-        val = Convert.getDoubleValue((fldNo-1)*8, data);
+        val = Convert.getDoubleValue(2, data);
+        // val = Convert.getDoubleValue(fldOffset[fldNo -1], data);
         return val;
        }
       else 
@@ -401,8 +442,8 @@ public class BasicPattern implements GlobalConst{
       EID val;
       if ( (fldNo > 0) && (fldNo <= fldCnt))      
       {
-        int pageNo = Convert.getIntValue((fldNo-1)*8, data);
-        int slotNo = Convert.getIntValue((fldNo-1)*8 + 4, data);
+        int pageNo = Convert.getIntValue((fldNo-1)*8+2, data);
+        int slotNo = Convert.getIntValue((fldNo-1)*8+2 + 4, data);
 
        val = new EID(new LID(new PageId(pageNo), slotNo));
        return val;
@@ -448,7 +489,8 @@ public class BasicPattern implements GlobalConst{
   { 
    if ( (fldNo > 0))
     {
-     Convert.setDoubleValue(val, (fldNo-1)*8, data);
+     Convert.setDoubleValue(val, 2, data);
+     // Convert.setDoubleValue(val, fldOffset[fldNo -1], data);
      return this;
     }
     else  
@@ -530,8 +572,8 @@ public class BasicPattern implements GlobalConst{
     }
     if ( (fldNo > 0))        
     {
-      Convert.setIntValue (val.pageNo.pid, (fldNo-1)*8, data);
-      Convert.setIntValue (val.slotNo, (fldNo-1)*8 + 4, data);
+      Convert.setIntValue (val.pageNo.pid, (fldNo-1)*8+2, data);
+      Convert.setIntValue (val.slotNo, (fldNo-1)*8+2 + 4, data);
       return this;
     }
 
@@ -554,29 +596,30 @@ public class BasicPattern implements GlobalConst{
 public void setHdr (short numFlds)
  throws IOException, InvalidTypeException, InvalidTupleSizeException		
 {
-  if((numFlds +2)*2 > max_size)
-    throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
+  //if((numFlds +2)*2 > max_size)
+  //  throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");
   
   fldCnt = numFlds;
-  Convert.setShortValue(numFlds, bp_offset, data);
+  Convert.setShortValue(numFlds, 0, data);
   fldOffset = new short[numFlds+1];
-  int pos = bp_offset+2;  // start position for fldOffset[]
-  fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
+  // int pos = bp_offset+2;  // start position for fldOffset[]
+  // int pos = 2;  // start position for fldOffset[]
+  // fldOffset[0] = (short) ((numFlds +2) * 2 + bp_offset);   
    
-  Convert.setShortValue(fldOffset[0], pos, data);
-  pos +=2;
-  short incr = 8;
-  int i;
+  // Convert.setShortValue(fldOffset[0], pos, data);
+  // pos +=2;
+  // short incr = 8;
+  // int i;
 
 
-  for (i=1; i<=numFlds; i++)
-  {
-    fldOffset[i]  = (short) (fldOffset[i-1] + incr);
-    Convert.setShortValue(fldOffset[i], pos, data);
-    pos +=2;
-  }
+  // for (i=1; i<=numFlds; i++)
+  // {
+  //   fldOffset[i]  = (short) (fldOffset[i-1] + incr);
+  //   Convert.setShortValue(fldOffset[i], pos, data);
+  //   pos +=2;
+  // }
   
-  bp_length = fldOffset[numFlds] - bp_offset;
+  bp_length = 2 + 8 * numFlds;
 
   if(bp_length > max_size)
     throw new InvalidTupleSizeException (null, "BasicPattern: BP_TOOBIG_ERROR");

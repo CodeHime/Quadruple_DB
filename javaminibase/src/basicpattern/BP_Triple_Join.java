@@ -50,7 +50,7 @@ public class BP_Triple_Join implements GlobalConst {
 
 	/** The rdfDB we are using. */
 	private rdfDB _rdfdb;
-	double _minConfidence = 0.6;
+	double _minConfidence = 1;
 	String _minConfidenceFilter = Double.toString(_minConfidence);
 	// BasicPatternSort bp_sort=null;
 	Scan bp_scan;
@@ -222,20 +222,28 @@ public class BP_Triple_Join implements GlobalConst {
 				}
 				if (join_eid_outer.equals(join_eid_inner)) {
 					// Match found so calculate new confidence
+					System.out.println(outer_bp.getDoubleFld(outer_bp.confidence_fld_num));
+					System.out.println(inner_quad.getConfidence());
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 							inner_quad.getConfidence());
-					outer_bp.setDoubleFld(outer_bp.confidence_fld_num, new_confidence);
+
+					BasicPattern tempBP = new BasicPattern(outer_bp);
+					tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
 
 					// Insert values into Basic Pattern
 					if (OutputRightSubject == 1) {
-						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
+						tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getSubjectQid());
 						if (OutputRightObject == 1) {
-							outer_bp.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
+							tempBP.setEIDFld(num_left_nodes + 2, inner_quad.getObjectQid());
 						}
 					} else if (OutputRightObject == 1) {
-						outer_bp.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
+						tempBP.setEIDFld(num_left_nodes + 1, inner_quad.getObjectQid());
 					}
-					_results.insertRecord(outer_bp.getBasicPatternByteArray());
+					System.out.println(tempBP.getLength());
+					System.out.println(tempBP.getDoubleFld(tempBP.confidence_fld_num));
+					//_results.insertRecord(outer_bp.returnBasicPatternArray());
+					_results.insertRecord(tempBP.returnTupleArray());
+					//_results.insertRecord(outer_bp.getBasicPatternByteArray());
 				}
 			}
 			try {

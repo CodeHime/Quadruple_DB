@@ -1,5 +1,6 @@
 :Jorunn_Danielsen :knows :Eirik_Newth		0.5232176791516268
-:Jorunn_Danielsen :title :Ms		0.6117295679646559
+:Jorunn_Danielsen :title :Ms		0.117295679646559
 :Jorunn_Danielsen :surname :Danielsen		0.21449363903927876
 :Jorunn_Danielsen :homepage :andedamorg		0.8225479994279873
 :Jorunn_Danielsen :name :Jorunn_Danielsen		0.2442393806110037
+:bob_bobert :name :bob_bobert		0.2442393806110037

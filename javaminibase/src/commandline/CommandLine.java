@@ -303,7 +303,7 @@ public class CommandLine {
 
 		// TODO: DELETE THESE
 		int amt_of_mem = 1000;
-		int num_left_nodes = 2;
+		int num_left_nodes = 3;
 
 		int BPJoinNodePosition = 2;
 		int JoinOnSubjectorObject = 0;
@@ -328,6 +328,7 @@ public class CommandLine {
 
 			// BasicPattern tempBP = left_itr.get_next();
 			// System.out.println(tempBP);
+
 			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
 			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
 

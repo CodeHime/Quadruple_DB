@@ -137,6 +137,7 @@ public class BP_Triple_Join implements GlobalConst {
 			// TODO: reset heapfile and close scan
 			_results=null;
 			basic_nlj();
+			// basic_index_nlj();
 			bp_scan = new Scan(_results);
 			// JOIN
 		} catch (Exception e) {
@@ -334,6 +335,7 @@ public class BP_Triple_Join implements GlobalConst {
 							
 							if (subjectid == null || !subjectid.equals(join_eid_outer)) {
 								continue;
+							}
 						}
 					}
 					else{
@@ -343,6 +345,7 @@ public class BP_Triple_Join implements GlobalConst {
 							
 							if (objectid == null || !objectid.equals(join_eid_outer)) {
 								continue;
+							}
 						}
 					}
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
@@ -374,6 +377,7 @@ public class BP_Triple_Join implements GlobalConst {
 					e.printStackTrace();
 				}
 			} while (outer_bp != null);
+			
 	
 			num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 			return COMPLETED_FLAG;

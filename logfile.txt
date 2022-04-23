@@ -95,3 +95,6 @@ query testDB_1 testQuery 1000	Execution Time: 35	Reads: 8	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 26832	Reads: 11	Writes: 0
 batchinsert phase3_test_data_small.txt 1 testDB	Execution Time: 1517	Reads: 14	Writes: 23
 batchinsert phase3_test_data_small.txt 1 testDB	Execution Time: 445	Reads: 22	Writes: 23
+query testDB_1 testQuery 1000	Execution Time: 1456	Reads: 25	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 2276	Reads: 28	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 1441	Reads: 25	Writes: 11

@@ -308,7 +308,7 @@ public class HFPage extends Page
   public short getSlotLength(int slotno)
     throws IOException
     {
-      int position = 4 + DPFIXED + slotno * SIZE_OF_SLOT;
+      int position = DPFIXED + slotno * SIZE_OF_SLOT;
       short val= Convert.getShortValue(position, data);
       return val;
     }

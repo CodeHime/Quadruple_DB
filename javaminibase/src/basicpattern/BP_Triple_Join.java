@@ -263,12 +263,102 @@ public class BP_Triple_Join implements GlobalConst {
 	public boolean basic_index_nlj()
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
-		outer_bp=null;
-		_results = new Heapfile(left_itr.getFileName()+"tuple");
-		
+			outer_bp=null;
+			_results = new Heapfile(left_itr.getFileName()+"tuple");
 
-		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
-		return COMPLETED_FLAG;
+			do {
+				// Check if end of right stream (inner loop)
+				// Sorted Index join
+				if (rstream == null) {
+					// Check if end of BP iteration (outer loop)
+					if ((outer_bp = left_itr.get_next()) == null) {
+						COMPLETED_FLAG=true;
+						// All elements in outer loop have been processed, i.e. JOIN is complete
+						return COMPLETED_FLAG;
+					}
+					// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+					// 	continue;
+					// }
+	
+					LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
+					String label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+	
+					if (JoinOnSubjectorObject == 0){
+						try{
+							rstream = new Stream(_rdfdb, label, 
+							RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+						}
+						catch(Exception e){
+							try{
+								rstream.closestream();
+								rstream = null;
+								//continue;
+							}
+							catch(Exception ex){
+								rstream = null;
+								//continue;
+							}
+						}
+					}
+					else{
+						try{
+							rstream = new Stream(_rdfdb, RightSubjectFilter, RightPredicateFilter, 
+							label, RightConfidenceFilter);
+						}
+						catch(Exception e){
+							try{
+								rstream.closestream();
+								rstream = null;
+								//continue;
+							}
+							catch(Exception ex){
+								rstream = null;
+								//continue;
+							}
+						}
+					}
+				}
+				System.out.println(outer_bp.getDoubleFld(1));
+	
+				if(rstream == null)
+				{
+					System.out.println("rstream null");
+					continue;
+				}
+				while ((inner_quad = rstream.getNext()) != null) {
+					// Match found so calculate new confidence
+					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
+							inner_quad.getConfidence());
+					
+					BasicPattern tempBP = new BasicPattern(LeftOutNodePositions,outer_bp);
+					tempBP.setDoubleFld(tempBP.confidence_fld_num, new_confidence);
+	
+					// Insert values into Basic Pattern
+					if (OutputRightSubject == 1) {
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getSubjectQid());
+						if (OutputRightObject == 1) {
+							tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
+						}
+					} else if (OutputRightObject == 1) {
+						tempBP.setEIDFld(tempBP.noOfFlds() + 1, inner_quad.getObjectQid());
+					}
+					//_results.insertRecord(outer_bp.getBasicPatternByteArray());
+					_results.insertRecord(tempBP.returnTupleArray());
+				}
+				try {
+					if (rstream != null) {
+						rstream.closestream();
+						rstream = null;
+						COMPLETED_FLAG=true;
+					}
+				} catch (Exception e) {
+					System.out.println("Error in closing stream in BT_Triple_Join");
+					e.printStackTrace();
+				}
+			} while (outer_bp != null);
+	
+			num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
+			return COMPLETED_FLAG;
 	}
 	
 	

@@ -359,14 +359,16 @@ public class CommandLine {
 
 			// BasicPattern bp = sort.get_next();
 			BasicPattern bp = left_itr.get_next();
+			int bpCount = 0;
 			while(bp!=null){
-				
+				bpCount++;
 				bp.print();
 				//Only printing confi
 				// System.out.println(database.getBasicPatternString(bp));
 				// bp = sort.get_next();
 				bp = left_itr.get_next();
-			}
+			} 
+			System.out.println("Final Count: "+Integer.toString(bpCount));
 			System.out.println("Query Complete!\n");
 		}
 		catch(Exception e)

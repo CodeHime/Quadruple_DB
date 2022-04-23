@@ -136,7 +136,8 @@ public class BP_Triple_Join implements GlobalConst {
 			// _rightQuads = rstream.getResults();
 			// TODO: reset heapfile and close scan
 			_results=null;
-			basic_nlj();
+			// basic_nlj();
+			basic_index_nlj();
 			bp_scan = new Scan(_results);
 			// JOIN
 		} catch (Exception e) {
@@ -208,9 +209,9 @@ public class BP_Triple_Join implements GlobalConst {
 					// All elements in outer loop have been processed, i.e. JOIN is complete
 					return COMPLETED_FLAG;
 				}
-				if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
-					continue;
-				}
+				// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+				// 	continue;
+				// }
 			}
 
 			while ((inner_quad = rstream.getNext()) != null) {
@@ -264,6 +265,8 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		outer_bp=null;
+		_results = new Heapfile(left_itr.getFileName()+"tuple");
+
 		do {
 			// Check if end of right stream (inner loop)
 			// Sorted Index join
@@ -274,9 +277,9 @@ public class BP_Triple_Join implements GlobalConst {
 					// All elements in outer loop have been processed, i.e. JOIN is complete
 					return COMPLETED_FLAG;
 				}
-				if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
-					continue;
-				}
+				// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+				// 	continue;
+				// }
 
 				if (JoinOnSubjectorObject == 0){
 					try{
@@ -365,9 +368,9 @@ public class BP_Triple_Join implements GlobalConst {
 					// All elements in outer loop have been processed, i.e. JOIN is complete
 					return COMPLETED_FLAG;
 				}
-				if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
-					continue;
-				}
+				// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
+				// 	continue;
+				// }
 				if (older_bp!=null &&
 				 outer_bp.getEIDFld(BPJoinNodePosition).getValue().equals(older_bp.getEIDFld(BPJoinNodePosition).getValue())){
 					rstream.reset_scan();

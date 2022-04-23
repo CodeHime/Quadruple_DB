@@ -431,6 +431,28 @@ public class BP_Triple_Join implements GlobalConst {
 			}
 		
 			while ((inner_quad = rstream.getNext()) != null) {
+
+				if (JoinOnSubjectorObject == 0){
+					if (RightSubjectFilter.compareToIgnoreCase("*") != 0) {
+						EID subjectid = rstream.getEID(RightSubjectFilter);
+						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
+						
+						if (subjectid == null || !subjectid.equals(join_eid_outer)) {
+							continue;
+						}
+					}
+				}
+				else{
+					if (RightObjectFilter.compareToIgnoreCase("*") != 0) {
+						EID objectid = rstream.getEID(RightObjectFilter);
+						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
+						
+						if (objectid == null || !objectid.equals(join_eid_outer)) {
+							continue;
+						}
+					}
+				}
+				
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());

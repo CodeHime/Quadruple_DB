@@ -84,3 +84,5 @@ query testDB_1 testQuery 1000	Execution Time: 646	Reads: 165	Writes: 2
 query testDB_1 testQuery 1000	Execution Time: 376019	Reads: 252	Writes: 15
 query testDB_1 testQuery 1000	Execution Time: 331574	Reads: 252	Writes: 15
 query testDB_1 testQuery 1000	Execution Time: 282979	Reads: 260	Writes: 9
+query testDB_1 testQuery 1000	Execution Time: 73	Reads: 122	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 328239	Reads: 260	Writes: 9

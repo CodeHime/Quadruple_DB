@@ -322,8 +322,7 @@ public class BP_Triple_Join implements GlobalConst {
 
 		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;
-	}
-	
+	}	
 	
 	public boolean basic_sorted_index_nlj()
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,

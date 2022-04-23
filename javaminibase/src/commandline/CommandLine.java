@@ -311,7 +311,7 @@ public class CommandLine {
 		String RightPredicateFilter = "*"; 
 		String RightObjectFilter = "*";
 		String RightConfidenceFilter = "*";
-
+		// LeftOutNodePositions takes the nodes (subjects or objects), where confidence is not a node
 		int[] LeftOutNodePositions = {};
 		int OutputRightSubject = 1;
 		int OutputRightObject = 1;

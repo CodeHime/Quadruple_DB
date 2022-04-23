@@ -982,4 +982,7 @@ public class QuadrupleHeapfile implements Filetype, GlobalConst {
 
 	} // end of delete_file_entry
 
+	public String getFilename(){
+		return _fileName;
+	}
 }// End of HeapFile

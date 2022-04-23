@@ -302,8 +302,12 @@ public class CommandLine {
 		//Parse join text file
 
 		// TODO: DELETE THESE
+		String SubjectFilter = "*";
+		String PredicateFilter = "name"; 
+		String ObjectFilter = "*";
+		String ConfidenceFilter = "*";
+
 		int amt_of_mem = 1000;
-		int num_left_nodes = 3;
 
 		int BPJoinNodePosition = 1;
 		int JoinOnSubjectorObject = 0;
@@ -317,7 +321,6 @@ public class CommandLine {
 		int OutputRightObject = 1;
 		//------------------------------------------------
 		// Second Join
-		int num_left_nodes2 = 5;
 		
 		int BPJoinNodePosition2 = 2;
 		int JoinOnSubjectorObject2 = 0;
@@ -337,31 +340,31 @@ public class CommandLine {
 
 		try
 		{
-
-			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(database.getName() + "QuadHF");
+			Stream tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter, ConfidenceFilter);
+			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(tempStream.getResults().getFilename());
 
 			// query testDB_1 q1.txt 1000
 			// BasicPattern tempBP = left_itr.get_next();
 			// System.out.println(tempBP);
 
 			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, num_left_nodes, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
+			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, 3, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
 			btj.runJoinType(1);
 			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 
 			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
-			btj =  new BP_Triple_Join(amt_of_mem, num_left_nodes2, left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
+			btj =  new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
 			btj.runJoinType(1);
 			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 			
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 			//The final name will be options[0]tupletuple
-			BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			BasicPattern bp = sort.get_next();
-			// BasicPattern bp = left_itr.get_next();
+			// BasicPattern bp = sort.get_next();
+			BasicPattern bp = left_itr.get_next();
 			int bpCount = 0;
 			while(bp!=null){
 				bpCount++;

@@ -117,3 +117,11 @@ query testDB_1 testQuery 1000	Execution Time: 4655	Reads: 25	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 85105	Reads: 25	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 1519	Reads: 25	Writes: 11
 query testDB_1 testQuery 1000	Execution Time: 1211	Reads: 23	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 1221	Reads: 23	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 14104	Reads: 23	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 14188	Reads: 23	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 1456	Reads: 25	Writes: 11
+query testDB_1 testQuery 1000	Execution Time: 47	Reads: 23	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 1247	Reads: 25	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 273	Reads: 26	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 289	Reads: 26	Writes: 0

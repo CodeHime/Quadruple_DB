@@ -96,7 +96,7 @@ public class BPSort extends BPIterator implements GlobalConst {
 
       // may need change depending on whether Get() returns the original
       // or make a copy of the tuple, need io_bufs.java ???
-      Tuple temp_tuple = new Tuple(tuple_size);
+      Tuple temp_tuple = new Tuple();
 
       try {
         temp_tuple.setHdr(n_cols, _in, str_lens);
@@ -168,31 +168,41 @@ public class BPSort extends BPIterator implements GlobalConst {
     while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
       try {
         basicPattern = _am.get_next();
-        short numberOfTupleFields = (short) (basicPattern.noOfFlds() * 2 - 1);
+        if (basicPattern != null) {
+          short numberOfTupleFields = (short) (basicPattern.noOfFlds() * 2 - 1);
 
-        AttrType[] tupletypes = new AttrType[numberOfTupleFields];
-        short[] strSizes = new short[1];
-        short tuplesize = 8;
-        tupletypes[0] = new AttrType(AttrType.attrD);
-        for (int i = 1; i < numberOfTupleFields; i++) {
-          tupletypes[i] = new AttrType(AttrType.attrInteger);
-          tuplesize += 4;
+          AttrType[] tupletypes = new AttrType[numberOfTupleFields];
+          short[] strSizes = new short[1];
+          short tuplesize = 8;
+          tupletypes[0] = new AttrType(AttrType.attrD);
+          for (int i = 1; i < numberOfTupleFields; i++) {
+            tupletypes[i] = new AttrType(AttrType.attrInteger);
+            tuplesize += 4;
+          }
+          tuple = new Tuple();
+          tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
+          tuple.setDFld(1, basicPattern.getDoubleFld(1));
+          int tupleIntIndex = 2;
+          for (int i = 2; i <= basicPattern.noOfFlds(); i++) {
+            tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).pageNo.pid);
+            tupleIntIndex += 1;
+            tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).slotNo);
+            tupleIntIndex += 1;
+            n_cols = numberOfTupleFields;
+          _in = tupletypes;
+          str_lens = strSizes;
+          } // according to Iterator.java
         }
-        tuple = new Tuple();
-        tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-        tuple.setDFld(1, basicPattern.getDoubleFld(0));
-        int tupleIntIndex = 2;
-        for (int i = 2; i <= basicPattern.noOfFlds(); i++) {
-          tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).pageNo.pid);
-          tupleIntIndex += 1;
-          tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).slotNo);
-          tupleIntIndex += 1;
-        } // according to Iterator.java
+        else{
+          tuple = null;
+        }
 
         if (first_time) {
+          first_time = false;
+
           Tuple t = new Tuple(); // need Tuple.java
           try {
-            t.setHdr(numberOfTupleFields, tupletypes, strSizes);
+            t.setHdr(n_cols, _in, str_lens);
           } catch (Exception e) {
             throw new SortException(e, "Sort.java: t.setHdr() failed");
           }
@@ -236,7 +246,7 @@ public class BPSort extends BPIterator implements GlobalConst {
 
           Q = new BasicPatternPNodeSplayPQ(_sort_fld, _sort_fld_type, order);
 
-          op_buf = new Tuple(tuple_size); // need Tuple.java
+          op_buf = new Tuple(); // need Tuple.java
           try {
             op_buf.setHdr(n_cols, _in, str_lens);
           } catch (Exception e) {
@@ -262,7 +272,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     // now the queue is full, starting writing to file while keep trying
     // to add new tuples to the queue. The ones that does not fit are put
     // on the other queue temperarily
-    Tuple lastElem = new Tuple(tuple_size); // need tuple.java
+    Tuple lastElem = new Tuple(); // need tuple.java
     try {
       lastElem.setHdr(n_cols, _in, str_lens);
     } catch (Exception e) {
@@ -293,7 +303,6 @@ public class BPSort extends BPIterator implements GlobalConst {
         break;
       p_elems_curr_Q--;
 
-  
       comp_res = BasicPatternUtils.CompareTupleWithValue(_sort_fld_type, cur_node.tuple, _sort_fld, lastElem); // need
       // tuple_utils.java
 
@@ -382,6 +391,7 @@ public class BPSort extends BPIterator implements GlobalConst {
         while ((p_elems_curr_Q + p_elems_other_Q) < max_elems) {
           try {
             basicPattern = _am.get_next();
+            if (basicPattern!=null){
             short numberOfTupleFields = (short) (basicPattern.noOfFlds() * 2 - 1);
 
             AttrType[] tupletypes = new AttrType[numberOfTupleFields];
@@ -394,7 +404,7 @@ public class BPSort extends BPIterator implements GlobalConst {
             }
             tuple = new Tuple();
             tuple.setHdr(numberOfTupleFields, tupletypes, strSizes);
-            tuple.setDFld(1, basicPattern.getDoubleFld(0));
+            tuple.setDFld(1, basicPattern.getDoubleFld(1));
             int tupleIntIndex = 2;
             for (int i = 2; i <= basicPattern.noOfFlds(); i++) {
               tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).pageNo.pid);
@@ -402,7 +412,10 @@ public class BPSort extends BPIterator implements GlobalConst {
               tuple.setIntFld(tupleIntIndex, basicPattern.getEIDFld(i).slotNo);
               tupleIntIndex += 1;
             } // according to Iterator.java
-
+          }
+          else{
+            tuple = null;
+          }
             // according to
             // Iterator.java
           } catch (Exception e) {
@@ -524,7 +537,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     // tuple of the same run into the queue
     if (i_buf[cur_node.run_num].empty() != true) {
       // run not exhausted
-      new_tuple = new Tuple(tuple_size); // need tuple.java??
+      new_tuple = new Tuple(); // need tuple.java??
 
       try {
         new_tuple.setHdr(n_cols, _in, str_lens);
@@ -577,7 +590,6 @@ public class BPSort extends BPIterator implements GlobalConst {
     String s = new String(c);
     // short fld_no = 1;
 
-
     switch (sortFldType.attrType) {
       case AttrType.attrInteger:
         // lastElem.setHdr(fld_no, junk, null);
@@ -623,7 +635,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     c[0] = Character.MAX_VALUE;
     String s = new String(c);
     // short fld_no = 1;
-    
+
     switch (sortFldType.attrType) {
       case AttrType.attrInteger:
         // lastElem.setHdr(fld_no, junk, null);
@@ -639,6 +651,7 @@ public class BPSort extends BPIterator implements GlobalConst {
         break;
       case AttrType.attrD:
         lastElem.setDFld(_sort_fld, Double.MAX_VALUE);
+        break;
       default:
         // don't know how to handle attrSymbol, attrNull
         // System.err.println("error in sort.java");
@@ -672,7 +685,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     if (SortNodeIDPos == -1) {
       SortNodeIDPos = 0;
     }
-
+    max_elems_in_heap = 200;
     _am = input_itr;
     _sort_fld = SortNodeIDPos;
     order = sort_order;
@@ -681,13 +694,13 @@ public class BPSort extends BPIterator implements GlobalConst {
     if (_sort_fld == 0 || _sort_fld == 1) {
       _sort_fld_type = new AttrType(AttrType.attrD);
       _sort_fld = 1;
-    }
-     else {
-       _sort_fld = _sort_fld*2-2;
+    } else {
+      _sort_fld = _sort_fld * 2 - 2;
       _sort_fld_type = new AttrType(AttrType.attrInteger);
     }
 
     first_time = true;
+
 
   }
 
@@ -713,7 +726,7 @@ public class BPSort extends BPIterator implements GlobalConst {
       Exception {
     if (first_time) {
       // first get_next call to the sort routine
-      first_time = false;
+      // first_time = false;
 
       // generate runs
       Nruns = generate_runs(max_elems_in_heap, sortFldLen);
@@ -725,6 +738,7 @@ public class BPSort extends BPIterator implements GlobalConst {
     }
 
     if (Q.empty()) {
+      int a =2;
       // no more tuples availble
       return null;
     }

@@ -292,6 +292,7 @@ public class CommandLine {
 	// batchinsert phase3_test_data_small.txt 1 testDB
 	// query testDB_1 q1.txt 1000
 	public static void query2(String options[]){
+		//query testDB_1 testQuery 1000
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
 
@@ -335,7 +336,7 @@ public class CommandLine {
 
 		int sort_order = 0;
 		int SortNodeIDPos = 2;
-		int n_pages = 1000;
+		int n_pages = 32;
 
 
 		try
@@ -380,7 +381,7 @@ public class CommandLine {
 				//Only printing confi
 				// System.out.println(database.getBasicPatternString(bp));
 				// bp = sort.get_next();
-				bp = left_itr.get_next();
+				bp = sort.get_next();
 			} 
 			System.out.println("Final Count: "+Integer.toString(bpCount));
 			System.out.println("Query Complete!");

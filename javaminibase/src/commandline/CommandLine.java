@@ -8,7 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import basicpattern.BPOrder;
@@ -290,9 +294,14 @@ public class CommandLine {
 	}
 
 	// batchinsert phase3_test_data_small.txt 1 testDB
+<<<<<<< HEAD
 	// query testDB_1 q1.txt 1000
 	public static void query2(String options[]){
 		//query testDB_1 testQuery 1000
+=======
+	// query testDB_1 query1.txt 1000
+	public static void query2(String options[]) throws IOException{
+>>>>>>> 628a64de8ccd934cf6622e523236a79ccacb7f67
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
 
@@ -302,41 +311,181 @@ public class CommandLine {
 
 		//Parse join text file
 
-		// TODO: DELETE THESE
-		String SubjectFilter = "*";
-		String PredicateFilter = "name"; 
-		String ObjectFilter = "*";
-		String ConfidenceFilter = "*";
+		String queryfile = options[1];
+
+
+		String query = new String(Files.readAllBytes(Paths.get(queryfile)));
+
+		// Remove newlines and whitespaces
+		query = query.replace("\n", "").replace("\r", "");
+		query = query.replaceAll("\\s+","");
+				
+		String[] strs = query.split("\\),");
+		String[] firstStrs = strs[0].split("],");
+		String[] temp1 = firstStrs[0].split("\\[");
+		String[] temp2 = temp1[1].split(",");
+		stringProcess(temp2);
+
+		String SubjectFilter = temp2[0], PredicateFilter = temp2[1], ObjectFilter = temp2[2], ConfidenceFilter = temp2[3];
+		// System.out.println("SF1: " + SubjectFilter);
+		// System.out.println("PF1: " + PredicateFilter);
+		// System.out.println("OF1: " + ObjectFilter);
+		// System.out.println("CF1: " + ConfidenceFilter);
+
+		// JNP,JONO,RSF,RPF,ROF,RCF,LONP,ORS,ORO
+		String[] temp3 = firstStrs[1].split(",");
+		int BPJoinNodePosition = Integer.parseInt(temp3[0]);
+		int JoinOnSubjectorObject = Integer.parseInt(temp3[1]);
+		String RightSubjectFilter = stringProcess(temp3[2]);
+		String RightPredicateFilter = stringProcess(temp3[3]);
+		String RightObjectFilter = stringProcess(temp3[4]);
+		String RightConfidenceFilter = temp3[5];
+
+		List<Integer> lonpAL = new ArrayList<Integer>();
+		
+		// If length is 9 then there is one or zero indexs for LONP given
+		if(temp3.length != 9)
+		{
+			int i = 6;
+
+			// drop the bracket of the first LONP value
+			temp3[i] = temp3[i].substring(1);
+
+			while(!temp3[i].contains("}")){
+				lonpAL.add(Integer.parseInt(temp3[i]));
+				i++;
+			}
+			// remove closing }
+			lonpAL.add(Integer.parseInt(temp3[i].substring(0, 1)));
+		}
+		// There is one index given, add the just the int without the brackets 
+		else if(temp3[6].length() > 2)
+		{
+			lonpAL.add((Integer.parseInt(temp3[6].substring(1, temp3[6].indexOf("}")))));
+		}
+
+		int[] LeftOutNodePositions = lonpAL.stream().mapToInt(i -> i).toArray();
+
+		int OutputRightSubject = Integer.parseInt(temp3[temp3.length - 2]);
+		int OutputRightObject = Integer.parseInt(temp3[temp3.length - 1]);
+
+		// System.out.println("jnp: " + BPJoinNodePosition);
+		// System.out.println("jono: " + JoinOnSubjectorObject);
+		// System.out.println("rsf: " + RightSubjectFilter);
+		// System.out.println("rpf: " + RightPredicateFilter);
+		// System.out.println("rof: " + RightObjectFilter);
+		// System.out.println("rcf: " + RightConfidenceFilter);
+		// System.out.println("lonp: " + Arrays.toString(LeftOutNodePositions));
+		// System.out.println("ors: " + OutputRightSubject);
+		// System.out.println("oro: " + OutputRightObject);
+
+		String[] secondStrs = strs[1].split("\\)");
+
+		// JNP,JONO,RSF,RPF,ROF,RCF,LONP,ORS,ORO
+		String[] secondSet = secondStrs[0].split(",");
+		// stringProcess(secondSet);
+		// System.out.println(Arrays.toString(secondSet));
+
+		Integer BPJoinNodePosition2 = Integer.parseInt(secondSet[0]);
+		Integer JoinOnSubjectorObject2 = Integer.parseInt(secondSet[1]);
+		String RightSubjectFilter2 = stringProcess(secondSet[2]);
+		String RightPredicateFilter2 = stringProcess(secondSet[3]);
+		String RightObjectFilter2 = stringProcess(secondSet[4]);
+		String RightConfidenceFilter2 = secondSet[5];
+
+		// List<Integer> lonp2 = processLONP(secondSet[6]);
+		List<Integer> lonpAL2 = new ArrayList<Integer>();
+		
+		// If length is 9 then there is 1 or 0 indexes for LONP given
+		if(secondSet.length != 9)
+		{
+			int i = 6;
+
+			// drop the bracket of the first LONP value
+			secondSet[i] = secondSet[i].substring(1);
+
+			while(!secondSet[i].contains("}")){
+				lonpAL2.add(Integer.parseInt(secondSet[i]));
+				i++;
+			}
+			// remove closing }
+			lonpAL2.add(Integer.parseInt(secondSet[i].substring(0, secondSet[i].indexOf("}"))));
+		}
+		// There is one index given, add the just the int without the brackets 
+		else if(secondSet[6].length() > 2)
+		{
+			lonpAL2.add((Integer.parseInt(secondSet[6].substring(1, secondSet[6].indexOf("}")))));
+		}
+
+
+		int[] LeftOutNodePositions2 = lonpAL2.stream().mapToInt(i -> i).toArray();
+
+
+		int OutputRightSubject2 = Integer.parseInt(secondSet[secondSet.length - 2]);
+		int OutputRightObject2 = Integer.parseInt(secondSet[secondSet.length - 1]);
+
+		// System.out.println("jnp2: " + BPJoinNodePosition2);
+		// System.out.println("jono2: " + JoinOnSubjectorObject2);
+		// System.out.println("rsf2: " + RightSubjectFilter2);
+		// System.out.println("rpf2: " + RightPredicateFilter2);
+		// System.out.println("rof2: " + RightObjectFilter2);
+		// System.out.println("rcf2: " + RightConfidenceFilter2);
+		// System.out.println("lonp2: " + Arrays.toString(LeftOutNodePositions2));
+		// System.out.println("ors2: " + OutputRightSubject2);
+		// System.out.println("oro2: " + OutputRightObject2);
+
+
+		String[] lastStrs = secondStrs[1].split(",");
+		int sort_order = Integer.parseInt(lastStrs[0]), SortNodeIDPos = Integer.parseInt(lastStrs[1]), n_pages = Integer.parseInt(lastStrs[2]);
+		// System.out.println("so: " + sort_order);
+		// System.out.println("snp: " + SortNodeIDPos);
+		// System.out.println("np: " + n_pages + "\n\n");
+
 
 		int amt_of_mem = 1000;
 
-		int BPJoinNodePosition = 1;
-		int JoinOnSubjectorObject = 0;
-		String RightSubjectFilter = "Jorunn_Danielsen";
-		String RightPredicateFilter = "*"; 
-		String RightObjectFilter = "*";
-		String RightConfidenceFilter = "*";
-		// LeftOutNodePositions takes the nodes (subjects or objects), where confidence is not a node
-		int[] LeftOutNodePositions = {};
-		int OutputRightSubject = 1;
-		int OutputRightObject = 1;
-		//------------------------------------------------
-		// Second Join
+
+		// TODO: DELETE THESE
+		// String SubjectFilter = "*";
+		// String PredicateFilter = "name"; 
+		// String ObjectFilter = "*";
+		// String ConfidenceFilter = "*";
+
+
+		// int BPJoinNodePosition = 1;
+		// int JoinOnSubjectorObject = 0;
+		// String RightSubjectFilter = "Jorunn_Danielsen";
+		// String RightPredicateFilter = "*"; 
+		// String RightObjectFilter = "*";
+		// String RightConfidenceFilter = "*";
+		// // LeftOutNodePositions takes the nodes (subjects or objects), where confidence is not a node
+		// int[] LeftOutNodePositions = {};
+		// int OutputRightSubject = 1;
+		// int OutputRightObject = 1;
+
+		// //------------------------------------------------
+		// // Second Join
 		
-		int BPJoinNodePosition2 = 2;
-		int JoinOnSubjectorObject2 = 0;
-		String RightSubjectFilter2 = "Jorunn_Danielsen";
-		String RightPredicateFilter2 = "*"; 
-		String RightObjectFilter2 = "*";
-		String RightConfidenceFilter2 = "*";
+		// int BPJoinNodePosition2 = 2;
+		// int JoinOnSubjectorObject2 = 0;
+		// String RightSubjectFilter2 = "Jorunn_Danielsen";
+		// String RightPredicateFilter2 = "*"; 
+		// String RightObjectFilter2 = "*";
+		// String RightConfidenceFilter2 = "*";
 
-		int[] LeftOutNodePositions2 = {1,2};
-		int OutputRightSubject2 = 1;
-		int OutputRightObject2 = 1;
+		// int[] LeftOutNodePositions2 = {1,2};
+		// int OutputRightSubject2 = 1;
+		// int OutputRightObject2 = 1;
 
+<<<<<<< HEAD
 		int sort_order = 0;
 		int SortNodeIDPos = 2;
 		int n_pages = 32;
+=======
+		// int sort_order = 0;
+		// int SortNodeIDPos = 2;
+		// int n_pages = 1000;
+>>>>>>> 628a64de8ccd934cf6622e523236a79ccacb7f67
 
 
 		try
@@ -463,6 +612,24 @@ public class CommandLine {
 				System.out.println("error");
 			}
 		}
+	}
+
+	//helper for processing Query file
+	private static void stringProcess(String[] strs) {
+		for (int i = 0; i < strs.length - 1; i++) {
+			if (!strs[i].equals("*")) {
+				strs[i] = strs[i].substring(1, strs[i].length() - 1);
+			}
+		}
+	}
+	
+	//helper for processing Query file
+	private static String stringProcess(String str) {
+		if (!str.equals("*")) {
+			str = str.substring(1, str.length() - 1);
+		}
+
+		return str;
 	}
 
 	public static void main(String[] argvs) throws InvalidPageNumberException, FileIOException, DiskMgrException {

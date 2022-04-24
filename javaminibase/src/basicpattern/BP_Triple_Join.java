@@ -418,7 +418,7 @@ public class BP_Triple_Join implements GlobalConst {
 		do {
 			// Check if end of right stream (inner loop)
 			// Sorted Index join
-			if (rstream == null) {
+			// if (rstream == null) {
 				// Check if end of BP iteration (outer loop)
 				BasicPattern older_bp = outer_bp;
 				if ((outer_bp = left_itr.get_next()) == null) {
@@ -482,7 +482,7 @@ public class BP_Triple_Join implements GlobalConst {
 						outer_bp_label, RightConfidenceFilter);
 					}
 				}
-			}
+			// }
 		
 			while ((inner_quad = rstream.getNext()) != null) {
 

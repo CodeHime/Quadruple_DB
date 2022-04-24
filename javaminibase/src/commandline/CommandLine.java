@@ -507,10 +507,10 @@ public class CommandLine {
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 
 			// Print results
-			BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			BasicPattern bp = sort.get_next();
-			// BasicPattern bp = left_itr.get_next();
+			// BasicPattern bp = sort.get_next();
+			BasicPattern bp = left_itr.get_next();
 			int bpCount = 0;
 			while(bp!=null){
 				bpCount++;

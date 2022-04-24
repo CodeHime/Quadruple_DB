@@ -467,6 +467,11 @@ public class CommandLine {
 		}
 	}
 
+	public static void deleteDB(String db){
+		File dbf = new File(db); 
+		dbf.delete();
+	}
+
 	public static void getInput() throws InvalidPageNumberException, FileIOException, DiskMgrException {
 
 		int end = 0;
@@ -490,7 +495,10 @@ public class CommandLine {
 						System.out.println(scan.nextLine());
 					}
 					scan.close();
-				} else if (parsed[0].equals("query") && parsed.length == 9) {
+				} else if (parsed[0].equals("delete")&& parsed.length == 2){
+					deleteDB(parsed[1]);
+				} 
+				else if (parsed[0].equals("query") && parsed.length == 9) {
 					Long startTime = new java.util.Date().getTime();
 					query(Arrays.copyOfRange(parsed, 1, parsed.length));
 					Long endTime = new java.util.Date().getTime();

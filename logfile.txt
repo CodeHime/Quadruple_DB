@@ -181,3 +181,7 @@ query testDB_1 query2.txt 40 2	Execution Time: 52247	Reads: 13975008	Writes: 145
 query testDB_1 query2.txt 1000 2	Execution Time: 9839	Reads: 320	Writes: 0
 =======
 >>>>>>> eb171473f8250473393fc31b87e0a710ed3f7347
+query testDB_1 query2.txt 1000 3	Execution Time: 9698	Reads: 324	Writes: 10
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 4025	Reads: 2	Writes: 383
+query testDB_1 query2.txt 1000 1	Execution Time: 9576	Reads: 254	Writes: 0
+query testDB_1 query2.txt 1000 3	Execution Time: 8437	Reads: 320	Writes: 8

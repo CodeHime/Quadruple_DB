@@ -294,14 +294,8 @@ public class CommandLine {
 	}
 
 	// batchinsert phase3_test_data_small.txt 1 testDB
-<<<<<<< HEAD
-	// query testDB_1 q1.txt 1000
-	public static void query2(String options[]){
-		//query testDB_1 testQuery 1000
-=======
 	// query testDB_1 query1.txt 1000
 	public static void query2(String options[]) throws IOException{
->>>>>>> 628a64de8ccd934cf6622e523236a79ccacb7f67
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();
 
@@ -477,15 +471,9 @@ public class CommandLine {
 		// int OutputRightSubject2 = 1;
 		// int OutputRightObject2 = 1;
 
-<<<<<<< HEAD
-		int sort_order = 0;
-		int SortNodeIDPos = 2;
-		int n_pages = 32;
-=======
 		// int sort_order = 0;
 		// int SortNodeIDPos = 2;
 		// int n_pages = 1000;
->>>>>>> 628a64de8ccd934cf6622e523236a79ccacb7f67
 
 
 		try

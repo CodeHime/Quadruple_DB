@@ -294,7 +294,7 @@ public class CommandLine {
 	}
 
 	// batchinsert phase3_test_data_small.txt 1 testDB
-	// query testDB_1 q1.txt 1000
+	// query testDB_1 query1.txt 1000
 	public static void query2(String options[]) throws IOException{
 		String dbname = options[0];
 		rdfDB database = rdfDB.getInstance();

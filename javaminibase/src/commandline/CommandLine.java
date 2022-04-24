@@ -340,31 +340,39 @@ public class CommandLine {
 
 		try
 		{
+			// Get left iterator with sorted values
 			Stream tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter, ConfidenceFilter);
 			BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(tempStream.getResults().getFilename());
 
-			// query testDB_1 q1.txt 1000
-			// BasicPattern tempBP = left_itr.get_next();
-			// System.out.println(tempBP);
-
-			// Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+			// Get basic pattern triple join
 			BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, 3, left_itr, BPJoinNodePosition, JoinOnSubjectorObject, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter, LeftOutNodePositions, OutputRightSubject, OutputRightObject);
-			btj.runJoinType(1);
-			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+			System.out.println("BP_Triple_Join:\n---------------");
+			System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
+			// Perform nested loop join
+			// ---------------------------------------------------------------------------------------------
+			// Perform first join
+			btj.runJoinType(1);
+			System.out.println("1st Nested Loop Join:\n---------------------");
+			System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
+
+			// Reset left iterator
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
 
-			//Save the data to a file left_itr.getFileName()+"tuple"     Do not sort, sorting will be done in command line
+			// Perform second join
 			btj =  new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2, JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2, RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
 			btj.runJoinType(1);
-			System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+			System.out.println("2nd Nested Loop Join:\n---------------------");
+			System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 			
+			// Reset left iterator
 			left_itr = new BasicPatternIteratorScan(left_itr.getFileName()+"basic_nlj", btj.getNumLeftNodes());
-			//The final name will be options[0]tupletuple
-			// BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
-			// BasicPattern bp = sort.get_next();
-			BasicPattern bp = left_itr.get_next();
+			// Print results
+			BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+
+			BasicPattern bp = sort.get_next();
+			// BasicPattern bp = left_itr.get_next();
 			int bpCount = 0;
 			while(bp!=null){
 				bpCount++;
@@ -375,7 +383,7 @@ public class CommandLine {
 				bp = left_itr.get_next();
 			} 
 			System.out.println("Final Count: "+Integer.toString(bpCount));
-			System.out.println("Query Complete!\n");
+			System.out.println("Query Complete!");
 		}
 		catch(Exception e)
 		{
@@ -419,7 +427,7 @@ public class CommandLine {
 					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
 					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
-					System.out.println("Reads:" + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+					System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} 
 				else if (parsed[0].equals("batchinsert") && parsed.length == 4) {
 					Long startTime = new java.util.Date().getTime();
@@ -431,7 +439,7 @@ public class CommandLine {
 					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
 					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
-					System.out.println("Reads " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
+					System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				} else if (parsed[0].equals("query") && parsed.length == 4){
 					Long startTime = new java.util.Date().getTime();
 					query2(Arrays.copyOfRange(parsed, 1, parsed.length));
@@ -442,7 +450,7 @@ public class CommandLine {
 					fw.append("Execution Time: " + Long.toString(endTime - startTime) + "\t");
 					fw.append("Reads: " + PCounter.rcounter + "\tWrites: " + PCounter.wcounter + "\n");
 					fw.close();
-
+					System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n\n");
 				}
 				else if (parsed[0].equals("exit") || parsed[0].equals("quit") || parsed[0].equals("q")) {
 					end = 1;

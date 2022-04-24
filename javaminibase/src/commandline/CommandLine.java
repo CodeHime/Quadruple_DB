@@ -462,18 +462,25 @@ public class CommandLine {
 						btj.getNumLeftNodes());
 				System.out.println(left_itr.getFileName());
 
-				// Print results
-				BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
-
-				BasicPattern bp = sort.get_next();
-				// BasicPattern bp = left_itr.get_next();
+				BasicPatternIteratorScan temp_left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
+						btj.getNumLeftNodes());
+				
 				int bpCount = 0;
-				while (bp != null) {
-					bpCount++;
-					bp.print();
-					bp = sort.get_next();
-					// bp = left_itr.get_next();
+				if(temp_left_itr.get_next() != null){
+					// Print results
+					BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
+
+					BasicPattern bp = sort.get_next();
+					// BasicPattern bp = left_itr.get_next();
+					while (bp != null) {
+						bpCount++;
+						bp.print();
+						bp = sort.get_next();
+						System.out.println(database.getEntityHeapFile().getLabel(bp.getEIDFld(3).returnLID()).getLabel());
+						// bp = left_itr.get_next();
+					}
 				}
+
 				System.out.println("Final Count: " + Integer.toString(bpCount));
 				System.out.println("Query Complete!");
 			}

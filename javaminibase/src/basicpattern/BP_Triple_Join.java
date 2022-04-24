@@ -620,15 +620,16 @@ public class BP_Triple_Join implements GlobalConst {
 			int partInnerCount = 0;
 			while ((label_outer.compareTo(label_inner) == 0) && (outer_bp != null) && (inner_quad != null)) {
 				// Reset rstream
-				if (rstream == null) {
-					if (JoinOnSubjectorObject == 0) {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
-								RightObjectFilter, RightConfidenceFilter);
-					} else {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
-								RightObjectFilter, RightConfidenceFilter);
-					}
-				}
+				// if (rstream == null) {
+				// 	if (JoinOnSubjectorObject == 0) {
+				// 		rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
+				// 				RightObjectFilter, RightConfidenceFilter);
+				// 	} else {
+				// 		rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
+				// 				RightObjectFilter, RightConfidenceFilter);
+				// 	}
+				// }
+				rstream.reset_scan();
 				for(int i=0; i<innerCount; i++){
 					inner_quad = rstream.getNext();
 				}
@@ -676,15 +677,15 @@ public class BP_Triple_Join implements GlobalConst {
 					}
 					// ----------------------
 				}
-				try {
-					if (rstream != null) {
-						rstream.closestream();
-						rstream = null;
-					}
-				} catch (Exception e) {
-					System.out.println("Error in closing stream in BT_Triple_Join");
-					e.printStackTrace();
-				}
+				// try {
+				// 	if (rstream != null) {
+				// 		rstream.closestream();
+				// 		rstream = null;
+				// 	}
+				// } catch (Exception e) {
+				// 	System.out.println("Error in closing stream in BT_Triple_Join");
+				// 	e.printStackTrace();
+				// }
 				// Increment outer stream
 				// ----------------------
 				if(inner_quad != null){

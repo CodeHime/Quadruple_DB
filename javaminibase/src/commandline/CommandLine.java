@@ -2,6 +2,7 @@
 // ./gradlew build 
 package commandline;
 
+import global.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -397,10 +398,10 @@ public class CommandLine {
 		int amt_of_mem = Integer.parseInt(options[2]);
 
 		try {
-			String joinTypeFileNames[] = { "basic_nlj", "basic_index_nlj", "bsi_nlj" };
-			int iterations[] = { 1, 2, 3 };
+			String joinTypeFileNames[] = { "basic_nlj", "basic_index_nlj", "bsi_nlj", "smj" };
+			int iterations[] = { 1, 2, 3, 4 };
 			int iterationsLength = 3;
-			if (Integer.parseInt(options[3]) != 4) {
+			if (Integer.parseInt(options[3]) != 5) {
 				iterations[0] = Integer.parseInt(options[3]);
 				iterationsLength = 1;
 				joinTypeFileNames[0] = joinTypeFileNames[Integer.parseInt(options[3]) - 1];
@@ -408,8 +409,21 @@ public class CommandLine {
 
 			for (int i = 0; i < iterationsLength; i++) {
 				// Get left iterator with sorted values
-				Stream tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
-						ConfidenceFilter);
+				Stream tempStream;
+				// if (iterations[i] < 3) {
+				// 	tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
+				// 			ConfidenceFilter);
+				// } else {
+				// 	if (JoinOnSubjectorObject == 0) {
+				// 		tempStream = new Stream(database, QuadrupleOrder.SubjectConfidence, SubjectFilter,
+				// 				PredicateFilter, ObjectFilter, ConfidenceFilter);
+				// 	} else {
+				// 		tempStream = new Stream(database, QuadrupleOrder.ObjectConfidence, SubjectFilter,
+				// 				PredicateFilter, ObjectFilter, ConfidenceFilter);
+				// 	}
+				// }
+				tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
+							ConfidenceFilter);
 				BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(tempStream.getResults().getFilename());
 
 				// Get basic pattern triple join
@@ -420,29 +434,33 @@ public class CommandLine {
 				System.out.println("BP_Triple_Join:\n---------------");
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
-				// Perform nested loop join
+				// Perform join
 				// ---------------------------------------------------------------------------------------------
 				// Perform first join
 
 				btj.runJoinType(iterations[i]);
-				System.out.println("1st Nested Loop Join:\n---------------------");
+				System.out.println("1st " + joinTypeFileNames[i] + ":\n---------------------");
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
 				// Reset left iterator
+				System.out.println(left_itr.getFileName());
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
+				System.out.println(left_itr.getFileName());
 
 				// Perform second join
 				btj = new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2,
 						JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2,
 						RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
 				btj.runJoinType(iterations[i]);
-				System.out.println("2nd Nested Loop Join:\n---------------------");
+				System.out.println("2nd " + joinTypeFileNames[i] + ":\n---------------------");
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
 				// Reset left iterator
+				System.out.println(left_itr.getFileName());
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
+				System.out.println(left_itr.getFileName());
 
 				// Print results
 				BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
@@ -453,10 +471,8 @@ public class CommandLine {
 				while (bp != null) {
 					bpCount++;
 					bp.print();
-					// Only printing confi
-					// System.out.println(database.getBasicPatternString(bp));
-					// bp = sort.get_next();
 					bp = sort.get_next();
+					// bp = left_itr.get_next();
 				}
 				System.out.println("Final Count: " + Integer.toString(bpCount));
 				System.out.println("Query Complete!");
@@ -467,8 +483,8 @@ public class CommandLine {
 		}
 	}
 
-	public static void deleteDB(String db){
-		File dbf = new File(db); 
+	public static void deleteDB(String db) {
+		File dbf = new File(db);
 		dbf.delete();
 	}
 
@@ -495,10 +511,9 @@ public class CommandLine {
 						System.out.println(scan.nextLine());
 					}
 					scan.close();
-				} else if (parsed[0].equals("delete")&& parsed.length == 2){
+				} else if (parsed[0].equals("delete") && parsed.length == 2) {
 					deleteDB(parsed[1]);
-				} 
-				else if (parsed[0].equals("query") && parsed.length == 9) {
+				} else if (parsed[0].equals("query") && parsed.length == 9) {
 					Long startTime = new java.util.Date().getTime();
 					query(Arrays.copyOfRange(parsed, 1, parsed.length));
 					Long endTime = new java.util.Date().getTime();

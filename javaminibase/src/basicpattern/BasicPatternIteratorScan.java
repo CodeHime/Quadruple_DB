@@ -206,7 +206,12 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
       SortException,
       IndexException {
     if (!closeFlag) {
-      scan.closescan();
+      if(scan != null){
+        scan.closescan();
+      }
+      if(tscan != null){
+        tscan.closescan();
+      }
       closeFlag = true;
     }
   }

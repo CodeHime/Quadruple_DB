@@ -28,6 +28,7 @@ public class BPSort extends BPIterator implements GlobalConst {
   private short n_cols;
   private short[] str_lens;
   private BPIterator _am;
+  // private BasicPatternIteratorScan _am;
   private int _sort_fld;
   private AttrType _sort_fld_type;
   private BPOrder order;

@@ -346,7 +346,7 @@ public class BP_Triple_Join implements GlobalConst {
 						}
 					}
 				}
-				System.out.println(outer_bp.getDoubleFld(1));
+				// System.out.println(outer_bp.getDoubleFld(1));
 	
 				if(rstream == null)
 				{

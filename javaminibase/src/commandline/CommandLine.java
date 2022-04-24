@@ -410,33 +410,25 @@ public class CommandLine {
 			for (int i = 0; i < iterationsLength; i++) {
 				// Get left iterator with sorted values
 				Stream tempStream;
-				// if (iterations[i] < 3) {
-				// 	tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
-				// 			ConfidenceFilter);
-				// } else {
-				// 	if (JoinOnSubjectorObject == 0) {
-				// 		tempStream = new Stream(database, QuadrupleOrder.SubjectConfidence, SubjectFilter,
-				// 				PredicateFilter, ObjectFilter, ConfidenceFilter);
-				// 	} else {
-				// 		tempStream = new Stream(database, QuadrupleOrder.ObjectConfidence, SubjectFilter,
-				// 				PredicateFilter, ObjectFilter, ConfidenceFilter);
-				// 	}
-				// }
+				if (iterations[i] < 3) {
+					tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
+							ConfidenceFilter);
+				} else {
+					tempStream = new Stream(database, sort_order, SubjectFilter,
+							PredicateFilter, ObjectFilter, ConfidenceFilter);
+				}
 				tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
 							ConfidenceFilter);
 				BasicPatternIteratorScan left_itr = new BasicPatternIteratorScan(tempStream.getResults().getFilename());
 
-				// Get basic pattern triple join
+				// ---------------------------------------------------------------------------------------------
+				// Perform first join
 				BP_Triple_Join btj = new BP_Triple_Join(amt_of_mem, 3, left_itr, BPJoinNodePosition,
 						JoinOnSubjectorObject,
 						RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter,
 						LeftOutNodePositions, OutputRightSubject, OutputRightObject);
 				System.out.println("BP_Triple_Join:\n---------------");
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
-
-				// Perform join
-				// ---------------------------------------------------------------------------------------------
-				// Perform first join
 
 				btj.runJoinType(iterations[i]);
 				System.out.println("1st " + joinTypeFileNames[i] + ":\n---------------------");
@@ -448,7 +440,7 @@ public class CommandLine {
 						btj.getNumLeftNodes());
 				System.out.println(left_itr.getFileName());
 
-				// Perform second join
+				// // Perform second join
 				btj = new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2,
 						JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2,
 						RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);

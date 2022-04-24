@@ -417,50 +417,33 @@ public class BP_Triple_Join implements GlobalConst {
 			LowMemException, UnknownKeyTypeException, Exception {
 		outer_bp = null;
 		_results = new Heapfile(left_itr.getFileName() + "bsi_nlj");
-		do {
-			// Check if end of right stream (inner loop)
-			// Sorted Index join
-			// if (rstream == null) {
-			// Check if end of BP iteration (outer loop)
+		while ((outer_bp = left_itr.get_next()) != null){
 			BasicPattern older_bp = outer_bp;
-			if ((outer_bp = left_itr.get_next()) == null) {
-				COMPLETED_FLAG = true;
-				// All elements in outer loop have been processed, i.e. JOIN is complete
-				return COMPLETED_FLAG;
-			}
 			// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
 			// continue;
 			// }
 
 			LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
 			String outer_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
-
-			if (older_bp != null) {
-				labelID = older_bp.getEIDFld(BPJoinNodePosition).returnLID();
-				String older_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
-
-				if (older_bp_label.equals(outer_bp_label)) {
-					rstream.reset_scan();
-				} else {
-					try {
-						if (rstream != null) {
-							rstream.closestream();
-							rstream = null;
-						}
-					} catch (Exception e) {
-						System.out.println("Error in closing stream in BT_Triple_Join");
-						e.printStackTrace();
-					}
-					if (JoinOnSubjectorObject == 0) {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence,
-								outer_bp_label,
-								RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
-					} else {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence,
-								RightSubjectFilter, RightPredicateFilter,
-								outer_bp_label, RightConfidenceFilter);
+			
+			if (JoinOnSubjectorObject == 0) {
+				if (RightSubjectFilter.compareToIgnoreCase("*") != 0){
+					if(outer_bp_label.compareToIgnoreCase(RightSubjectFilter)!=0){
+						continue;
 					}
 				}
+			}
+			else{
+				if (RightObjectFilter.compareToIgnoreCase("*") != 0){
+					if(outer_bp_label.compareToIgnoreCase(RightObjectFilter)!=0){
+						continue;
+					}
+				}
+			}
+			if (older_bp != null && rstream != null && outer_bp.getEIDFld(BPJoinNodePosition).equals(older_bp.getEIDFld(BPJoinNodePosition))) {
+				// labelID = older_bp.getEIDFld(BPJoinNodePosition).returnLID();
+				// String older_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+				rstream.reset_scan();
 			} else {
 				try {
 					if (rstream != null) {
@@ -471,40 +454,16 @@ public class BP_Triple_Join implements GlobalConst {
 					System.out.println("Error in closing stream in BT_Triple_Join");
 					e.printStackTrace();
 				}
+				int order;
 				if (JoinOnSubjectorObject == 0) {
-					rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence,
-							outer_bp_label,
-							RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+					order = QuadrupleOrder.SubjectConfidence;
 				} else {
-					rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence,
-							RightSubjectFilter, RightPredicateFilter,
-							outer_bp_label, RightConfidenceFilter);
+					order = QuadrupleOrder.ObjectConfidence;
 				}
+				rstream = new Stream(_rdfdb, order, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
 			}
-			// }
 
 			while ((inner_quad = rstream.getNext()) != null) {
-
-				if (JoinOnSubjectorObject == 0) {
-					if (RightSubjectFilter.compareToIgnoreCase("*") != 0) {
-						EID subjectid = rstream.getEID(RightSubjectFilter);
-						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
-
-						if (subjectid == null || !subjectid.equals(join_eid_outer)) {
-							continue;
-						}
-					}
-				} else {
-					if (RightObjectFilter.compareToIgnoreCase("*") != 0) {
-						EID objectid = rstream.getEID(RightObjectFilter);
-						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
-
-						if (objectid == null || !objectid.equals(join_eid_outer)) {
-							continue;
-						}
-					}
-				}
-
 				// Match found so calculate new confidence
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
@@ -524,17 +483,19 @@ public class BP_Triple_Join implements GlobalConst {
 				// _results.insertRecord(outer_bp.getBasicPatternByteArray());
 				_results.insertRecord(tempBP.returnTupleArray());
 			}
-			// try {
-			// if (rstream != null) {
-			// rstream.closestream();
-			// rstream = null;
-			// COMPLETED_FLAG=true;
-			// }
-			// } catch (Exception e) {
-			// System.out.println("Error in closing stream in BT_Triple_Join");
-			// e.printStackTrace();
-			// }
-		} while (outer_bp != null);
+		}
+
+		outer_bp = null;
+		try {
+			if (rstream != null) {
+				rstream.closestream();
+				rstream = null;
+				COMPLETED_FLAG = true;
+			}
+		} catch (Exception e) {
+			System.out.println("Error in closing stream in BT_Triple_Join");
+			e.printStackTrace();
+		}
 
 		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;
 		return COMPLETED_FLAG;

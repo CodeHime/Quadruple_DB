@@ -477,7 +477,23 @@ public class Stream implements GlobalConst {
 
 	public void reset_scan(){
 		try {
-			qfs = new TScan(_results);
+			if(_needSort){
+				if (qsort != null) {
+					qsort.close();
+				}
+				if (qfs != null) {
+					qfs.closescan();
+				}
+				qfs = new TScan(_results);
+				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+			}
+			else{
+				if (qfs != null) {
+					qfs.closescan();
+				}
+				qfs = new TScan(_results);
+			}
 			// QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
 			// qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 

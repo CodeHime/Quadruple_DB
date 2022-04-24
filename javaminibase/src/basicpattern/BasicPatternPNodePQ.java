@@ -80,7 +80,7 @@ public abstract class BasicPatternPNodePQ
    */
   public int pnodeCMP(BasicPatternPNode a, BasicPatternPNode b) 
          throws IOException, UnknowAttrType, TupleUtilsException {
-    int ans = TupleUtils.CompareTupleWithTuple(fld_type, a.tuple, fld_no, b.tuple, fld_no);
+    int ans = BasicPatternUtils.CompareTupleWithValue(fld_type, a.tuple, fld_no, b.tuple);
     return ans;
   }
 

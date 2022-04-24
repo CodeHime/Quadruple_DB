@@ -518,7 +518,7 @@ public class CommandLine {
 				//Only printing confi
 				// System.out.println(database.getBasicPatternString(bp));
 				// bp = sort.get_next();
-				bp = left_itr.get_next();
+				bp = sort.get_next();
 			} 
 			System.out.println("Final Count: "+Integer.toString(bpCount));
 			System.out.println("Query Complete!");

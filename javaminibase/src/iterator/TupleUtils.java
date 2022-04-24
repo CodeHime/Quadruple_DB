@@ -42,6 +42,7 @@ public class TupleUtils
       int   t1_i,  t2_i;
       float t1_r,  t2_r;
       String t1_s, t2_s;
+      double t1_d, t2_d;
       
       switch (fldType.attrType) 
 	{
@@ -55,6 +56,16 @@ public class TupleUtils
 	  if (t1_i == t2_i) return  0;
 	  if (t1_i <  t2_i) return -1;
 	  if (t1_i >  t2_i) return  1;
+  case AttrType.attrD:                // Compare two integers.
+	  try {
+	    t1_d = t1.getDFld(t1_fld_no);
+	    t2_d = t2.getDFld(t2_fld_no);
+	  }catch (FieldNumberOutOfBoundException e){
+	    throw new TupleUtilsException(e, "FieldNumberOutOfBoundException is caught by TupleUtils.java");
+	  }
+	  if (t1_d == t2_d) return  0;
+	  if (t1_d <  t2_d) return -1;
+	  if (t1_d >  t2_d) return  1;
 	  
 	case AttrType.attrReal:                // Compare two floats
 	  try {

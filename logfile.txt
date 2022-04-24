@@ -128,5 +128,37 @@ query testDB_1 testQuery 1000	Execution Time: 289	Reads: 26	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 254	Reads: 26	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 256	Reads: 26	Writes: 0
 query testDB_1 testQuery 1000	Execution Time: 242	Reads: 26	Writes: 0
+<<<<<<< HEAD
 query testDB_1 query1.txt 1000	Execution Time: 12280	Reads: 23	Writes: 19
 query testDB_1 query1.txt 1000	Execution Time: 4298	Reads: 25	Writes: 19
+=======
+batchinsert phase3_test_data_extra_small.txt 1 testDB	Execution Time: 88	Reads: 2	Writes: 14
+query testDB_1 testQuery 1000	Execution Time: 40	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 90	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 95	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 2611	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 3525	Reads: 13	Writes: 9
+query testDB_1 testQuery 1000	Execution Time: 25823	Reads: 13	Writes: 9
+query testDB_1 testQuery 1000	Execution Time: 12383	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 98	Reads: 12	Writes: 0
+batchinsert phase3_test_data_extra_small.txt 1 testDB	Execution Time: 99	Reads: 2	Writes: 14
+query testDB_1 testQuery 1000	Execution Time: 33	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 87	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 83	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 84	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 183287	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 30818	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 90	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 4827	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 90	Reads: 10	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 96	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 97	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 91	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 89	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 96	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 127161	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 10732	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 4706	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 86	Reads: 12	Writes: 0
+query testDB_1 testQuery 1000	Execution Time: 92	Reads: 12	Writes: 0
+>>>>>>> ed62493eae3cfea4cbe5dc66bc908e63799ba524

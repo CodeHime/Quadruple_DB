@@ -435,10 +435,8 @@ public class CommandLine {
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
 				// Reset left iterator
-				System.out.println(left_itr.getFileName());
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
-				System.out.println(left_itr.getFileName());
 
 				// // Perform second join
 				btj = new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2,
@@ -449,10 +447,8 @@ public class CommandLine {
 				System.out.println("Reads: " + PCounter.rcounter + "\nWrites: " + PCounter.wcounter + "\n");
 
 				// Reset left iterator
-				System.out.println(left_itr.getFileName());
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
-				System.out.println(left_itr.getFileName());
 
 
 				int bpCount = 0;

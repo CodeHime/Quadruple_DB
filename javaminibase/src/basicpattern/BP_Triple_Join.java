@@ -81,6 +81,7 @@ public class BP_Triple_Join implements GlobalConst {
 	String RightConfidenceFilter;
 	boolean COMPLETED_FLAG = false;
 
+	BPSort outerSort = null;
 	public int getNumLeftNodes() {
 		return num_left_nodes;
 	}
@@ -505,11 +506,15 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		_results = new Heapfile(left_itr.getFileName() + "smj");
-
+		
+		if (left_itr.isEmpty()){
+			COMPLETED_FLAG = true;
+			return COMPLETED_FLAG;
+		}
 		// Sort left iterator for outer loop and set outer basic pattern
-		BPSort outerSort = new BPSort(left_itr, new BPOrder(0), BPJoinNodePosition, 32);
-		// outer_bp = outerSort.get_next();
-		outer_bp = left_itr.get_next();
+		outerSort = new BPSort(left_itr, new BPOrder(0), BPJoinNodePosition, 32);
+		outer_bp = outerSort.get_next();
+		// outer_bp = left_itr.get_next();
 
 		// Create a sorted stream for inner loop and set inner and temp quadruple and inner count
 		if (rstream == null) {
@@ -523,6 +528,7 @@ public class BP_Triple_Join implements GlobalConst {
 		}
 		inner_quad = rstream.getNext();
 		int innerCount = 0;
+		System.out.println(rstream.getResults().getQuadrupleCnt());
 
 		// Start of current partition
 		while ((outer_bp != null) && (inner_quad != null)) {
@@ -539,7 +545,7 @@ public class BP_Triple_Join implements GlobalConst {
 			String label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
 
 			// Continue scan of outer loop
-			while (label_outer.compareTo(label_inner) < 0) {
+			while ((label_outer.compareTo(label_inner) < 0) && (outer_bp != null)) {
 				outer_bp = outerSort.get_next();
 				// outer_bp = left_itr.get_next();
 
@@ -550,7 +556,7 @@ public class BP_Triple_Join implements GlobalConst {
 			}
 
 			// Continue scan of inner loop
-			while (label_outer.compareTo(label_inner) > 0) {
+			while ((label_outer.compareTo(label_inner) > 0) && (inner_quad != null)) {
 				inner_quad = rstream.getNext();
 				innerCount++;
 
@@ -567,33 +573,41 @@ public class BP_Triple_Join implements GlobalConst {
 			// Needed in case label_outer != label_inner
 			// -----------------------------------------
 			// Set new outer label
-			labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
-			label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+			if((outer_bp != null) && (inner_quad != null)){
+				labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
+				label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
 
-			// Set new inner label
-			if (JoinOnSubjectorObject == 0) {
-				join_eid_inner = inner_quad.getSubjectQid();
-			} else {
-				join_eid_inner = inner_quad.getObjectQid();
+				// Set new inner label
+				if (JoinOnSubjectorObject == 0) {
+					join_eid_inner = inner_quad.getSubjectQid();
+				} else {
+					join_eid_inner = inner_quad.getObjectQid();
+				}
+				label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
 			}
-			label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
 			// -----------------------------------------
+			
 			int partInnerCount = 0;
-			while ((label_outer.compareTo(label_inner) == 0) && (outer_bp != null) && (inner_quad != null)) {
+			while ((label_outer.compareTo(label_inner) == 0) && (outer_bp != null)) {
+				System.out.println("innerCount: "+Integer.toString(innerCount));
 				// Reset rstream
-				// if (rstream == null) {
-				// 	if (JoinOnSubjectorObject == 0) {
-				// 		rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
-				// 				RightObjectFilter, RightConfidenceFilter);
-				// 	} else {
-				// 		rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
-				// 				RightObjectFilter, RightConfidenceFilter);
-				// 	}
-				// }
-				rstream.reset_scan();
+				// ----------------------
+				if (rstream == null) {
+					if (JoinOnSubjectorObject == 0) {
+						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
+								RightObjectFilter, RightConfidenceFilter);
+					} else {
+						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
+								RightObjectFilter, RightConfidenceFilter);
+					}
+					inner_quad = rstream.getNext();
+				}
+				// ----------------------
+				// rstream.reset_scan();
 				for(int i=0; i<innerCount; i++){
 					inner_quad = rstream.getNext();
 				}
+				System.out.println(inner_quad);
 				if(inner_quad != null){
 					if (JoinOnSubjectorObject == 0) {
 						join_eid_inner = inner_quad.getSubjectQid();
@@ -604,6 +618,7 @@ public class BP_Triple_Join implements GlobalConst {
 				}
 				partInnerCount = 0;
 				while ((label_outer.compareTo(label_inner) == 0) && (inner_quad != null)) {
+					System.out.println("partInnerCount: "+Integer.toString(partInnerCount));
 					// Add result to heapfile
 					// ----------------------
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
@@ -638,25 +653,27 @@ public class BP_Triple_Join implements GlobalConst {
 					}
 					// ----------------------
 				}
-				// try {
-				// 	if (rstream != null) {
-				// 		rstream.closestream();
-				// 		rstream = null;
-				// 	}
-				// } catch (Exception e) {
-				// 	System.out.println("Error in closing stream in BT_Triple_Join");
-				// 	e.printStackTrace();
-				// }
 				// Increment outer stream
 				// ----------------------
-				if(inner_quad != null){
-					outer_bp = outerSort.get_next();
-					// outer_bp = left_itr.get_next();
+				outer_bp = outerSort.get_next();
+				// outer_bp = left_itr.get_next();
 
-					if(outer_bp != null){
-						labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
-						label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+				if(outer_bp != null){
+					labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
+					label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+				}
+				// ----------------------
+
+				// Set rstream to null
+				// ----------------------
+				try {
+					if (rstream != null) {
+						rstream.closestream();
+						rstream = null;
 					}
+				} catch (Exception e) {
+					System.out.println("Error in closing stream in BT_Triple_Join");
+					e.printStackTrace();
 				}
 				// ----------------------
 			}

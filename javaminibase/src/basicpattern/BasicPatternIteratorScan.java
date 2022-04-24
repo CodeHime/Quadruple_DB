@@ -15,6 +15,7 @@ import heap.HFBufMgrException;
 import heap.HFDiskMgrException;
 import heap.HFException;
 import heap.Heapfile;
+import heap.InvalidSlotNumberException;
 import heap.InvalidTupleSizeException;
 import heap.InvalidTypeException;
 import heap.Scan;
@@ -140,6 +141,28 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
 
   public Heapfile getHeapFile(){
     return this.f;
+  }
+
+  public QuadrupleHeapfile getQuadrupleHeapFile(){
+    return this.q;
+  }
+
+  public boolean isEmpty(){
+    boolean bool = true;
+    try {
+      if((f != null)){
+        try {
+          bool = f.getRecCnt() < 1;
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      } else{
+        bool = q.getQuadrupleCnt() < 1;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return bool;
   }
 
   public BasicPattern get_next()

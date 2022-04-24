@@ -297,3 +297,6 @@ query testDB_1 query2.txt 1000 1	Execution Time: 7725	Reads: 252	Writes: 0
 query testDB_1 query2.txt 1000 1	Execution Time: 241	Reads: 286	Writes: 0
 query testDB_1 query2.txt 1000 1	Execution Time: 7923	Reads: 252	Writes: 0
 query testDB_1 query2.txt 1000 1	Execution Time: 7991	Reads: 252	Writes: 0
+query testDB_1 query2.txt 1000 2	Execution Time: 6222	Reads: 299	Writes: 0
+query testDB_1 query2.txt 1000 2	Execution Time: 6973	Reads: 319	Writes: 0
+query testDB_1 query4.txt 1000 2	Execution Time: 155	Reads: 8	Writes: 0

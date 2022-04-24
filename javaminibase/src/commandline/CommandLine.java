@@ -462,21 +462,20 @@ public class CommandLine {
 						btj.getNumLeftNodes());
 				System.out.println(left_itr.getFileName());
 
-				BasicPatternIteratorScan temp_left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
-						btj.getNumLeftNodes());
-				
+
 				int bpCount = 0;
-				if(temp_left_itr.get_next() != null){
+				if (left_itr.getHeapFile().getRecCnt() > 1)
+				{
 					// Print results
 					BPSort sort = new BPSort(left_itr, new BPOrder(sort_order), SortNodeIDPos, n_pages);
 
 					BasicPattern bp = sort.get_next();
 					// BasicPattern bp = left_itr.get_next();
+					
 					while (bp != null) {
 						bpCount++;
 						bp.print();
 						bp = sort.get_next();
-						System.out.println(database.getEntityHeapFile().getLabel(bp.getEIDFld(3).returnLID()).getLabel());
 						// bp = left_itr.get_next();
 					}
 				}

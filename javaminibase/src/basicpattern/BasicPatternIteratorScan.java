@@ -137,6 +137,11 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
   public String getFileName(){
     return filename;
   }
+
+  public Heapfile getHeapFile(){
+    return this.f;
+  }
+
   public BasicPattern get_next()
       throws IOException,
       JoinsException,

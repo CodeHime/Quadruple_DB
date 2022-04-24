@@ -1,10 +1,10 @@
 S( J(
 
-      J([*,*,*,*],
+      J([*,"title",*,*],
 
-           1,0,"Jorunn_Danielsen",*,*,*,{},1,1),
+           0,0,"Jorunn_Danielsen",*,*,*,{1},1,1),
 
-      2,0,"Jorunn_Danielsen",*,*,*,{1,2},1,1)
+      1,0,"Jorunn_Danielsen",*,*,*,{1,2},1,1)
 
    0, 2, 32
 

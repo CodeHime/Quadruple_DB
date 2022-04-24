@@ -120,7 +120,7 @@ public class BP_Triple_Join implements GlobalConst {
 			this.amt_of_mem = amt_of_mem;
 			// Number of entites in given BP
 			this.num_left_nodes = num_left_nodes;
-			this.BPJoinNodePosition = BPJoinNodePosition + 1;
+			this.BPJoinNodePosition = BPJoinNodePosition + 2;
 			this.JoinOnSubjectorObject = JoinOnSubjectorObject;
 			this.LeftOutNodePositions = LeftOutNodePositions;
 			this.OutputRightSubject = OutputRightSubject;
@@ -253,6 +253,12 @@ public class BP_Triple_Join implements GlobalConst {
 				} else {
 					join_eid_inner = inner_quad.getObjectQid();
 				}
+
+				// String label1 = _rdfdb.getEntityHeapFile().getLabel(join_eid_outer.returnLID()).getLabel();
+				// String label2 = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
+				// System.out.println(label1);
+				// System.out.println(label2);
+
 				if (join_eid_outer.equals(join_eid_inner)) {
 					// Match found so calculate new confidence
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),

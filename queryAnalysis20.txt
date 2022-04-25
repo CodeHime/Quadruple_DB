@@ -1,0 +1,6 @@
+S( J(
+      J(["Schuyler_Erle","knows",*,*],
+           0,0,"Schuyler_Erle","knows",*,*,{1,2},0,0),
+      0,0,"Schuyler_Erle","knows",*,*,{1,2},1,1)
+   0, 2, 32
+)

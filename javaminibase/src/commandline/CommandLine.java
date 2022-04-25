@@ -124,15 +124,18 @@ public class CommandLine {
 			// stream.getNext()) {
 			// INSIGHT: for #times query: #total writes <
 			// BufferSize-SortBufferSize-#write/iteration, else error
+			int quadCount = 0;
 			Quadruple quad = stream.getNext();
 			while (quad != null) {
 				try {
 					database.getQuadrupleString(quad);
 					quad = stream.getNext();
+					quadCount++;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+			System.out.println("Number of Quadruples: "+Integer.toString(quadCount));
 			stream.closestream();
 			sysdef.JavabaseBM.flushAllPages();
 
@@ -303,7 +306,8 @@ public class CommandLine {
 		String query = new String(Files.readAllBytes(Paths.get(queryfile)));
 
 		// Remove newlines and whitespaces
-		query = query.replace("\n", "").replace("\r", "");
+		// query = query.replace("\n", "").replace("\r", "");
+		query = query.replace("\n", "").replace("\r", "").replace("\t", "");
 		query = query.replaceAll("\\s+", "");
 
 		String[] strs = query.split("\\),");
@@ -498,7 +502,7 @@ public class CommandLine {
 					
 					while (bp != null) {
 						bpCount++;
-						bp.print();
+						// bp.print();
 						bp = sort.get_next();
 						// bp = left_itr.get_next();
 					}

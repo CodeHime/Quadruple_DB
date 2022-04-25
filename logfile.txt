@@ -432,3 +432,229 @@ query testDB_1 query3.txt 1000 3	Execution Time: 4674	Reads: 289	Writes: 0
 query testDB_1 query4.txt 1000 3	Execution Time: 2946	Reads: 8	Writes: 0
 query testDB_1 query3.txt 1000 2	Execution Time: 728890	Reads: 465	Writes: 262
 query testDB_1 query3.txt 1000 3	Execution Time: 3513	Reads: 289	Writes: 0
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3429	Reads: 2	Writes: 383
+query testDB_1 query1.txt 1000 1	Execution Time: 7923	Reads: 254	Writes: 0
+query testDB_1 query1.txt 1000 2	Execution Time: 8766	Reads: 319	Writes: 0
+query testDB_1 query1.txt 1000 3	Execution Time: 394	Reads: 289	Writes: 0
+query testDB_1 query1.txt 1000 4	Execution Time: 1586	Reads: 289	Writes: 0
+query testDB_1 query2.txt 1000 1	Execution Time: 7267	Reads: 252	Writes: 0
+query testDB_1 query2.txt 1000 2	Execution Time: 6792	Reads: 299	Writes: 0
+query testDB_1 query2.txt 1000 3	Execution Time: 199	Reads: 285	Writes: 0
+query testDB_1 query1.txt 100 1	Execution Time: 11703	Reads: 5028820	Writes: 14201
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3244	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis1.txt 1000 1	Execution Time: 1262	Reads: 280	Writes: 0
+query testDB_1 queryAnalysis1.txt 100 1	Execution Time: 1764	Reads: 792670	Writes: 1956
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3096	Reads: 2	Writes: 383
+query testDB_1 1 3 crschmidt * * * 1000	Execution Time: 262	Reads: 273	Writes: 138
+query testDB_1 1 3 crschmidt * * * 1000	Execution Time: 195	Reads: 250	Writes: 132
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3364	Reads: 2	Writes: 383
+query testDB_1 1 1 * Image * * 1000	Execution Time: 112	Reads: 282	Writes: 132
+query testDB_1 1 1 Kyo_Nagashima * * * 1000	Execution Time: 124	Reads: 287	Writes: 132
+query testDB_1 1 1 * depiction * * 1000	Execution Time: 121	Reads: 289	Writes: 132
+query testDB_1 1 1 * firstName * * 1000	Execution Time: 136	Reads: 289	Writes: 132
+query testDB_1 1 1 crschmidt knows * * 1000	Execution Time: 124	Reads: 270	Writes: 133
+query testDB_1 1 1 crschmidt * * * 1000	Execution Time: 132	Reads: 273	Writes: 138
+query testDB_1 1 1 * weblog * * 1000	Execution Time: 148	Reads: 286	Writes: 132
+query testDB_1 1 1 * knows * 0.5 1000	Execution Time: 177	Reads: 290	Writes: 132
+query testDB_1 1 1 * seeAlso * * 1000	Execution Time: 192	Reads: 289	Writes: 132
+query testDB_1 1 1 * knows * 0.75 1000	Execution Time: 135	Reads: 290	Writes: 132
+query testDB_1 1 1 * knows * 0.25 1000	Execution Time: 237	Reads: 290	Writes: 132
+query testDB_1 1 1 * knows * * 1000	Execution Time: 296	Reads: 290	Writes: 132
+query testDB_1 1 1 * name * * 1000	Execution Time: 233	Reads: 290	Writes: 132
+query testDB_1 1 1 * type * * 1000	Execution Time: 304	Reads: 290	Writes: 132
+query testDB_1 1 1 * * Person * 1000	Execution Time: 220	Reads: 184	Writes: 24
+query testDB_1 1 1 * * * 0.75 1000	Execution Time: 426	Reads: 288	Writes: 131
+query testDB_1 1 1 * * * 0.25 1000	Execution Time: 1667	Reads: 288	Writes: 132
+query testDB_1 1 1 * * * 0.75 1000	Execution Time: 415	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.5 1000	Execution Time: 927	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.2 1000	Execution Time: 1698	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * 0.8 1000	Execution Time: 355	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.7 1000	Execution Time: 483	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.6 1000	Execution Time: 644	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.5 1000	Execution Time: 997	Reads: 289	Writes: 131
+query testDB_1 1 1 * * * 0.4 1000	Execution Time: 1429	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * 0.3 1000	Execution Time: 1479	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * 0.25 1000	Execution Time: 1668	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * 0.2 1000	Execution Time: 1832	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * 0.1 1000	Execution Time: 2062	Reads: 289	Writes: 132
+query testDB_1 1 1 * * * * 1000	Execution Time: 2091	Reads: 289	Writes: 307
+query testDB_1 1 1 * knows * 0.25 1000	Execution Time: 227	Reads: 291	Writes: 132
+query testDB_1 1 1 * knows * 0.75 1000	Execution Time: 134	Reads: 291	Writes: 132
+query testDB_1 queryAnalysis1.txt 100 1	Execution Time: 2008	Reads: 792861	Writes: 1955
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 319831	Reads: 4030	Writes: 8065
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3528	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 320544	Reads: 4984	Writes: 9149
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3417	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 10000 4	Execution Time: 495884	Reads: 3771	Writes: 3633
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3215	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 10000 4	Execution Time: 14616	Reads: 285	Writes: 0
+query testDB_1 queryAnalysis2.txt 100 4	Execution Time: 8114	Reads: 6192361	Writes: 9478
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3469	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 13618	Reads: 445	Writes: 289
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 161621	Reads: 575	Writes: 307
+query testDB_1 queryAnalysis3.txt 1000 1	Execution Time: 11333	Reads: 287	Writes: 0
+query testDB_1 queryAnalysis3.txt 100 1	Execution Time: 14639	Reads: 6823180	Writes: 23305
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 4048	Reads: 250	Writes: 0
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 158320	Reads: 410	Writes: 175
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 8386	Reads: 285	Writes: 59
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 11372	Reads: 256	Writes: 0
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 4232	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 100 1	Execution Time: 16224	Reads: 7644792	Writes: 26901
+query testDB_1 queryAnalysis2.txt 100 4	Execution Time: 473	Reads: 271508	Writes: 637
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3621	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 100 4	Execution Time: 1087	Reads: 726177	Writes: 1289
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3753	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis1.txt 1000 1	Execution Time: 1290	Reads: 279	Writes: 0
+query testDB_1 queryAnalysis1.txt 1000 2	Execution Time: 1071	Reads: 284	Writes: 0
+query testDB_1 queryAnalysis1.txt 1000 3	Execution Time: 412	Reads: 279	Writes: 0
+query testDB_1 queryAnalysis1.txt 1000 4	Execution Time: 1202	Reads: 279	Writes: 0
+query testDB_1 queryAnalysis2.txt 1000 1	Execution Time: 11571	Reads: 256	Writes: 0
+query testDB_1 queryAnalysis2.txt 1000 2	Execution Time: 293	Reads: 315	Writes: 0
+query testDB_1 queryAnalysis2.txt 1000 3	Execution Time: 690	Reads: 286	Writes: 134
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 6519	Reads: 285	Writes: 34
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 7041	Reads: 285	Writes: 34
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3168	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 6105	Reads: 285	Writes: 34
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3237	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 6317	Reads: 285	Writes: 34
+query testDB_1 queryAnalysis2.txt 10000 4	Execution Time: 10009	Reads: 285	Writes: 0
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3364	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 1000 4	Execution Time: 6758	Reads: 285	Writes: 34
+query testDB_1 queryAnalysis3.txt 1000 1	Execution Time: 10507	Reads: 287	Writes: 0
+query testDB_1 queryAnalysis3.txt 1000 2	Execution Time: 10488	Reads: 322	Writes: 0
+query testDB_1 queryAnalysis3.txt 1000 3	Execution Time: 1138	Reads: 287	Writes: 7
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3186	Reads: 2	Writes: 383
+query testDB_1 query1.txt 100 4	Execution Time: 685	Reads: 417816	Writes: 705
+query testDB_1 query1.txt 1000 4	Execution Time: 1730	Reads: 289	Writes: 0
+query testDB_1 query1.txt 100 4	Execution Time: 279	Reads: 126200	Writes: 378
+query testDB_1 query1.txt 1000 4	Execution Time: 1657	Reads: 289	Writes: 0
+query testDB_1 query2.txt 1000 4	Execution Time: 296	Reads: 288	Writes: 0
+query testDB_1 query3.txt 1000 4	Execution Time: 2313	Reads: 289	Writes: 0
+query testDB_1 query3.txt 1000 1	Execution Time: 286833	Reads: 346	Writes: 228
+query testDB_1 queryAnalysis4.txt 1000 1	Execution Time: 13765	Reads: 287	Writes: 0
+query testDB_1 queryAnalysis4.txt 1000 2	Execution Time: 14309	Reads: 321	Writes: 0
+query testDB_1 queryAnalysis5.txt 1000 3	Execution Time: 287950	Reads: 590	Writes: 9272
+query testDB_1 queryAnalysis4.txt 1000 3	Execution Time: 1223	Reads: 536	Writes: 265
+query testDB_1 queryAnalysis5.txt 1000 1	Execution Time: 496536	Reads: 326	Writes: 8894
+query testDB_1 queryAnalysis5.txt 1000 4	Execution Time: 315	Reads: 268	Writes: 0
+query testDB_1 queryAnalysis5.txt 1000 1	Execution Time: 7038	Reads: 252	Writes: 0
+query testDB_1 queryAnalysis5.txt 1000 3	Execution Time: 484	Reads: 268	Writes: 42
+query testDB_1 queryAnalysis5.txt 1000 1	Execution Time: 7516	Reads: 252	Writes: 0
+query testDB_1 queryAnalysis5.txt 1000 2	Execution Time: 210	Reads: 264	Writes: 0
+query testDB_1 queryAnalysis5.txt 1000 3	Execution Time: 487	Reads: 268	Writes: 42
+query testDB_1 queryAnalysis5.txt 1000 4	Execution Time: 298	Reads: 268	Writes: 0
+query testDB_1 queryAnalysis6.txt 1000 1	Execution Time: 35680	Reads: 251	Writes: 12
+query testDB_1 queryAnalysis6.txt 1000 3	Execution Time: 491	Reads: 271	Writes: 0
+query testDB_1 queryAnalysis6.txt 1000 2	Execution Time: 323	Reads: 313	Writes: 0
+query testDB_1 queryAnalysis6.txt 1000 1	Execution Time: 34019	Reads: 262	Writes: 12
+query testDB_1 queryAnalysis6.txt 1000 3	Execution Time: 393	Reads: 271	Writes: 0
+query testDB_1 queryAnalysis6.txt 1000 4	Execution Time: 2696	Reads: 271	Writes: 0
+query testDB_1 queryAnalysis7.txt 1000 1	Execution Time: 30515	Reads: 284	Writes: 14
+query testDB_1 queryAnalysis7.txt 1000 2	Execution Time: 31341	Reads: 322	Writes: 0
+query testDB_1 queryAnalysis7.txt 1000 3	Execution Time: 7563	Reads: 558	Writes: 295
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 4272	Reads: 2	Writes: 383
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3496	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis8.txt 1000 1	Execution Time: 245721	Reads: 768	Writes: 2898
+query testDB_1 queryAnalysis8.txt 1000 3	Execution Time: 107251	Reads: 1185	Writes: 3223
+query testDB_1 queryAnalysis8.txt 1000 1	Execution Time: 245710	Reads: 768	Writes: 2930
+query testDB_1 queryAnalysis7.txt 100 1	Execution Time: 43520	Reads: 20692192	Writes: 78199
+query testDB_1 queryAnalysis7.txt 1000 2	Execution Time: 31300	Reads: 322	Writes: 0
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3945	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis1.txt 100 1	Execution Time: 1781	Reads: 792669	Writes: 1956
+query testDB_1 queryAnalysis1.txt 100 2	Execution Time: 1493	Reads: 643606	Writes: 1661
+query testDB_1 queryAnalysis1.txt 100 3	Execution Time: 585	Reads: 309816	Writes: 566
+query testDB_1 queryAnalysis1.txt 100 4	Execution Time: 1192	Reads: 838801	Writes: 1027
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3464	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis2.txt 100 1	Execution Time: 16818	Reads: 7644792	Writes: 26901
+query testDB_1 queryAnalysis2.txt 100 2	Execution Time: 386	Reads: 138723	Writes: 1462
+query testDB_1 queryAnalysis2.txt 100 3	Execution Time: 914	Reads: 310187	Writes: 859
+query testDB_1 queryAnalysis3.txt 100 1	Execution Time: 15100	Reads: 6824867	Writes: 23305
+query testDB_1 queryAnalysis3.txt 100 2	Execution Time: 14564	Reads: 6359903	Writes: 15608
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3797	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis3.txt 100 3	Execution Time: 1356	Reads: 312940	Writes: 839
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3257	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis4.txt 100 1	Execution Time: 20469	Reads: 9248839	Writes: 38724
+query testDB_1 queryAnalysis4.txt 100 2	Execution Time: 19590	Reads: 8753416	Writes: 21497
+query testDB_1 queryAnalysis4.txt 100 3	Execution Time: 1397	Reads: 309469	Writes: 1041
+query testDB_1 queryAnalysis5.txt 100 1	Execution Time: 10444	Reads: 4397808	Writes: 18527
+query testDB_1 queryAnalysis5.txt 100 2	Execution Time: 275	Reads: 93188	Writes: 910
+query testDB_1 queryAnalysis5.txt 100 3	Execution Time: 270	Reads: 126030	Writes: 457
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3221	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis5.txt 100 3	Execution Time: 633	Reads: 216904	Writes: 692
+query testDB_1 queryAnalysis6.txt 100 1	Execution Time: 50413	Reads: 24408675	Writes: 99182
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3248	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis6.txt 100 2	Execution Time: 399	Reads: 119017	Writes: 1221
+query testDB_1 queryAnalysis6.txt 100 3	Execution Time: 616	Reads: 315129	Writes: 1030
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3360	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis6.txt 100 3	Execution Time: 618	Reads: 315136	Writes: 1028
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3119	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis7.txt 100 1	Execution Time: 42575	Reads: 20692192	Writes: 78199
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3358	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis7.txt 100 2	Execution Time: 41203	Reads: 19566579	Writes: 47374
+query testDB_1 queryAnalysis7.txt 100 3	Execution Time: 446	Reads: 217261	Writes: 700
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3077	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis7.txt 100 3	Execution Time: 7226	Reads: 312378	Writes: 993
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3188	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis8.txt 100 1	Execution Time: 310603	Reads: 142648582	Writes: 883314
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3268	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis8.txt 100 3	Execution Time: 99712	Reads: 454653	Writes: 15576
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3349	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis6.txt 100 3	Execution Time: 610	Reads: 315136	Writes: 1028
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3139	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis6.txt 100 3	Execution Time: 633	Reads: 315136	Writes: 1028
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3514	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis3.txt 100 3	Execution Time: 1336	Reads: 312940	Writes: 839
+query testDB_1 1 1 Christopher_Richard_Gabriel * * * 1000	Execution Time: 196	Reads: 251	Writes: 132
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3006	Reads: 2	Writes: 383
+query testDB_1 1 1 Christopher_Richard_Gabriel * * * 1000	Execution Time: 111	Reads: 261	Writes: 132
+query testDB_1 1 1 * * male * 1000	Execution Time: 20	Reads: 160	Writes: 6
+query testDB_1 1 1 * weblog * 0.9 1000	Execution Time: 107	Reads: 284	Writes: 132
+query testDB_1 1 1 * homepage * 0.9 1000	Execution Time: 107	Reads: 285	Writes: 132
+query testDB_1 1 1 Schuyler_Erle knows * * 1000	Execution Time: 110	Reads: 293	Writes: 133
+query testDB_1 1 1 * schoolHomepage * 0.75 1000	Execution Time: 104	Reads: 289	Writes: 132
+query testDB_1 1 1 * weblog * 0.8 1000	Execution Time: 113	Reads: 284	Writes: 132
+query testDB_1 1 1 * knows * 0.9 1000	Execution Time: 115	Reads: 290	Writes: 132
+query testDB_1 1 1 David_Dorward * * 0.75 1000	Execution Time: 95	Reads: 278	Writes: 132
+query testDB_1 1 1 David_Dorward * * * 1000	Execution Time: 116	Reads: 279	Writes: 132
+query testDB_1 1 1 * workplaceHomepage * 0.75 1000	Execution Time: 107	Reads: 285	Writes: 132
+query testDB_1 1 1 * workplaceHomepage * * 1000	Execution Time: 114	Reads: 289	Writes: 132
+query testDB_1 1 1 * * Person 0.9 1000	Execution Time: 47	Reads: 184	Writes: 24
+query testDB_1 1 1 * aimChatID * * 1000	Execution Time: 108	Reads: 289	Writes: 132
+query testDB_1 1 1 * name * 0.9 1000	Execution Time: 111	Reads: 290	Writes: 132
+query testDB_1 1 1 * * Mr * 1000	Execution Time: 35	Reads: 160	Writes: 8
+query testDB_1 1 1 * seeAlso * 0.8 1000	Execution Time: 112	Reads: 289	Writes: 132
+query testDB_1 1 1 * seeAlso * 0.75 1000	Execution Time: 113	Reads: 289	Writes: 132
+query testDB_1 1 1 * knows * 0.8 1000	Execution Time: 121	Reads: 290	Writes: 132
+query testDB_1 1 1 * interest * * 1000	Execution Time: 122	Reads: 286	Writes: 132
+query testDB_1 1 1 * knows * 0.75 1000	Execution Time: 133	Reads: 290	Writes: 132
+query testDB_1 1 1 * name * 0.8 1000	Execution Time: 120	Reads: 290	Writes: 138
+query testDB_1 1 1 * seeAlso * 0.5 1000	Execution Time: 133	Reads: 289	Writes: 132
+query testDB_1 queryAnalysis16.txt 100 1	Execution Time: 17252	Reads: 8420437	Writes: 20576
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3132	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis16.txt 100 2	Execution Time: 16485	Reads: 7991873	Writes: 20331
+query testDB_1 queryAnalysis16.txt 100 3	Execution Time: 562	Reads: 311082	Writes: 610
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3200	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis16.txt 100 3	Execution Time: 768	Reads: 311276	Writes: 791
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3364	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis17.txt 100 1	Execution Time: 50	Reads: 6317	Writes: 213
+query testDB_1 queryAnalysis17.txt 100 2	Execution Time: 36	Reads: 5378	Writes: 225
+query testDB_1 queryAnalysis17.txt 100 3	Execution Time: 49	Reads: 1482	Writes: 43
+query testDB_1 queryAnalysis18.txt 100 1	Execution Time: 5016	Reads: 2310792	Writes: 5916
+query testDB_1 queryAnalysis18.txt 100 2	Execution Time: 4695	Reads: 2089351	Writes: 5277
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3119	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis18.txt 100 1	Execution Time: 4888	Reads: 2310823	Writes: 5916
+query testDB_1 queryAnalysis18.txt 100 3	Execution Time: 420	Reads: 217065	Writes: 449
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3485	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis18.txt 100 3	Execution Time: 599	Reads: 311585	Writes: 593
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3068	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis19.txt 100 1	Execution Time: 5593	Reads: 2538014	Writes: 7383
+query testDB_1 queryAnalysis19.txt 100 2	Execution Time: 5037	Reads: 2308049	Writes: 5854
+query testDB_1 queryAnalysis19.txt 100 3	Execution Time: 624	Reads: 312868	Writes: 670
+query testDB_1 queryAnalysis20.txt 100 1	Execution Time: 91804	Reads: 42313832	Writes: 123789
+query testDB_1 queryAnalysis20.txt 100 2	Execution Time: 90032	Reads: 39631792	Writes: 123887
+query testDB_1 queryAnalysis20.txt 100 3	Execution Time: 12475	Reads: 326167	Writes: 3756
+query testDB_1 queryAnalysis21.txt 100 1	Execution Time: 9231	Reads: 4351702	Writes: 13462
+query testDB_1 queryAnalysis21.txt 100 2	Execution Time: 8843	Reads: 4042969	Writes: 10101
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3173	Reads: 2	Writes: 383
+query testDB_1 queryAnalysis21.txt 100 3	Execution Time: 872	Reads: 310463	Writes: 747
+batchinsert phase2_test_data_big.txt 1 testDB	Execution Time: 3039	Reads: 2	Writes: 383

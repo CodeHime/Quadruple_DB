@@ -149,16 +149,18 @@ public class BasicPatternIteratorScan extends BPIterator implements Flags {
 
   public boolean isEmpty(){
     boolean bool = true;
+    boolean boolF = true;
+    boolean boolQ = true;
     try {
       if((f != null)){
-        try {
-          bool = f.getRecCnt() < 1;
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
-      } else{
-        bool = q.getQuadrupleCnt() < 1;
+        boolF = f.getRecCnt() < 1;
       }
+
+      if((q != null)){
+        boolQ = q.getQuadrupleCnt() < 1;
+      }
+
+      bool = boolF && boolQ;
     } catch (Exception e) {
       e.printStackTrace();
     }

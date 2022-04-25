@@ -438,7 +438,44 @@ public class CommandLine {
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
 
-				// // Perform second join
+				// // Test code: DELETE or COMMENT
+				// //------------------------------------------------
+				// if (left_itr.getHeapFile().getRecCnt() > 1)
+				// {
+				// 	// Print results
+				// 	BasicPattern testBP = left_itr.get_next();
+				// 	int bpTestCount = 0;					
+				// 	while (testBP != null) {
+				// 		bpTestCount++;
+				// 		testBP.print();
+				// 		testBP = left_itr.get_next();
+				// 	}
+				// 	System.out.println(bpTestCount);
+
+				// 	Stream rstream;
+				// 	if (JoinOnSubjectorObject == 0) {
+				// 		rstream = new Stream(database, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
+				// 				RightObjectFilter, RightConfidenceFilter);
+				// 	} else {
+				// 		rstream = new Stream(database, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
+				// 				RightObjectFilter, RightConfidenceFilter);
+				// 	}
+
+				// 	Quadruple testQuad = rstream.getNext();
+				// 	int quadTestCount = 0;					
+				// 	while (testQuad != null) {
+				// 		quadTestCount++;
+				// 		String subject = database.getEntityHeapFile().getLabel(testQuad.getSubjectQid().returnLID()).getLabel();
+				// 		String predicate = database.getPredicateHeapFile().getLabel(testQuad.getPredicateID().returnLID()).getLabel();
+				// 		String object = database.getEntityHeapFile().getLabel(testQuad.getObjectQid().returnLID()).getLabel();
+				// 		System.out.println("["+Double.toString(testQuad.getConfidence())+" "+subject+" "+predicate+" "+object+"]");
+				// 		testQuad = rstream.getNext();
+				// 	}
+				// 	System.out.println(bpTestCount);
+				// }
+				// //------------------------------------------------
+
+				// Perform second join
 				btj = new BP_Triple_Join(amt_of_mem, btj.getNumLeftNodes(), left_itr, BPJoinNodePosition2,
 						JoinOnSubjectorObject2, RightSubjectFilter2, RightPredicateFilter2, RightObjectFilter2,
 						RightConfidenceFilter2, LeftOutNodePositions2, OutputRightSubject2, OutputRightObject2);
@@ -449,7 +486,6 @@ public class CommandLine {
 				// Reset left iterator
 				left_itr = new BasicPatternIteratorScan(left_itr.getFileName() + joinTypeFileNames[i],
 						btj.getNumLeftNodes());
-
 
 				int bpCount = 0;
 				if (left_itr.getHeapFile().getRecCnt() > 1)

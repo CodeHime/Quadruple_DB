@@ -528,7 +528,6 @@ public class BP_Triple_Join implements GlobalConst {
 		}
 		inner_quad = rstream.getNext();
 		int innerCount = 0;
-		System.out.println(rstream.getResults().getQuadrupleCnt());
 
 		// Start of current partition
 		while ((outer_bp != null) && (inner_quad != null)) {
@@ -543,6 +542,8 @@ public class BP_Triple_Join implements GlobalConst {
 
 			LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
 			String label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+			// System.out.println("label_inner: "+label_inner);
+			// System.out.println("label_outer: "+label_outer);
 
 			// Continue scan of outer loop
 			while ((label_outer.compareTo(label_inner) < 0) && (outer_bp != null)) {
@@ -552,6 +553,7 @@ public class BP_Triple_Join implements GlobalConst {
 				if (outer_bp != null) {
 					labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
 					label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+					// System.out.println("label_outer (match loop): "+label_outer);
 				}
 			}
 
@@ -567,6 +569,7 @@ public class BP_Triple_Join implements GlobalConst {
 						join_eid_inner = inner_quad.getObjectQid();
 					}
 					label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
+					// System.out.println("label_inner (match loop): "+label_inner);
 				}
 			}
 
@@ -589,36 +592,9 @@ public class BP_Triple_Join implements GlobalConst {
 			
 			int partInnerCount = 0;
 			while ((label_outer.compareTo(label_inner) == 0) && (outer_bp != null)) {
-				System.out.println("innerCount: "+Integer.toString(innerCount));
-				// Reset rstream
-				// ----------------------
-				if (rstream == null) {
-					if (JoinOnSubjectorObject == 0) {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
-								RightObjectFilter, RightConfidenceFilter);
-					} else {
-						rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
-								RightObjectFilter, RightConfidenceFilter);
-					}
-					inner_quad = rstream.getNext();
-				}
-				// ----------------------
-				// rstream.reset_scan();
-				for(int i=0; i<innerCount; i++){
-					inner_quad = rstream.getNext();
-				}
-				System.out.println(inner_quad);
-				if(inner_quad != null){
-					if (JoinOnSubjectorObject == 0) {
-						join_eid_inner = inner_quad.getSubjectQid();
-					} else {
-						join_eid_inner = inner_quad.getObjectQid();
-					}
-					label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
-				}
 				partInnerCount = 0;
 				while ((label_outer.compareTo(label_inner) == 0) && (inner_quad != null)) {
-					System.out.println("partInnerCount: "+Integer.toString(partInnerCount));
+					// System.out.println("partInnerCount: "+Integer.toString(partInnerCount));
 					// Add result to heapfile
 					// ----------------------
 					double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
@@ -650,6 +626,7 @@ public class BP_Triple_Join implements GlobalConst {
 							join_eid_inner = inner_quad.getObjectQid();
 						}
 						label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
+						// System.out.println("label_inner (inner loop): "+label_inner);
 					}
 					// ----------------------
 				}
@@ -661,6 +638,7 @@ public class BP_Triple_Join implements GlobalConst {
 				if(outer_bp != null){
 					labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
 					label_outer = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+					// System.out.println("label_outer (outer loop): "+label_outer);
 				}
 				// ----------------------
 
@@ -670,6 +648,32 @@ public class BP_Triple_Join implements GlobalConst {
 					if (rstream != null) {
 						rstream.closestream();
 						rstream = null;
+
+						// System.out.println("innerCount: "+Integer.toString(innerCount));
+						// Reset rstream
+						// ----------------------
+						if (JoinOnSubjectorObject == 0) {
+							rstream = new Stream(_rdfdb, QuadrupleOrder.SubjectConfidence, RightSubjectFilter, RightPredicateFilter,
+									RightObjectFilter, RightConfidenceFilter);
+						} else {
+							rstream = new Stream(_rdfdb, QuadrupleOrder.ObjectConfidence, RightSubjectFilter, RightPredicateFilter,
+									RightObjectFilter, RightConfidenceFilter);
+						}
+						inner_quad = rstream.getNext();
+						// ----------------------
+						// rstream.reset_scan();
+						for(int i=0; i<innerCount; i++){
+							inner_quad = rstream.getNext();
+						}
+						if(inner_quad != null){
+							if (JoinOnSubjectorObject == 0) {
+								join_eid_inner = inner_quad.getSubjectQid();
+							} else {
+								join_eid_inner = inner_quad.getObjectQid();
+							}
+							label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
+							// System.out.println("label_inner (outer loop): "+label_inner);
+						}
 					}
 				} catch (Exception e) {
 					System.out.println("Error in closing stream in BT_Triple_Join");
@@ -680,11 +684,6 @@ public class BP_Triple_Join implements GlobalConst {
 			// Initialize search for next partition
 			innerCount += partInnerCount;
 		}
-
-		// if(outerSort != null){
-		// 	outerSort.close();
-		// 	outerSort = null;
-		// }
 
 		COMPLETED_FLAG = true;
 		num_left_nodes = 1 + LeftOutNodePositions.length + OutputRightSubject + OutputRightObject;

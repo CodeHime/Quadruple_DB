@@ -82,6 +82,7 @@ public class BP_Triple_Join implements GlobalConst {
 	boolean COMPLETED_FLAG = false;
 
 	BPSort outerSort = null;
+
 	public int getNumLeftNodes() {
 		return num_left_nodes;
 	}
@@ -255,8 +256,10 @@ public class BP_Triple_Join implements GlobalConst {
 					join_eid_inner = inner_quad.getObjectQid();
 				}
 
-				// String label1 = _rdfdb.getEntityHeapFile().getLabel(join_eid_outer.returnLID()).getLabel();
-				// String label2 = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
+				// String label1 =
+				// _rdfdb.getEntityHeapFile().getLabel(join_eid_outer.returnLID()).getLabel();
+				// String label2 =
+				// _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
 				// System.out.println(label1);
 				// System.out.println(label2);
 
@@ -418,7 +421,7 @@ public class BP_Triple_Join implements GlobalConst {
 			LowMemException, UnknownKeyTypeException, Exception {
 		outer_bp = null;
 		_results = new Heapfile(left_itr.getFileName() + "bsi_nlj");
-		while ((outer_bp = left_itr.get_next()) != null){
+		while ((outer_bp = left_itr.get_next()) != null) {
 			BasicPattern older_bp = outer_bp;
 			// if (outer_bp.getDoubleFld(outer_bp.confidence_fld_num) < _minConfidence) {
 			// continue;
@@ -426,24 +429,25 @@ public class BP_Triple_Join implements GlobalConst {
 
 			LID labelID = outer_bp.getEIDFld(BPJoinNodePosition).returnLID();
 			String outer_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
-			
+
 			if (JoinOnSubjectorObject == 0) {
-				if (RightSubjectFilter.compareToIgnoreCase("*") != 0){
-					if(outer_bp_label.compareToIgnoreCase(RightSubjectFilter)!=0){
+				if (RightSubjectFilter.compareToIgnoreCase("*") != 0) {
+					if (outer_bp_label.compareToIgnoreCase(RightSubjectFilter) != 0) {
+						continue;
+					}
+				}
+			} else {
+				if (RightObjectFilter.compareToIgnoreCase("*") != 0) {
+					if (outer_bp_label.compareToIgnoreCase(RightObjectFilter) != 0) {
 						continue;
 					}
 				}
 			}
-			else{
-				if (RightObjectFilter.compareToIgnoreCase("*") != 0){
-					if(outer_bp_label.compareToIgnoreCase(RightObjectFilter)!=0){
-						continue;
-					}
-				}
-			}
-			if (older_bp != null && rstream != null && outer_bp.getEIDFld(BPJoinNodePosition).equals(older_bp.getEIDFld(BPJoinNodePosition))) {
+			if (older_bp != null && rstream != null
+					&& outer_bp.getEIDFld(BPJoinNodePosition).equals(older_bp.getEIDFld(BPJoinNodePosition))) {
 				// labelID = older_bp.getEIDFld(BPJoinNodePosition).returnLID();
-				// String older_bp_label = _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
+				// String older_bp_label =
+				// _rdfdb.getEntityHeapFile().getLabel(labelID).getLabel();
 				rstream.reset_scan();
 			} else {
 				try {
@@ -461,11 +465,31 @@ public class BP_Triple_Join implements GlobalConst {
 				} else {
 					order = QuadrupleOrder.ObjectConfidence;
 				}
-				rstream = new Stream(_rdfdb, order, RightSubjectFilter, RightPredicateFilter, RightObjectFilter, RightConfidenceFilter);
+				rstream = new Stream(_rdfdb, order, RightSubjectFilter, RightPredicateFilter, RightObjectFilter,
+						RightConfidenceFilter);
 			}
 
 			while ((inner_quad = rstream.getNext()) != null) {
 				// Match found so calculate new confidence
+				if (JoinOnSubjectorObject == 0) {
+					if (RightSubjectFilter.compareToIgnoreCase("*") == 0) {
+						EID subjectid = inner_quad.getSubjectQid();
+						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
+
+						if (subjectid == null || !subjectid.equals(join_eid_outer)) {
+							continue;
+						}
+					}
+				} else {
+					if (RightObjectFilter.compareToIgnoreCase("*") == 0) {
+						EID objectid = inner_quad.getObjectQid();
+						EID join_eid_outer = outer_bp.getEIDFld(BPJoinNodePosition);
+
+						if (objectid == null || !objectid.equals(join_eid_outer)) {
+							continue;
+						}
+					}
+				}
 				double new_confidence = Math.min(outer_bp.getDoubleFld(outer_bp.confidence_fld_num),
 						inner_quad.getConfidence());
 
@@ -506,7 +530,7 @@ public class BP_Triple_Join implements GlobalConst {
 			throws IOException, InvalidTypeException, PageNotReadException, TupleUtilsException, SortException,
 			LowMemException, UnknownKeyTypeException, Exception {
 		_results = new Heapfile(left_itr.getFileName() + "smj");
-		
+
 		if (left_itr.isEmpty()){
 			COMPLETED_FLAG = true;
 			return COMPLETED_FLAG;
@@ -589,7 +613,7 @@ public class BP_Triple_Join implements GlobalConst {
 				label_inner = _rdfdb.getEntityHeapFile().getLabel(join_eid_inner.returnLID()).getLabel();
 			}
 			// -----------------------------------------
-			
+
 			int partInnerCount = 0;
 			while ((label_outer.compareTo(label_inner) == 0) && (outer_bp != null)) {
 				partInnerCount = 0;

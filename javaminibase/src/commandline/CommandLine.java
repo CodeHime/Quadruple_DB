@@ -414,7 +414,7 @@ public class CommandLine {
 			for (int i = 0; i < iterationsLength; i++) {
 				// Get left iterator with sorted values
 				Stream tempStream;
-				if (iterations[i] < 3) {
+				if (iterations[i] != 3) {
 					tempStream = new Stream(database, SubjectFilter, PredicateFilter, ObjectFilter,
 							ConfidenceFilter);
 				} else {
@@ -502,7 +502,7 @@ public class CommandLine {
 					
 					while (bp != null) {
 						bpCount++;
-						// bp.print();
+						bp.print();
 						bp = sort.get_next();
 						// bp = left_itr.get_next();
 					}

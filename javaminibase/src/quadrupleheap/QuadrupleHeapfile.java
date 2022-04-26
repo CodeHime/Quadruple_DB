@@ -220,7 +220,7 @@ public class QuadrupleHeapfile implements Filetype, GlobalConst {
 		if (name == null) {
 			// If the name is NULL, allocate a temporary name
 			// and no logging is required.
-			_fileName = "tempHeapFile";
+			_fileName = "tempQuadrupleHeapFile";
 			String useId = new String("user.name");
 			String userAccName;
 			userAccName = System.getProperty(useId);
@@ -982,4 +982,7 @@ public class QuadrupleHeapfile implements Filetype, GlobalConst {
 
 	} // end of delete_file_entry
 
+	public String getFilename(){
+		return _fileName;
+	}
 }// End of HeapFile

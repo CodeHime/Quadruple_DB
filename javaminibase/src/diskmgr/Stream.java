@@ -87,7 +87,7 @@ public class Stream implements GlobalConst {
 	boolean _needSort;
 	String _subjectFilter, _predicateFilter, _objectFilter;
 	String _confidenceFilter;
-	TScan qfs;
+	TScan qfs = null;
 
 	boolean _subjectNullFilter = false;
 	boolean _predicateNullFilter = false;
@@ -99,9 +99,9 @@ public class Stream implements GlobalConst {
 	PID _predicateID = new PID();
 	EID _objectID = new EID();
 
-	//int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
+	// int SORT_Q_NUM_PAGES = SystemDefs.JavabaseBM.getNumBuffers()/2;
 	int SORT_Q_NUM_PAGES = 16;
-	
+
 	Sort qsort = null;
 	QuadrupleHeapfile _results = null;
 	public TScan quadover = null;
@@ -122,8 +122,11 @@ public class Stream implements GlobalConst {
 			String confidenceFilter)
 			throws InvalidTupleSizeException,
 			IOException {
+		// TODO: KRima check if works for exact match
+		
 		// set null filters and filter values
 		_results = null;
+		_needSort=true;
 		init(rdfdatabase, orderType, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
 		// Scan file using index
 		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
@@ -139,15 +142,13 @@ public class Stream implements GlobalConst {
 				// the given filter as one of the column values used in the index is null
 				use_index = false;
 			}
-			if (ScanBTreeIndex()){
-					// Sort results
+			if (ScanBTreeIndex()) {
+				// Sort results
 				// TODO: set class name and define instance
 				// SORT: don't forget a default case ASK TANNER
 				// quadover = new TScan(_results);
 				try {
 					qfs = new TScan(_results);
-					// new QuadFileScan(_results);
-					// 0 means Ascending
 					QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
 					qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
 
@@ -155,17 +156,54 @@ public class Stream implements GlobalConst {
 					System.out.println(e);
 					e.printStackTrace();
 				}
-			}else {
+			} else {
 				System.out.println("No matching records found");
 			}
 
-			
+		}
+	}
+
+	public Stream(rdfDB rdfdatabase, String subjectFilter, String predicateFilter, String objectFilter,
+			String confidenceFilter)
+			throws InvalidTupleSizeException,
+			IOException {
+		// set null filters and filter values
+		_results = null;
+		_needSort=false;
+		init(rdfdatabase, 0, subjectFilter, predicateFilter, objectFilter, confidenceFilter);
+		// Scan file using index
+		if (!_subjectNullFilter & !_predicateNullFilter & !_objectNullFilter & !_confidenceNullFilter) {
+			// No nulls so we can perform a filter on all columns in the full btree
+			// scan_on_btree=> only one match will be found
+			scan_on_btree = true;
+		} else {
+			scan_on_btree = false;
+			if (indexValidForStream()) {
+				use_index = true;
+			} else {
+				// None of the above options were selected or the index cannot be created for
+				// the given filter as one of the column values used in the index is null
+				use_index = false;
+			}
+			if (ScanBTreeIndex()) {
+				try {
+					qfs = new TScan(_results);
+					// QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+					// qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("No matching records found");
+			}
 		}
 	}
 
 	// public QID getFirstQID() {
-	// 	// return this.quadover.get_firstQID();
-	// 	qsort.get_next();
+	// // return this.quadover.get_firstQID();
+	// qsort.get_next();
 	// }
 
 	public boolean indexValidForStream() {
@@ -256,7 +294,7 @@ public class Stream implements GlobalConst {
 		}
 
 		// if (!use_index) {
-		// 	_rdfdb.openrdfDB(name, 0);
+		// _rdfdb.openrdfDB(name, 0);
 		// }
 
 		try {
@@ -267,33 +305,32 @@ public class Stream implements GlobalConst {
 			// LabelHeapfile predicate_heap_file = _rdfdb.getPredicateHeapFile();
 			// LabelHeapfile entity_heap_file = _rdfdb.getEntityHeapFile();
 
-
 			byte quadruplePtr[] = new byte[32];
-			if(!_subjectNullFilter){
+			if (!_subjectNullFilter) {
 				EID subjectid = getEID(_subjectFilter);
-				if(subjectid == null){
+				if (subjectid == null) {
 					return false;
 				}
 				Convert.setIntValue(subjectid.pageNo.pid, 0, quadruplePtr);
 				Convert.setIntValue(subjectid.slotNo, 4, quadruplePtr);
 			}
-			if(!_predicateNullFilter){
+			if (!_predicateNullFilter) {
 				PID predicateid = getPID(_predicateFilter);
-				if(predicateid == null){
+				if (predicateid == null) {
 					return false;
 				}
 				Convert.setIntValue(predicateid.pageNo.pid, 8, quadruplePtr);
 				Convert.setIntValue(predicateid.slotNo, 12, quadruplePtr);
 			}
-			if(!_objectNullFilter){
+			if (!_objectNullFilter) {
 				EID objectid = getEID(_objectFilter);
-				if(objectid == null){
+				if (objectid == null) {
 					return false;
 				}
 				Convert.setIntValue(objectid.pageNo.pid, 16, quadruplePtr);
 				Convert.setIntValue(objectid.slotNo, 20, quadruplePtr);
 			}
-			if(!_confidenceNullFilter){
+			if (!_confidenceNullFilter) {
 				Convert.setDoubleValue(Double.parseDouble(_confidenceFilter), 24, quadruplePtr);
 			}
 			QuadBTFileScan scan;
@@ -378,18 +415,30 @@ public class Stream implements GlobalConst {
 		try {
 			// TODO: ONLY IF DEFAULT CASE COVERED
 			// return quadover.getNext(qid);
-			if(qsort != null){
-				return qsort.get_next(); 
+			if(_needSort){
+				if (qsort != null) {
+					return qsort.get_next();
+				} else {
+					return null;
+				}
 			}
-			else {
-				return null;
+			else{
+				// TODO: CHECK
+				QID qid=new QID();
+				return qfs.getNext(qid);
 			}
-			
+
 		} catch (Exception e) {
 			System.out.println("Error in getNext of Steam.java");
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public QuadrupleHeapfile getResults()
+			throws InvalidTupleSizeException,
+			IOException {
+		return _results;
 	}
 
 	/**
@@ -426,16 +475,48 @@ public class Stream implements GlobalConst {
 		_confidenceFilter = confidenceFilter;
 	}
 
+	public void reset_scan(){
+		try {
+			if(_needSort){
+				if (qsort != null) {
+					qsort.close();
+				}
+				if (qfs != null) {
+					qfs.closescan();
+				}
+				qfs = new TScan(_results);
+				QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+				qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+			}
+			else{
+				if (qfs != null) {
+					qfs.closescan();
+				}
+				qfs = new TScan(_results);
+			}
+			// QuadrupleOrder quadrupleOrder = new QuadrupleOrder(_orderType, 0);
+			// qsort = new Sort(qfs, quadrupleOrder, SORT_Q_NUM_PAGES);
+
+		} catch (Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		}
+	}
+
 	/** Closes the Stream object */
 	public void closestream() {
 		try {
 			if (qsort != null) {
-			qsort.close();
+				qsort.close();
 			}
 
-			if (quadover != null) {
-				quadover.closescan();
+			if (qfs != null) {
+				qfs.closescan();
 			}
+
+			// if (quadover != null) {
+			// 	quadover.closescan();
+			// }
 
 			if (_results != null && _results != _rdfdb.getQuadHeapFile()) {
 				_results.deleteFile();

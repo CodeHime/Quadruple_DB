@@ -571,6 +571,38 @@ public class HFPage extends Page
      
       
     }
+
+    public Tuple getRecord ( RID rid, boolean inp ) 
+    throws IOException,  
+	   InvalidSlotNumberException
+    {
+      short recLen;
+      short offset;
+      byte []record;
+      PageId pageNo = new PageId();
+      pageNo.pid= rid.pageNo.pid;
+      curPage.pid = Convert.getIntValue (CUR_PAGE, data);
+      int slotNo = rid.slotNo;
+      
+      // length of record being returned
+      recLen = getSlotLength (slotNo);
+      slotCnt = Convert.getShortValue (SLOT_CNT, data);
+      if (( slotNo >=0) && (slotNo < slotCnt) && (recLen >0) 
+	  && (pageNo.pid == curPage.pid))
+	{
+	  offset = getSlotOffset (slotNo);
+	  record = new byte[recLen];
+	  System.arraycopy(data, offset, record, 0, recLen);
+	  Tuple tuple = new Tuple();
+	  return tuple;
+	}
+      
+      else {
+        throw new InvalidSlotNumberException (null, "HEAPFILE: INVALID_SLOTNO");
+      }
+     
+      
+    }
   
   /**
    * returns a tuple in a byte array[pageSize] with given RID rid.

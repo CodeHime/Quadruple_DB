@@ -2,72 +2,36 @@ package commandline;
 
 import java.io.IOException;
 import java.nio.file.Files;
+
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PhaseThreeQuery {
     private static void stringProcess(String[] strs) {
-        for (int i = 0; i < strs.length; i++) {
-            if (strs[i].equals("*")) {
-                strs[i] = null;
-            } else {
-                strs[i] = strs[i].substring(2, strs[i].length() - 1);
+
+        for (int i = 0; i < strs.length - 1; i++) {
+            if (!strs[i].equals("*")) {
+                strs[i] = strs[i].substring(1, strs[i].length() - 1);
+
             }
         }
     }
 
     private static String stringProcess(String str) {
-        if (str.equals("*")) {
-            str = null;
-        } else {
-            str = str.substring(2, str.length() - 1);
+
+        if (!str.equals("*")) {
+            str = str.substring(1, str.length() - 1);
         }
 
         return str;
     }
 
-    private static List<Integer> processLONP(String str) {
-        str = str.substring(1, str.length() - 1);
-        
-        List<Integer> l = new LinkedList<>();
-        String[] strs = str.split(":");
-        for (String s : strs) {
-            l.add(Integer.parseInt(s));
-        }
 
-        return l;
-    }
-
-    private static Double processDouble(String s) {
-        if (s.equals("*")) {
-            return null;
-        } 
-        
-        return Double.parseDouble(s);
-    }
-
-    private static Integer processInteger(String s) {
-        if (s.equals("*")) {
-            return null;
-        } 
-        
-        return Integer.parseInt(s);
-    }
-
-    public static void main(String[] argvs) {
-        // Verify if input is valid
-        if (argvs.length != 3) {
-            System.out.println("Invalid arguments");
-            return;
-        }
-
-        // Read Input
-        String rdfDBName = argvs[0];
-        String queryfile = argvs[1];
-        int numBuf = Integer.parseInt(argvs[2]);
-
-        System.out.println(rdfDBName + queryfile + numBuf);
+    public static void processFile(String queryfile) {
 
         // Process query file
         try {
@@ -91,25 +55,46 @@ public class PhaseThreeQuery {
 
             // JNP,JONO,RSF,RPF,ROF,RCF,LONP,ORS,ORO
             String[] temp3 = firstStrs[1].split(",");
-            Integer jnp = processInteger(temp3[0]);
-            Integer jono = processInteger(temp3[1]);
-            String rsf = stringProcess(temp3[2]);
-            String rpf = stringProcess(temp3[3]);
-            String rof = stringProcess(temp3[4]);
-            Double rcf = processDouble(temp3[5]);
-            List<Integer> lonp = processLONP(temp3[6]);
-            int ors = Integer.parseInt(temp3[7]);
-            int oro = Integer.parseInt(temp3[8]);
+          
+            int BPJoinNodePosition = Integer.parseInt(temp3[0]);
+            int JoinOnSubjectorObject = Integer.parseInt(temp3[1]);
+            String RightSubjectFilter = stringProcess(temp3[2]);
+            String RightPredicateFilter = stringProcess(temp3[3]);
+            String RightObjectFilter = stringProcess(temp3[4]);
+            String RightConfidenceFilter = temp3[5];
 
-            System.out.println("jnp: " + jnp);
-            System.out.println("jono: " + jono);
-            System.out.println("rsf: " + rsf);
-            System.out.println("rpf: " + rpf);
-            System.out.println("rof: " + rof);
-            System.out.println("rcf: " + rcf);
-            System.out.println("lonp: " + lonp);
-            System.out.println("ors: " + ors);
-            System.out.println("oro: " + oro);
+            List<Integer> lonpAL = new ArrayList<Integer>();
+            
+            // If length is 9 then there is no LONP given
+            if(temp3.length != 9)
+            {
+                int i = 6;
+
+                // drop the bracket of the first LONP value
+                temp3[i] = temp3[i].substring(1);
+
+                while(!temp3[i].contains("}")){
+                    lonpAL.add(Integer.parseInt(temp3[i]));
+                    i++;
+                }
+                // remove closing }
+                lonpAL.add(Integer.parseInt(temp3[i].substring(0, 1)));
+            }
+            int[] LeftOutNodePositions = lonpAL.stream().mapToInt(i -> i).toArray();
+
+            int OutputRightSubject = Integer.parseInt(temp3[temp3.length - 2]);
+            int OutputRightObject = Integer.parseInt(temp3[temp3.length - 1]);
+
+            System.out.println("jnp: " + BPJoinNodePosition);
+            System.out.println("jono: " + JoinOnSubjectorObject);
+            System.out.println("rsf: " + RightSubjectFilter);
+            System.out.println("rpf: " + RightPredicateFilter);
+            System.out.println("rof: " + RightObjectFilter);
+            System.out.println("rcf: " + RightConfidenceFilter);
+            System.out.println("lonp: " + Arrays.toString(LeftOutNodePositions));
+            System.out.println("ors: " + OutputRightSubject);
+            System.out.println("oro: " + OutputRightObject);
+
 
             String[] secondStrs = strs[1].split("\\)");
 
@@ -118,35 +103,59 @@ public class PhaseThreeQuery {
             // stringProcess(secondSet);
             // System.out.println(Arrays.toString(secondSet));
 
-            Integer jnp2 = processInteger(secondSet[0]);
-            Integer jono2 = processInteger(secondSet[1]);
-            String rsf2 = stringProcess(secondSet[2]);
-            String rpf2 = stringProcess(secondSet[3]);
-            String rof2 = stringProcess(secondSet[4]);
-            Double rcf2 = processDouble(secondSet[5]);
-            List<Integer> lonp2 = processLONP(secondSet[6]);
-            Integer ors2 = processInteger(secondSet[7]);
-            Integer oro2 = processInteger(secondSet[8]);
+            Integer BPJoinNodePosition2 = Integer.parseInt(secondSet[0]);
+            Integer JoinOnSubjectorObject2 = Integer.parseInt(secondSet[1]);
+            String RightSubjectFilter2 = stringProcess(secondSet[2]);
+            String RightPredicateFilter2 = stringProcess(secondSet[3]);
+            String RightObjectFilter2 = stringProcess(secondSet[4]);
+            String RightConfidenceFilter2 = secondSet[5];
 
-            System.out.println("jnp2: " + jnp2);
-            System.out.println("jono2: " + jono2);
-            System.out.println("rsf2: " + rsf2);
-            System.out.println("rpf2: " + rpf2);
-            System.out.println("rof2: " + rof2);
-            System.out.println("rcf2: " + rcf2);
-            System.out.println("lonp2: " + lonp2);
-            System.out.println("ors2: " + ors2);
-            System.out.println("oro2: " + oro2);
+            // List<Integer> lonp2 = processLONP(secondSet[6]);
+            List<Integer> lonpAL2 = new ArrayList<Integer>();
+            
+            // If length is 9 then there is no LONP given
+            if(secondSet.length != 9)
+            {
+                int i = 6;
+
+                // drop the bracket of the first LONP value
+                secondSet[i] = secondSet[i].substring(1);
+
+                while(!secondSet[i].contains("}")){
+                    lonpAL2.add(Integer.parseInt(secondSet[i]));
+                    i++;
+                }
+                // remove closing }
+                lonpAL2.add(Integer.parseInt(secondSet[i].substring(0, secondSet[i].indexOf("}"))));
+            }
+            int[] LeftOutNodePositions2 = lonpAL2.stream().mapToInt(i -> i).toArray();
+
+
+            int OutputRightSubject2 = Integer.parseInt(secondSet[secondSet.length - 2]);
+            int OutputRightObject2 = Integer.parseInt(secondSet[secondSet.length - 1]);
+
+            System.out.println("jnp2: " + BPJoinNodePosition2);
+            System.out.println("jono2: " + JoinOnSubjectorObject2);
+            System.out.println("rsf2: " + RightSubjectFilter2);
+            System.out.println("rpf2: " + RightPredicateFilter2);
+            System.out.println("rof2: " + RightObjectFilter2);
+            System.out.println("rcf2: " + RightConfidenceFilter2);
+            System.out.println("lonp2: " + Arrays.toString(LeftOutNodePositions2));
+            System.out.println("ors2: " + OutputRightSubject2);
+            System.out.println("oro2: " + OutputRightObject2);
 
 
             String[] lastStrs = secondStrs[1].split(",");
-            Integer so = processInteger(lastStrs[0]), snp = processInteger(lastStrs[1]), np = processInteger(lastStrs[2]);
-            System.out.println("so: " + so);
-            System.out.println("so: " + snp);
-            System.out.println("np: " + np);
+            int sort_order = Integer.parseInt(lastStrs[0]), SortNodeIDPos = Integer.parseInt(lastStrs[1]), n_pages = Integer.parseInt(lastStrs[2]);
+            System.out.println("so: " + sort_order);
+            System.out.println("snp: " + SortNodeIDPos);
+            System.out.println("np: " + n_pages + "\n\n");
+
             
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
+

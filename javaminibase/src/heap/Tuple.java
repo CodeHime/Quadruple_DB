@@ -66,8 +66,14 @@ public class Tuple implements GlobalConst{
    {
       data = atuple;
       tuple_offset = offset;
+      try {
+        fldCnt = Convert.getShortValue(0, atuple);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       tuple_length = length;
-    //  fldCnt = getShortValue(offset, data);
+      
    }
    
    /** Constructor(used as tuple copy)
@@ -203,6 +209,19 @@ public class Tuple implements GlobalConst{
     else 
      throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
   }
+
+  public double getDFld(int fldNo) 
+  	throws IOException, FieldNumberOutOfBoundException
+  {           
+    double val;
+    if ( (fldNo > 0) && (fldNo <= fldCnt))
+     {
+      val = Convert.getDoubleValue(fldOffset[fldNo -1], data);
+      return val;
+     }
+    else 
+     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
+  }
     
    /**
     * Convert this field in to float
@@ -275,6 +294,19 @@ public class Tuple implements GlobalConst{
        throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND");
  
     }
+
+    public Tuple setDFld(int fldNo, double val) 
+  	throws IOException, FieldNumberOutOfBoundException
+  { 
+    if ( (fldNo > 0) && (fldNo <= fldCnt))
+     {
+	Convert.setDoubleValue(val, fldOffset[fldNo -1], data);
+	return this;
+     }
+    else 
+     throw new FieldNumberOutOfBoundException (null, "TUPLE:TUPLE_FLDNO_OUT_OF_BOUND"); 
+  }
+
 
   /**
    * Set this field to integer value
@@ -379,6 +411,10 @@ public void setHdr (short numFlds,  AttrType types[], short strSizes[])
   {
     switch(types[i-1].attrType) {
     
+    case AttrType.attrD:
+      incr = 8;
+      break;
+
    case AttrType.attrInteger:
      incr = 4;
      break;
@@ -401,6 +437,10 @@ public void setHdr (short numFlds,  AttrType types[], short strSizes[])
  
 }
  switch(types[numFlds -1].attrType) {
+
+  case AttrType.attrD:
+  incr = 8;
+  break;
 
    case AttrType.attrInteger:
      incr = 4;
@@ -468,11 +508,17 @@ public void setHdr (short numFlds,  AttrType types[], short strSizes[])
   int i, val;
   float fval;
   String sval;
+  double dval;
 
   System.out.print("[");
   for (i=0; i< fldCnt-1; i++)
    {
     switch(type[i].attrType) {
+
+case AttrType.attrD:
+      dval = Convert.getDoubleValue(fldOffset[i], data);
+      System.out.println(dval);
+      break;
 
    case AttrType.attrInteger:
      val = Convert.getIntValue(fldOffset[i], data);
@@ -498,6 +544,11 @@ public void setHdr (short numFlds,  AttrType types[], short strSizes[])
  
  switch(type[fldCnt-1].attrType) {
 
+  case AttrType.attrD:
+      dval = Convert.getDoubleValue(fldOffset[i], data);
+      System.out.println(dval);
+      break;
+      
    case AttrType.attrInteger:
      val = Convert.getIntValue(fldOffset[i], data);
      System.out.print(val);

@@ -2,6 +2,7 @@ package commandline;
 
 import java.io.IOException;
 import java.nio.file.Files;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,14 +12,17 @@ import java.util.List;
 
 public class PhaseThreeQuery {
     private static void stringProcess(String[] strs) {
+
         for (int i = 0; i < strs.length - 1; i++) {
             if (!strs[i].equals("*")) {
                 strs[i] = strs[i].substring(1, strs[i].length() - 1);
+
             }
         }
     }
 
     private static String stringProcess(String str) {
+
         if (!str.equals("*")) {
             str = str.substring(1, str.length() - 1);
         }
@@ -26,7 +30,9 @@ public class PhaseThreeQuery {
         return str;
     }
 
+
     public static void processFile(String queryfile) {
+
         // Process query file
         try {
             String query = new String(Files.readAllBytes(Paths.get(queryfile)));
@@ -49,6 +55,7 @@ public class PhaseThreeQuery {
 
             // JNP,JONO,RSF,RPF,ROF,RCF,LONP,ORS,ORO
             String[] temp3 = firstStrs[1].split(",");
+          
             int BPJoinNodePosition = Integer.parseInt(temp3[0]);
             int JoinOnSubjectorObject = Integer.parseInt(temp3[1]);
             String RightSubjectFilter = stringProcess(temp3[2]);
@@ -87,6 +94,7 @@ public class PhaseThreeQuery {
             System.out.println("lonp: " + Arrays.toString(LeftOutNodePositions));
             System.out.println("ors: " + OutputRightSubject);
             System.out.println("oro: " + OutputRightObject);
+
 
             String[] secondStrs = strs[1].split("\\)");
 
@@ -142,9 +150,12 @@ public class PhaseThreeQuery {
             System.out.println("so: " + sort_order);
             System.out.println("snp: " + SortNodeIDPos);
             System.out.println("np: " + n_pages + "\n\n");
+
             
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
+
